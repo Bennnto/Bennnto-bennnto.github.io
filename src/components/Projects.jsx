@@ -34,10 +34,10 @@ const Projects = () => {
       github: 'https://github.com/Bennnto',
     },
     {
-      title: 'Command line interface To-do Lists',
-      description: 'A To-do list in command line interface let you add delete mark your task within command line interface.',
-      tech: ['Python', 'os Module'],
-      github : 'https://github.com/Bennnto/Cli-Todo-list',
+      title: 'Pomodoro Timer',
+      description: 'A Pomodoro productivity timer available in both command-line interface and GUI versions, featuring customizable work/break intervals, cycle management, and pause/resume controls.',
+      tech: ['Python', 'Tkinter', 'Threading', 'CLI'],
+      github: 'https://github.com/Bennnto/Pomodoro_Timer',
     }
   ]
 
@@ -48,11 +48,11 @@ const Projects = () => {
       <div className="section-container relative z-10">
         <div className="text-center mb-16">
           <h2 className="section-title mb-6">
-            Featured Projects
+            Projects
           </h2>
           <div className="w-16 h-px bg-gray-300 dark:bg-gray-600 mx-auto mb-8" />
           <p className="section-subtitle">
-            A collection of innovative solutions and creative applications
+            My personal collection of coding practice projects
           </p>
         </div>
 
