@@ -38,6 +38,12 @@ const Projects = () => {
       description: 'A Pomodoro productivity timer available in both command-line interface and GUI versions, featuring customizable work/break intervals, cycle management, and pause/resume controls.',
       tech: ['Python', 'Tkinter', 'Threading', 'CLI'],
       github: 'https://github.com/Bennnto/Pomodoro_Timer',
+    },
+    {
+      title: 'Expense Tracker',
+      description: 'A command-line expense tracking application that allows users to add, list, and delete expenses with JSON-based local storage. Features customizable categories and detailed expense management.',
+      tech: ['Python', 'JSON', 'CLI', 'File I/O'],
+      github: 'https://github.com/Bennnto/Expense_tracker',
     }
   ]
 
