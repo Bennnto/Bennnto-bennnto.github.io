@@ -45,6 +45,11 @@ const Projects = () => {
       tech: ['Python', 'JSON', 'CLI', 'File I/O'],
       github: 'https://github.com/Bennnto/Expense_tracker',
     }
+    {
+      title: 'Expense Tracker GUI PyQt5',
+      description: An expense tracking application that write in python with PyQt5 Module for graphic user interface allow users to add list, summarize and category and store information in sqlite3.',
+      tech: ['Python', 'Json', 'sqlite3', 'PyQt5'
+      github: 'https://github.com/Bennnto/Expense-Tracker-GUI-Version'
   ]
 
   return (
