@@ -1,0 +1,85 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-sans antialiased bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300;
+  }
+}
+
+@layer components {
+  /* Button Styles */
+  .btn-primary {
+    @apply px-8 py-3 bg-gray-900 text-white rounded-full font-medium 
+           hover:bg-gray-800 transition-all duration-300 
+           hover:shadow-lg hover:scale-105 active:scale-95;
+  }
+
+  .btn-secondary {
+    @apply px-8 py-3 bg-transparent text-gray-900 rounded-full font-medium 
+           border-2 border-gray-900 hover:bg-gray-900 hover:text-white 
+           transition-all duration-300 hover:shadow-lg hover:scale-105 active:scale-95;
+  }
+
+  /* Hero Container */
+  .hero-container {
+    @apply max-w-5xl mx-auto px-6;
+  }
+
+  /* Text Accent */
+  .text-accent {
+    @apply text-gray-600;
+  }
+
+  /* Dark mode overrides */
+  .dark .text-accent {
+    @apply text-gray-400;
+  }
+
+  .dark .btn-primary {
+    @apply bg-white text-gray-900 hover:bg-gray-100;
+  }
+
+  .dark .btn-secondary {
+    @apply border-white text-white hover:bg-white hover:text-gray-900;
+  }
+}
+
+@layer utilities {
+  /* Custom animations */
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+
+  @keyframes pulse-slow {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .animate-pulse-slow {
+    animation: pulse-slow 4s ease-in-out infinite;
+  }
+}
+
+/* Canvas Background */
+.animated-bg {
+  @apply absolute inset-0 w-full h-full;
+}
+
+.animated-bg canvas {
+  @apply absolute inset-0 w-full h-full;
+}
