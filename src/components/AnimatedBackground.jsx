@@ -19,7 +19,7 @@ const AnimatedBackground = () => {
     window.addEventListener('resize', handleResize)
 
     const particles = []
-    const particleCount = 100 // Density
+    const particleCount = 70 // Google Antigravity isn't too crowded
 
     class Particle {
       constructor() {
@@ -27,68 +27,82 @@ const AnimatedBackground = () => {
       }
 
       reset(initial = false) {
-        this.radius = Math.random() * 3 + 1.5
+        // Visuals: Dashes (like the image)
+        this.length = Math.random() * 8 + 4
+        this.width = Math.random() * 2 + 1.5
+
+        // Position
         this.x = Math.random() * canvas.width
-        this.y = Math.random() * canvas.height
+        this.y = initial ? Math.random() * canvas.height : canvas.height + 20
 
-        // Base speed
-        this.vx = (Math.random() - 0.5) * 0.5 // Slow horizontal drift
-        this.vy = (Math.random() - 0.5) * 0.5 // Slow vertical drift
+        // Movement: "Floating"
+        this.vx = (Math.random() - 0.5) * 0.5 // Gentle drift
+        this.vy = -(Math.random() * 0.5 + 0.2) // Slowly floating Up (Antigravity)
 
-        // Wave properties
-        this.waveAmplitude = Math.random() * 20 + 10
-        this.waveFrequency = Math.random() * 0.02 + 0.01
-        this.phase = Math.random() * Math.PI * 2
+        // Wave/Wobble properties
+        this.angle = Math.random() * Math.PI * 2
+        this.angleSpeed = (Math.random() - 0.5) * 0.02
 
-        // Colors from Google Palette
-        const colors = ['#4285F4', '#EA4335', '#FBBC05', '#34A853']
+        // Color Palette (Google-ish, mostly Blue as per image)
+        const colors = ['#4285F4', '#4285F4', '#4285F4', '#EA4335', '#FBBC05', '#34A853'] // Biased to Blue
         this.color = colors[Math.floor(Math.random() * colors.length)]
         this.opacity = Math.random() * 0.5 + 0.3
+
+        this.rotation = Math.random() * Math.PI * 2
+        this.rotationSpeed = (Math.random() - 0.5) * 0.05
       }
 
-      update(time, mouseX, mouseY) {
-        // Base movement
+      update(mouseX, mouseY) {
+        // 1. Base Floating Motion
         this.x += this.vx
+        this.y += this.vy
+        this.rotation += this.rotationSpeed
 
-        // Wave motion: y = base_y + sin(time)
-        // We add the wave component to the y position
-        // But we need to track base_y separately if we want it to drift
-        // Let's just create a flow.
-
-        // Simpler: Just Float with Sine modification
-        this.x += Math.sin(time * this.waveFrequency + this.phase) * 0.5
-        this.y += Math.cos(time * this.waveFrequency + this.phase) * 0.5 - 0.2 // Slight upward trend
-
-        // Mouse Repulsion (Gentle)
+        // 2. Mouse "Wave" Interaction
         if (mouseX && mouseY) {
           const dx = this.x - mouseX
           const dy = this.y - mouseY
           const distance = Math.sqrt(dx * dx + dy * dy)
-          const maxDist = 150
+          const maxDist = 250 // Large radius for "Wave" feel
 
           if (distance < maxDist) {
+            // Force strength depends on distance (smoother falloff)
             const force = (maxDist - distance) / maxDist
-            const angle = Math.atan2(dy, dx)
 
-            this.x += Math.cos(angle) * force * 1
-            this.y += Math.sin(angle) * force * 1
+            // "Wave" effect: Push away strongly but smoothly
+            const pushX = (dx / distance) * force * 5
+            const pushY = (dy / distance) * force * 5
+
+            this.x += pushX
+            this.y += pushY
+
+            // Add some "swirl" or rotation to the wave?
+            this.rotation += force * 0.1
           }
         }
 
-        // Wrap around
+        // Wrap around / Respawn
+        // If it floats off top, reset to bottom
+        if (this.y < -50) this.reset()
+
+        // Horizontal wrapping
         if (this.x < -50) this.x = canvas.width + 50
         if (this.x > canvas.width + 50) this.x = -50
-        if (this.y < -50) this.y = canvas.height + 50
-        if (this.y > canvas.height + 50) this.y = -50
       }
 
       draw() {
-        ctx.beginPath()
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2)
+        ctx.save()
+        ctx.translate(this.x, this.y)
+        ctx.rotate(this.rotation)
         ctx.globalAlpha = this.opacity
         ctx.fillStyle = this.color
+
+        // Draw Dash
+        ctx.beginPath()
+        ctx.roundRect(-this.length / 2, -this.width / 2, this.length, this.width, 2)
         ctx.fill()
-        ctx.globalAlpha = 1
+
+        ctx.restore()
       }
     }
 
@@ -98,7 +112,6 @@ const AnimatedBackground = () => {
 
     let mouseX = null
     let mouseY = null
-    let time = 0
 
     const onMouseMove = (e) => {
       mouseX = e.clientX
@@ -115,10 +128,9 @@ const AnimatedBackground = () => {
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
-      time += 1
 
       particles.forEach(particle => {
-        particle.update(time, mouseX, mouseY)
+        particle.update(mouseX, mouseY)
         particle.draw()
       })
 
@@ -139,7 +151,7 @@ const AnimatedBackground = () => {
     <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
       <canvas
         ref={canvasRef}
-        className="w-full h-full opacity-60"
+        className="w-full h-full opacity-70"
       />
     </div>
   )
