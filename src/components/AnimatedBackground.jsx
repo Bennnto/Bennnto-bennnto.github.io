@@ -18,12 +18,8 @@ const AnimatedBackground = () => {
     handleResize()
     window.addEventListener('resize', handleResize)
 
-    // Google Blue (#4285F4)
-    const colors = ['#4285F4', '#EA4335', '#FBBC05', '#34A853'] // Using Google colors for variety or just blue? 
-    // Reference image mostly showed blue dashes. I will stick to predominantly blue but maybe variation in opacity.
-
     const particles = []
-    const particleCount = 60 // Adjust for density
+    const particleCount = 100 // Density
 
     class Particle {
       constructor() {
@@ -31,66 +27,68 @@ const AnimatedBackground = () => {
       }
 
       reset(initial = false) {
+        this.radius = Math.random() * 3 + 1.5
         this.x = Math.random() * canvas.width
-        this.y = initial ? Math.random() * canvas.height : canvas.height + 20
-        // Dash dimensions
-        this.length = Math.random() * 15 + 5
-        this.width = Math.random() * 3 + 1
+        this.y = Math.random() * canvas.height
 
-        // Movement
-        this.speedX = (Math.random() - 0.5) * 1
-        this.speedY = -Math.random() * 2 - 0.5 // Upward
+        // Base speed
+        this.vx = (Math.random() - 0.5) * 0.5 // Slow horizontal drift
+        this.vy = (Math.random() - 0.5) * 0.5 // Slow vertical drift
 
-        // Content
-        this.rotation = Math.random() * Math.PI * 2
-        this.rotationSpeed = (Math.random() - 0.5) * 0.05
+        // Wave properties
+        this.waveAmplitude = Math.random() * 20 + 10
+        this.waveFrequency = Math.random() * 0.02 + 0.01
+        this.phase = Math.random() * Math.PI * 2
 
-        // Style
-        this.color = '#4285F4' // Google Blue
-        this.opacity = Math.random() * 0.6 + 0.2
+        // Colors from Google Palette
+        const colors = ['#4285F4', '#EA4335', '#FBBC05', '#34A853']
+        this.color = colors[Math.floor(Math.random() * colors.length)]
+        this.opacity = Math.random() * 0.5 + 0.3
       }
 
-      update(mouseX, mouseY) {
-        this.x += this.speedX
-        this.y += this.speedY
-        this.rotation += this.rotationSpeed
+      update(time, mouseX, mouseY) {
+        // Base movement
+        this.x += this.vx
 
-        // Mouse interaction
+        // Wave motion: y = base_y + sin(time)
+        // We add the wave component to the y position
+        // But we need to track base_y separately if we want it to drift
+        // Let's just create a flow.
+
+        // Simpler: Just Float with Sine modification
+        this.x += Math.sin(time * this.waveFrequency + this.phase) * 0.5
+        this.y += Math.cos(time * this.waveFrequency + this.phase) * 0.5 - 0.2 // Slight upward trend
+
+        // Mouse Repulsion (Gentle)
         if (mouseX && mouseY) {
-          const dx = mouseX - this.x
-          const dy = mouseY - this.y
+          const dx = this.x - mouseX
+          const dy = this.y - mouseY
           const distance = Math.sqrt(dx * dx + dy * dy)
-          const maxDist = 200
+          const maxDist = 150
 
           if (distance < maxDist) {
             const force = (maxDist - distance) / maxDist
             const angle = Math.atan2(dy, dx)
 
-            this.x -= Math.cos(angle) * force * 3
-            this.y -= Math.sin(angle) * force * 3
-            this.rotation += 0.1
+            this.x += Math.cos(angle) * force * 1
+            this.y += Math.sin(angle) * force * 1
           }
         }
 
-        if (this.y < -50) this.reset()
+        // Wrap around
         if (this.x < -50) this.x = canvas.width + 50
         if (this.x > canvas.width + 50) this.x = -50
+        if (this.y < -50) this.y = canvas.height + 50
+        if (this.y > canvas.height + 50) this.y = -50
       }
 
       draw() {
-        ctx.save()
-        ctx.translate(this.x, this.y)
-        ctx.rotate(this.rotation)
+        ctx.beginPath()
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2)
         ctx.globalAlpha = this.opacity
         ctx.fillStyle = this.color
-
-        // Draw Dash/Rectangle
-        // Rounded caps for nicer look
-        ctx.beginPath()
-        ctx.roundRect(-this.length / 2, -this.width / 2, this.length, this.width, 2)
         ctx.fill()
-
-        ctx.restore()
+        ctx.globalAlpha = 1
       }
     }
 
@@ -100,6 +98,7 @@ const AnimatedBackground = () => {
 
     let mouseX = null
     let mouseY = null
+    let time = 0
 
     const onMouseMove = (e) => {
       mouseX = e.clientX
@@ -116,9 +115,10 @@ const AnimatedBackground = () => {
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
+      time += 1
 
       particles.forEach(particle => {
-        particle.update(mouseX, mouseY)
+        particle.update(time, mouseX, mouseY)
         particle.draw()
       })
 
@@ -139,7 +139,7 @@ const AnimatedBackground = () => {
     <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
       <canvas
         ref={canvasRef}
-        className="w-full h-full"
+        className="w-full h-full opacity-60"
       />
     </div>
   )
