@@ -86,7 +86,7 @@ const Contact = () => {
               href="mailto:ben.promkaew@icloud.com"
               className="btn-primary"
             >
-              Send Message
+              Send Me a Message
             </a>
           </div>
         </div>
