@@ -7,9 +7,6 @@ const Footer = () => {
             <h3 className="text-xl font-light text-white mb-2">
               Ben Promkaew
             </h3>
-            <p className="text-gray-400 font-light">
-              Computer Programming Student
-            </p>
           </div>
 
           <div className="w-16 h-px bg-gray-600 mx-auto mb-6" />

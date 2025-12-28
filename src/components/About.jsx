@@ -46,10 +46,9 @@ const About = () => {
           {/* Bio */}
           <div className="text-center">
             <p className="text-lg text-gray-600 dark:text-gray-300 font-light leading-relaxed max-w-3xl mx-auto">
-              I'm a passionate Computer Programming student at George Brown College in Toronto,
-              constantly building and learning through hands-on projects. I enjoy creating practical
-              applications that solve real-world problems and am always eager to explore new
-              technologies and methodologies in software development.
+              I'm passionate about computer programming and constantly building and learning through hands-on projects
+              at George Brown College in Toronto. I enjoy creating practical applications that solve real-world problems
+              and am always eager to explore new technologies and methodologies in software development.
             </p>
           </div>
         </div>

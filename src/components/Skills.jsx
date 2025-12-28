@@ -1,21 +1,11 @@
-import { Code, Database, Terminal, Layout } from 'lucide-react'
+import { Code, Terminal } from 'lucide-react'
 
 const Skills = () => {
   const skillCategories = [
     {
-      title: 'Frontend Development',
-      icon: Layout,
-      skills: ['HTML5', 'CSS3', 'JavaScript', 'jQuery', 'React', 'Tailwind CSS'],
-    },
-    {
-      title: 'Backend Development',
-      icon: Database,
-      skills: ['Python', 'Django', 'Node.js', 'MySQL', 'MongoDB'],
-    },
-    {
       title: 'Programming Languages',
       icon: Code,
-      skills: ['.NET C#', 'Python', 'JavaScript', 'Bash'],
+      skills: ['.NET C#', 'Python', 'JavaScript', 'Bash', 'Java', 'HTML', 'CSS'],
     },
     {
       title: 'Tools & Technologies',

@@ -3,6 +3,12 @@ import { Github, ExternalLink } from 'lucide-react'
 const Projects = () => {
   const projects = [
     {
+      title: 'Weather Application',
+      description: 'A Python weather application with a PyQt5 GUI that fetches real-time weather data using OpenWeather API. Features geocoding to convert city names to coordinates and displays comprehensive weather information.',
+      tech: ['Python', 'PyQt5', 'API Integration', 'GUI'],
+      github: 'https://github.com/Bennnto/Weather',
+    },
+    {
       title: 'CLI Todo List',
       description: 'A powerful command-line todo list application built with Python featuring task management, priority levels, due dates, and data persistence.',
       tech: ['Python', 'CLI', 'File I/O', 'Data Structures'],

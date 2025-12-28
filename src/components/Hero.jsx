@@ -16,10 +16,6 @@ const Hero = () => {
 
         <div className="w-24 h-px bg-gray-300 mx-auto mb-8" />
 
-        <p className="text-xl md:text-2xl text-accent mb-4 font-light">
-          Computer Programming Student
-        </p>
-
         <p className="text-lg text-accent mb-12 font-light">
           George Brown College, Toronto
         </p>
