@@ -79,9 +79,6 @@ const Contact = () => {
 
           {/* CTA */}
           <div className="text-center">
-            <p className="text-gray-600 dark:text-gray-300 font-light mb-8">
-              Let's discuss how we can work together
-            </p>
             <a
               href="mailto:ben.promkaew@icloud.com"
               className="btn-primary"
