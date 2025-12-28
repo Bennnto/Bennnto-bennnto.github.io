@@ -6,6 +6,7 @@ const Footer = () => {
           <div className="mb-6">
             <h3 className="text-xl font-light text-white mb-2">
               Ben Promkaew
+              Ben.promkaew@icloud.com
             </h3>
           </div>
 
