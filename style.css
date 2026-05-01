@@ -1,17 +1,17 @@
 :root {
-  --bg: #06080e; --bg-2: #0d1117; --bg-3: #161b22;
-  --border: rgba(125,211,252,.08); --border-h: rgba(125,211,252,.2);
-  --text: #e2e8f0; --text-2: #8b949e; --text-3: #3d444d;
-  --blue: #7dd3fc; --blue-dim: rgba(125,211,252,.09); --blue-glow: rgba(125,211,252,.18);
-  --green: #6ee7b7; --amber: #fcd34d; --red: #fca5a5;
+  --bg: #0a0c10; --bg-2: #10141c; --bg-3: #151a24;
+  --border: rgba(148,163,184,.07); --border-h: rgba(148,163,184,.16);
+  --text: #e2e8f0; --text-2: #8892a4; --text-3: #3d4757;
+  --blue: #a5b4fc; --blue-dim: rgba(165,180,252,.07); --blue-glow: rgba(165,180,252,.12);
+  --green: #86efac; --amber: #fcd34d; --red: #fca5a5;
   --mono: 'IBM Plex Mono', monospace;
   --t: 240ms cubic-bezier(.4,0,.2,1);
 }
 [data-theme="light"] {
-  --bg: #f0f4f8; --bg-2: #ffffff; --bg-3: #e4eaf2;
-  --border: rgba(56,130,175,.1); --border-h: rgba(56,130,175,.25);
+  --bg: #f5f6f8; --bg-2: #ffffff; --bg-3: #edf0f4;
+  --border: rgba(99,102,241,.08); --border-h: rgba(99,102,241,.2);
   --text: #0f172a; --text-2: #475569; --text-3: #94a3b8;
-  --blue: #0284c7; --blue-dim: rgba(2,132,199,.08); --blue-glow: rgba(2,132,199,.15);
+  --blue: #6366f1; --blue-dim: rgba(99,102,241,.07); --blue-glow: rgba(99,102,241,.13);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 [hidden]{display:none !important;}

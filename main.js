@@ -9,7 +9,7 @@
   const ctx = canvas.getContext('2d');
 
   const BLOCK  = 8;
-  const COLORS = ['#00e5cc','#00bfa5','#00897b','#26d7bc','#80ffee','#00ffdd','#00c9a7'];
+  const COLORS = ['#a5b4fc','#818cf8','#6366f1','#c7d2fe','#4f46e5','#8b8cf7','#7c7ef5'];
   let W, H, cols, drops;
 
   function setup() {
@@ -26,11 +26,11 @@
   window.addEventListener('resize', setup);
 
   function tick() {
-    ctx.fillStyle = 'rgba(6,8,14,0.12)';
+    ctx.fillStyle = 'rgba(10,12,16,0.18)';
     ctx.fillRect(0, 0, W, H);
 
     for (let i = 0; i < cols; i++) {
-      drops[i] += 0.4;
+      drops[i] += 0.25;
       const py = Math.floor(drops[i]) * BLOCK;
       const px = i * BLOCK;
 
