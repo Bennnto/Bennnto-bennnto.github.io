@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vissarut Promkaew</title>
+  <meta name="description" content="Portfolio of Vissarut (Ben) Promkaew — developer based in Toronto." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Pixel grid overlay -->
+  <div class="bg-layer" aria-hidden="true"></div>
+
+  <button id="theme-toggle" aria-label="Toggle theme">☀</button>
+
+  <div class="page">
+
+    <!-- Header -->
+    <header class="site-header">
+      <span class="site-icon">◈</span>
+      <div>
+        <h1 class="site-name">Vissarut Promkaew</h1>
+        <p class="site-sub">Ben · Developer · Toronto, ON</p>
+      </div>
+    </header>
+
+    <!-- Two-column layout -->
+    <div class="two-col">
+
+      <!-- LEFT: Section buttons -->
+      <nav class="left-col">
+        <button class="sec-btn" data-target="s-info">
+          <span class="sicon">◆</span><span>Info</span>
+          <span class="sarrow">→</span>
+        </button>
+        <button class="sec-btn" data-target="s-projects">
+          <span class="sicon">◆</span><span>Projects</span>
+          <span class="sarrow">→</span>
+        </button>
+        <button class="sec-btn" data-target="s-api">
+          <span class="sicon">◆</span><span>API</span>
+          <span class="sarrow">→</span>
+        </button>
+        <button class="sec-btn" data-target="s-contact">
+          <span class="sicon">◆</span><span>Contact</span>
+          <span class="sarrow">→</span>
+        </button>
+      </nav>
+
+      <!-- RIGHT: Section content -->
+      <div class="right-col">
+
+        <!-- INFO -->
+        <div class="sec" id="s-info" hidden>
+          <div class="leaf" id="lf-name">
+            <button class="leaf-btn"><span class="lc">▶</span>name</button>
+            <div class="leaf-panel"><div class="leaf-inner">
+              <div class="row"><span class="rk">full</span><span class="rv">Vissarut Promkaew</span></div>
+              <div class="row"><span class="rk">preferred</span><span class="rv">Ben</span></div>
+            </div></div>
+          </div>
+          <div class="leaf" id="lf-location">
+            <button class="leaf-btn"><span class="lc">▶</span>location</button>
+            <div class="leaf-panel"><div class="leaf-inner">
+              <div class="row"><span class="rk">city</span><span class="rv">Toronto, ON</span></div>
+              <div class="row"><span class="rk">country</span><span class="rv">Canada</span></div>
+            </div></div>
+          </div>
+          <div class="leaf" id="lf-edu">
+            <button class="leaf-btn"><span class="lc">▶</span>education</button>
+            <div class="leaf-panel"><div class="leaf-inner">
+              <div class="row"><span class="rk">school</span><span class="rv">George Brown College</span></div>
+              <div class="row"><span class="rk">city</span><span class="rv">Toronto, ON</span></div>
+            </div></div>
+          </div>
+          <div class="leaf" id="lf-lang">
+            <button class="leaf-btn"><span class="lc">▶</span>languages</button>
+            <div class="leaf-panel"><div class="leaf-inner">
+              <div class="row"><span class="rk">spoken</span><span class="rv">English, Thai</span></div>
+            </div></div>
+          </div>
+          <div class="leaf" id="lf-skills">
+            <button class="leaf-btn"><span class="lc">▶</span>skills</button>
+            <div class="leaf-panel"><div class="leaf-inner">
+              <div class="row"><span class="rk">code</span><span class="rv">.NET C#, Python, JavaScript, Java, Bash, HTML, CSS</span></div>
+              <div class="row"><span class="rk">tools</span><span class="rv">Git, GitHub, REST APIs, FastAPI, Shell Scripts, VS Code</span></div>
+            </div></div>
+          </div>
+          <div class="leaf" id="lf-bio">
+            <button class="leaf-btn"><span class="lc">▶</span>bio</button>
+            <div class="leaf-panel"><div class="leaf-inner">
+              <p class="bio">A passionate developer crafting digital experiences. Building innovative applications and exploring cutting-edge technologies. Currently learning through hands-on projects at George Brown College.</p>
+            </div></div>
+          </div>
+        </div>
+
+        <!-- PROJECTS -->
+        <div class="sec" id="s-projects" hidden>
+          <div class="leaf featured">
+            <button class="leaf-btn"><span class="lc">▶</span>Snippet API<span class="badge">Featured</span></button>
+            <div class="leaf-panel"><div class="leaf-inner">
+              <div class="row"><span class="rk">desc</span><span class="rv">RESTful API for managing code snippets</span></div>
+              <div class="row"><span class="rk">stack</span><span class="rv">Python · FastAPI · SQLAlchemy · PostgreSQL</span></div>
+              <div class="row"><span class="rk">links</span><span class="rv"><a href="https://github.com/Bennnto/snippet_api" class="gl" target="_blank" rel="noopener">↗ GitHub</a></span></div>
+            </div></div>
+          </div>
+          <div class="leaf">
+            <button class="leaf-btn"><span class="lc">▶</span>Weather Application</button>
+            <div class="leaf-panel"><div class="leaf-inner">
+              <div class="row"><span class="rk">desc</span><span class="rv">Real-time weather with PyQt5 GUI</span></div>
+              <div class="row"><span class="rk">stack</span><span class="rv">Python · PyQt5 · OpenWeather API</span></div>
+              <div class="row"><span class="rk">links</span><span class="rv"><a href="https://github.com/Bennnto/Weather" class="gl" target="_blank" rel="noopener">↗ GitHub</a></span></div>
+            </div></div>
+          </div>
+          <div class="leaf">
+            <button class="leaf-btn"><span class="lc">▶</span>CLI Todo List</button>
+            <div class="leaf-panel"><div class="leaf-inner">
+              <div class="row"><span class="rk">desc</span><span class="rv">Command-line task manager</span></div>
+              <div class="row"><span class="rk">stack</span><span class="rv">Python · CLI</span></div>
+              <div class="row"><span class="rk">links</span><span class="rv"><a href="https://github.com/Bennnto/Cli-Todo-list" class="gl" target="_blank" rel="noopener">↗ GitHub</a></span></div>
+            </div></div>
+          </div>
+          <div class="leaf">
+            <button class="leaf-btn"><span class="lc">▶</span>Inventory Console App</button>
+            <div class="leaf-panel"><div class="leaf-inner">
+              <div class="row"><span class="rk">desc</span><span class="rv">Inventory management system</span></div>
+              <div class="row"><span class="rk">stack</span><span class="rv">.NET C#</span></div>
+              <div class="row"><span class="rk">links</span><span class="rv"><a href="https://github.com/bennnto" class="gl" target="_blank" rel="noopener">↗ GitHub</a></span></div>
+            </div></div>
+          </div>
+          <div class="leaf">
+            <button class="leaf-btn"><span class="lc">▶</span>Self-hosted Bookmarks</button>
+            <div class="leaf-panel"><div class="leaf-inner">
+              <div class="row"><span class="rk">desc</span><span class="rv">Local bookmarks manager</span></div>
+              <div class="row"><span class="rk">stack</span><span class="rv">HTML · CSS · JavaScript</span></div>
+              <div class="row"><span class="rk">links</span><span class="rv"><a href="https://github.com/bennnto" class="gl" target="_blank" rel="noopener">↗ GitHub</a></span></div>
+            </div></div>
+          </div>
+          <div class="leaf">
+            <button class="leaf-btn"><span class="lc">▶</span>System Monitoring Tool</button>
+            <div class="leaf-panel"><div class="leaf-inner">
+              <div class="row"><span class="rk">desc</span><span class="rv">macOS system stats monitoring</span></div>
+              <div class="row"><span class="rk">stack</span><span class="rv">Bash · macOS</span></div>
+              <div class="row"><span class="rk">links</span><span class="rv"><a href="https://github.com/bennnto" class="gl" target="_blank" rel="noopener">↗ GitHub</a></span></div>
+            </div></div>
+          </div>
+          <div class="leaf">
+            <button class="leaf-btn"><span class="lc">▶</span>Face Blur Video Processor</button>
+            <div class="leaf-panel"><div class="leaf-inner">
+              <div class="row"><span class="rk">desc</span><span class="rv">AI face detection &amp; blurring in videos</span></div>
+              <div class="row"><span class="rk">stack</span><span class="rv">Python · OpenCV · MediaPipe</span></div>
+              <div class="row"><span class="rk">links</span><span class="rv"><a href="https://github.com/Bennnto/undercovered" class="gl" target="_blank" rel="noopener">↗ GitHub</a></span></div>
+            </div></div>
+          </div>
+          <div class="leaf">
+            <button class="leaf-btn"><span class="lc">▶</span>Pomodoro Timer</button>
+            <div class="leaf-panel"><div class="leaf-inner">
+              <div class="row"><span class="rk">desc</span><span class="rv">Productivity timer — CLI &amp; GUI</span></div>
+              <div class="row"><span class="rk">stack</span><span class="rv">Python · tkinter</span></div>
+              <div class="row"><span class="rk">links</span><span class="rv"><a href="https://github.com/Bennnto/Pomodoro_Timer" class="gl" target="_blank" rel="noopener">↗ GitHub</a></span></div>
+            </div></div>
+          </div>
+          <div class="leaf">
+            <button class="leaf-btn"><span class="lc">▶</span>CS50P — Temperature Converter</button>
+            <div class="leaf-panel"><div class="leaf-inner">
+              <div class="row"><span class="rk">desc</span><span class="rv">CS50P final — temp unit conversion GUI</span></div>
+              <div class="row"><span class="rk">stack</span><span class="rv">Python · PyQt6</span></div>
+              <div class="row"><span class="rk">course</span><span class="rv">Harvard CS50P</span></div>
+              <div class="row"><span class="rk">links</span><span class="rv"><a href="https://github.com/Bennnto/Python" class="gl" target="_blank" rel="noopener">↗ GitHub</a></span></div>
+            </div></div>
+          </div>
+          <div class="leaf">
+            <button class="leaf-btn"><span class="lc">▶</span>Expense Tracker</button>
+            <div class="leaf-panel"><div class="leaf-inner">
+              <div class="row"><span class="rk">desc</span><span class="rv">CLI expense manager with JSON storage</span></div>
+              <div class="row"><span class="rk">stack</span><span class="rv">Python · CLI · JSON</span></div>
+              <div class="row"><span class="rk">links</span><span class="rv"><a href="https://github.com/Bennnto/Expense_tracker" class="gl" target="_blank" rel="noopener">↗ GitHub</a></span></div>
+            </div></div>
+          </div>
+          <div class="leaf">
+            <button class="leaf-btn"><span class="lc">▶</span>Vault API</button>
+            <div class="leaf-panel"><div class="leaf-inner">
+              <div class="row"><span class="rk">desc</span><span class="rv">JWT secured storage &amp; data management REST API</span></div>
+              <div class="row"><span class="rk">stack</span><span class="rv">Python · FastAPI · JWT · SQLAlchemy</span></div>
+              <div class="row"><span class="rk">links</span><span class="rv"><a href="https://codeberg.org/bennnto/Vault-API" class="gl" target="_blank" rel="noopener">↗ Codeberg</a></span></div>
+            </div></div>
+          </div>
+          <div class="leaf">
+            <button class="leaf-btn"><span class="lc">▶</span>Weather Forecast</button>
+            <div class="leaf-panel"><div class="leaf-inner">
+              <div class="row"><span class="rk">desc</span><span class="rv">Real-time weather forecast application</span></div>
+              <div class="row"><span class="rk">stack</span><span class="rv">Python · Weather API</span></div>
+              <div class="row"><span class="rk">links</span><span class="rv"><a href="https://github.com/Bennnto/Weather_forecast" class="gl" target="_blank" rel="noopener">↗ GitHub</a></span></div>
+            </div></div>
+          </div>
+          <div class="leaf">
+            <button class="leaf-btn"><span class="lc">▶</span>Tracking Calendar</button>
+            <div class="leaf-panel"><div class="leaf-inner">
+              <div class="row"><span class="rk">desc</span><span class="rv">Calendar &amp; expense tracking web app</span></div>
+              <div class="row"><span class="rk">stack</span><span class="rv">Python · Django · SQLite</span></div>
+              <div class="row"><span class="rk">links</span><span class="rv"><a href="https://github.com/Bennnto/tracking_calendar/tree/main" class="gl" target="_blank" rel="noopener">↗ GitHub</a></span></div>
+            </div></div>
+          </div>
+          <div class="leaf">
+            <button class="leaf-btn"><span class="lc">▶</span>Django User Identity</button>
+            <div class="leaf-panel"><div class="leaf-inner">
+              <div class="row"><span class="rk">desc</span><span class="rv">Login, logout, register &amp; password reset auth system</span></div>
+              <div class="row"><span class="rk">stack</span><span class="rv">Python · Django · SQLite</span></div>
+              <div class="row"><span class="rk">links</span><span class="rv"><a href="https://github.com/Bennnto/Django_User_Identity" class="gl" target="_blank" rel="noopener">↗ GitHub</a></span></div>
+            </div></div>
+          </div>
+        </div>
+
+        <!-- API -->
+        <div class="sec" id="s-api" hidden>
+          <div class="api-base-block">
+            <label class="api-base-label" for="api-base-url">Base URL</label>
+            <input class="api-base-input" id="api-base-url" type="text" value="https://snippet-api-4irp.onrender.com" spellcheck="false" />
+          </div>
+          <div class="leaf">
+            <button class="leaf-btn"><span class="lc">▶</span><span class="mt get">GET</span>/snip/</button>
+            <div class="leaf-panel"><div class="leaf-inner">
+              <div class="row"><span class="rk">action</span><span class="rv">List all snippets</span></div>
+              <div class="try-panel">
+                <div class="try-lbl">// Try it</div>
+                <button class="try-btn" data-method="GET" data-path="/snip/" data-res="r-get-all">▶ Send</button>
+                <pre class="try-res" id="r-get-all" hidden></pre>
+              </div>
+            </div></div>
+          </div>
+          <div class="leaf">
+            <button class="leaf-btn"><span class="lc">▶</span><span class="mt get">GET</span>/snip/{id}</button>
+            <div class="leaf-panel"><div class="leaf-inner">
+              <div class="row"><span class="rk">param</span><span class="rv"><code class="ic">topic_id</code> — integer</span></div>
+              <div class="try-panel">
+                <div class="try-lbl">// Try it</div>
+                <label class="try-field">topic_id <input class="try-input" id="id-get-one" type="number" value="1" min="1"></label>
+                <button class="try-btn" data-method="GET" data-path="/snip/{id}" data-id="id-get-one" data-res="r-get-one">▶ Send</button>
+                <pre class="try-res" id="r-get-one" hidden></pre>
+              </div>
+            </div></div>
+          </div>
+          <div class="leaf">
+            <button class="leaf-btn"><span class="lc">▶</span><span class="mt post">POST</span>/snip/</button>
+            <div class="leaf-panel"><div class="leaf-inner">
+              <div class="row"><span class="rk">action</span><span class="rv">Create a snippet</span></div>
+              <div class="try-panel">
+                <div class="try-lbl">// Try it</div>
+                <textarea class="try-body" id="b-post" rows="3" spellcheck="false">{"topic": "hello", "description": "test", "code": "print('hello')"}</textarea>
+                <button class="try-btn post" data-method="POST" data-path="/snip/" data-body="b-post" data-res="r-post">▶ Send</button>
+                <pre class="try-res" id="r-post" hidden></pre>
+              </div>
+            </div></div>
+          </div>
+          <div class="leaf">
+            <button class="leaf-btn"><span class="lc">▶</span><span class="mt put">PUT</span>/snip/{id}</button>
+            <div class="leaf-panel"><div class="leaf-inner">
+              <div class="row"><span class="rk">action</span><span class="rv">Replace entire snippet</span></div>
+              <div class="try-panel">
+                <div class="try-lbl">// Try it</div>
+                <label class="try-field">topic_id <input class="try-input" id="id-put" type="number" value="1" min="1"></label>
+                <textarea class="try-body" id="b-put" rows="3" spellcheck="false">{"topic": "updated", "description": "updated", "code": "print('updated')"}</textarea>
+                <button class="try-btn put" data-method="PUT" data-path="/snip/{id}" data-id="id-put" data-body="b-put" data-res="r-put">▶ Send</button>
+                <pre class="try-res" id="r-put" hidden></pre>
+              </div>
+            </div></div>
+          </div>
+          <div class="leaf">
+            <button class="leaf-btn"><span class="lc">▶</span><span class="mt put">PUT</span>/snip/{id}/edit</button>
+            <div class="leaf-panel"><div class="leaf-inner">
+              <div class="row"><span class="rk">action</span><span class="rv">Partial inline code edit</span></div>
+              <div class="try-panel">
+                <div class="try-lbl">// Try it</div>
+                <label class="try-field">topic_id <input class="try-input" id="id-edit" type="number" value="1" min="1"></label>
+                <textarea class="try-body" id="b-edit" rows="3" spellcheck="false">{"old_code": "print('hello')", "new_code": "print('world')"}</textarea>
+                <button class="try-btn put" data-method="PUT" data-path="/snip/{id}/edit" data-id="id-edit" data-body="b-edit" data-res="r-edit">▶ Send</button>
+                <pre class="try-res" id="r-edit" hidden></pre>
+              </div>
+            </div></div>
+          </div>
+          <div class="leaf">
+            <button class="leaf-btn"><span class="lc">▶</span><span class="mt del">DELETE</span>/snip/{id}</button>
+            <div class="leaf-panel"><div class="leaf-inner">
+              <div class="row"><span class="rk">action</span><span class="rv">Delete a snippet</span></div>
+              <div class="try-panel">
+                <div class="try-lbl">// Try it</div>
+                <label class="try-field">topic_id <input class="try-input" id="id-del" type="number" value="1" min="1"></label>
+                <button class="try-btn del" data-method="DELETE" data-path="/snip/{id}" data-id="id-del" data-res="r-del">▶ Send</button>
+                <pre class="try-res" id="r-del" hidden></pre>
+              </div>
+            </div></div>
+          </div>
+        </div>
+
+        <!-- CONTACT -->
+        <div class="sec" id="s-contact" hidden>
+          <div class="leaf">
+            <button class="leaf-btn"><span class="lc">▶</span>email</button>
+            <div class="leaf-panel"><div class="leaf-inner">
+              <div class="row"><span class="rk">address</span><a href="mailto:ben.promkaew@icloud.com" class="gl">ben.promkaew@icloud.com ↗</a></div>
+            </div></div>
+          </div>
+          <div class="leaf">
+            <button class="leaf-btn"><span class="lc">▶</span>github</button>
+            <div class="leaf-panel"><div class="leaf-inner">
+              <div class="row"><span class="rk">profile</span><a href="https://github.com/bennnto" class="gl" target="_blank" rel="noopener">github.com/bennnto ↗</a></div>
+            </div></div>
+          </div>
+          <div class="leaf">
+            <button class="leaf-btn"><span class="lc">▶</span>linkedin</button>
+            <div class="leaf-panel"><div class="leaf-inner">
+              <div class="row"><span class="rk">profile</span><a href="https://www.linkedin.com/in/vissarutp/" class="gl" target="_blank" rel="noopener">linkedin.com/in/vissarutp ↗</a></div>
+            </div></div>
+          </div>
+          <div class="leaf">
+            <button class="leaf-btn"><span class="lc">▶</span>website</button>
+            <div class="leaf-panel"><div class="leaf-inner">
+              <div class="row"><span class="rk">url</span><a href="https://bennnto.me" class="gl" target="_blank" rel="noopener">bennnto.me ↗</a></div>
+            </div></div>
+          </div>
+        </div>
+
+        <!-- Placeholder when nothing selected -->
+        <div class="empty-hint" id="empty-hint">← select a section</div>
+
+      </div><!-- /right-col -->
+    </div><!-- /two-col -->
+
+    <footer class="site-footer">© 2026 Vissarut Promkaew</footer>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+</html>
