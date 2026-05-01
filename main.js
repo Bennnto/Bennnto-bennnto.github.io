@@ -75,6 +75,7 @@ let   active    = null;
 (function () {
   const infoBtn = document.querySelector('.sec-btn[data-target="s-info"]');
   if (infoBtn) infoBtn.click();
+  document.querySelectorAll('#s-info .leaf').forEach(leaf => leaf.classList.add('open'));
 })();
 
 secBtns.forEach(btn => {
