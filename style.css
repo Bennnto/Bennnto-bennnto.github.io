@@ -74,7 +74,7 @@ body::after{
   50%{filter:drop-shadow(0 0 24px rgba(125,211,252,.5)) drop-shadow(0 0 48px rgba(125,211,252,.2));}
 }
 .site-name{
-  font-size:1.85rem;
+  font-size:2.6rem;
   font-weight:600;
   letter-spacing:-.03em;
   line-height:1.15;
