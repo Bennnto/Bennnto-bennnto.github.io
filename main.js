@@ -26,8 +26,11 @@
   window.addEventListener('resize', setup);
 
   function tick() {
-    ctx.fillStyle = 'rgba(10,12,16,0.18)';
+    const bg = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
+    ctx.fillStyle = bg ? bg : 'rgba(10,12,16,1)';
+    ctx.globalAlpha = 0.18;
     ctx.fillRect(0, 0, W, H);
+    ctx.globalAlpha = 1;
 
     for (let i = 0; i < cols; i++) {
       drops[i] += 0.25;
