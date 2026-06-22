@@ -454,3 +454,95 @@
     return statuses[code] || 'Unknown';
   }
 })();
+
+
+// ── TYPR PLAYGROUND INTERACTIVE RUNNER ──
+(function () {
+  const codeTextarea = document.getElementById('playground-code');
+  const templateSelect = document.getElementById('playground-template');
+  const runBtn = document.getElementById('playground-run-btn');
+  const outputConsole = document.getElementById('playground-output');
+  const clearBtn = document.getElementById('playground-clear-btn');
+
+  if (!codeTextarea || !templateSelect || !runBtn || !outputConsole) return;
+
+  const TYPR_TEMPLATES = {
+    vars: `// Typr statically-typed variable declarations
+init int: x = 42
+init str: greeting = "Hello, Typr!"
+let pi = 3.14159
+
+disp(greeting)
+disp("x is:", x)
+disp("pi is:", pi)`,
+
+    loops: `// While loops & built-in math functions
+init int: i = 1
+init int: sum = 0
+
+while (i <= 5) {
+  disp("Loop step:", i)
+  sum = sum + i
+  i = i + 1
+}
+
+disp("Sum of 1..5 is:", sum)
+disp("Square root of 100 is:", sqrt(100))`,
+
+    'type-error': `// Demonstrating Typr's static type checker
+init int: score = 95
+
+// Type Error! Cannot assign string to int
+score = "Excellent"
+
+disp("Score:", score)`
+  };
+
+  // 1. Template picker change
+  templateSelect.addEventListener('change', () => {
+    const selected = templateSelect.value;
+    if (TYPR_TEMPLATES[selected]) {
+      codeTextarea.value = TYPR_TEMPLATES[selected];
+    }
+  });
+
+  // 2. Clear terminal output
+  if (clearBtn) {
+    clearBtn.addEventListener('click', () => {
+      outputConsole.textContent = '// Terminal cleared.';
+    });
+  }
+
+  // 3. Run Typr script
+  runBtn.addEventListener('click', () => {
+    const code = codeTextarea.value;
+    outputConsole.textContent = '';
+    
+    let logs = [];
+    const logOutput = (text) => {
+      logs.push(text);
+    };
+
+    // Run custom Javascript-based interpreter
+    if (typeof window.runTyprCode === 'function') {
+      const res = window.runTyprCode(code, logOutput);
+      
+      if (res.success) {
+        if (logs.length === 0) {
+          outputConsole.textContent = '// Program executed successfully with no output.\n';
+        } else {
+          outputConsole.textContent = logs.join('\n') + '\n';
+        }
+        outputConsole.innerHTML += `<span style="color:#10B981">// Process exited successfully with status 0</span>`;
+      } else {
+        // Render error output
+        if (logs.length > 0) {
+          outputConsole.textContent = logs.join('\n') + '\n';
+        }
+        outputConsole.innerHTML += `<span style="color:#EF4444">${res.error}</span>`;
+      }
+    } else {
+      outputConsole.textContent = 'Error: Typr interpreter engine (typr.js) failed to load.';
+    }
+  });
+})();

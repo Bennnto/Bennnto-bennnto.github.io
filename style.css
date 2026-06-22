@@ -250,11 +250,9 @@ input, textarea, button, select {
 .left-sticky-content {
   position: sticky;
   top: 110px;
-  height: calc(100vh - 180px);
-  min-height: 480px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  gap: 2.5rem;
 }
 
 .hero-text-block {
@@ -294,7 +292,6 @@ input, textarea, button, select {
   border: 1px solid var(--border-color);
   background-color: var(--bg-secondary);
   padding: 2.5rem 1.2rem 1.2rem 1.2rem;
-  margin-top: auto;
   transition: border-color var(--transition), background-color var(--transition);
 
   /* Theme variables for Git Levels */
@@ -1078,6 +1075,155 @@ input, textarea, button, select {
   font-size: 0.72rem;
   color: var(--text-muted);
   transition: border-color var(--transition);
+}
+
+/* ── TYPR PLAYGROUND SECTION ── */
+.playground-intro {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+}
+
+.playground-box {
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-secondary);
+  transition: border-color var(--transition), background-color var(--transition);
+  margin-bottom: 2.5rem;
+}
+
+/* Header bar */
+.playground-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem;
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--bg-secondary);
+  transition: border-color var(--transition), background-color var(--transition);
+}
+
+.picker-group {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.playground-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.playground-select {
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color-muted);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-primary);
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color var(--transition), background-color var(--transition);
+}
+.playground-select:focus {
+  border-color: var(--border-color);
+}
+
+.lang-tag {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--accent-color);
+  letter-spacing: 0.05em;
+  background-color: var(--tag-bg);
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+  border: 1px solid var(--border-color-muted);
+}
+
+/* Editor layout */
+.playground-editor-layout {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid var(--border-color);
+  transition: border-color var(--transition);
+}
+
+.editor-pane {
+  display: flex;
+  background-color: var(--bg-primary);
+  min-height: 360px;
+}
+
+.editor-numbers {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding: 1.5rem 0.8rem;
+  background-color: var(--bg-secondary);
+  border-right: 1px solid var(--border-color-muted);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  user-select: none;
+  text-align: right;
+  min-width: 2.5rem;
+}
+
+.playground-textarea {
+  flex-grow: 1;
+  border: none;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  padding: 1.5rem;
+  resize: vertical;
+  outline: none;
+  tab-size: 4;
+}
+
+.playground-run-button {
+  background-color: var(--text-primary);
+  color: var(--bg-primary);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 1.2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color var(--transition), color var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  border: none;
+  border-top: 1px solid var(--border-color);
+  letter-spacing: 0.05em;
+}
+.playground-run-button:hover {
+  background-color: var(--accent-color);
+  color: #FFFFFF;
+}
+
+/* Output terminal */
+.playground-terminal-block {
+  background-color: var(--terminal-bg);
+  color: var(--terminal-text);
+  font-family: var(--font-mono);
+  transition: background-color var(--transition);
+}
+
+#playground .terminal-output-viewport {
+  max-height: 350px;
+  font-size: 0.88rem;
 }
 
 /* ── RESPONSIVE DESIGN (MEDIA QUERIES) ── */

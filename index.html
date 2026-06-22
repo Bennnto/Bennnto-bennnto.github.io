@@ -31,6 +31,7 @@
         <a href="#info" class="nav-link">Info</a>
         <a href="#projects" class="nav-link">Projects</a>
         <a href="#api" class="nav-link">API Console</a>
+        <a href="#playground" class="nav-link">Playground</a>
         <a href="#contact" class="nav-link">Contact</a>
       </nav>
 
@@ -479,6 +480,62 @@
           
         </div>
       </section>
+
+      <!-- TYPR PLAYGROUND SECTION -->
+      <section id="playground" class="portfolio-section">
+        <h2 class="section-title">Typr Playground</h2>
+        <p class="playground-intro">
+          Statically typed, interpreted scripting language running in a custom AST interpreter client-side. Select an example to test its type checking and execution.
+        </p>
+
+        <div class="playground-box">
+          <!-- Top bar with template picker -->
+          <div class="playground-header-bar">
+            <div class="picker-group">
+              <label for="playground-template" class="playground-label">Example</label>
+              <select id="playground-template" class="playground-select">
+                <option value="vars">Variables & Types</option>
+                <option value="loops">While Loops & Math</option>
+                <option value="type-error">Statically-Typed Error Demo</option>
+              </select>
+            </div>
+            <span class="lang-tag">TYPR v1.0.0</span>
+          </div>
+
+          <div class="playground-editor-layout">
+            <!-- Code Editor Area -->
+            <div class="editor-pane">
+              <div class="editor-numbers" aria-hidden="true">
+                <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span><span>22</span><span>23</span><span>24</span><span>25</span>
+              </div>
+              <textarea id="playground-code" rows="16" class="playground-textarea" spellcheck="false">// Typr statically-typed variable declarations
+init int: x = 42
+init str: greeting = "Hello, Typr!"
+let pi = 3.14159
+
+disp(greeting)
+disp("x is:", x)
+disp("pi is:", pi)</textarea>
+            </div>
+
+            <!-- Run Button -->
+            <button id="playground-run-btn" class="playground-run-button">
+              <span>▶</span> RUN CODE
+            </button>
+          </div>
+
+          <!-- Console Terminal Output -->
+          <div class="playground-terminal-block">
+            <div class="terminal-header">
+              <span class="terminal-title">PLAYGROUND OUTPUT</span>
+              <button id="playground-clear-btn" class="terminal-copy-btn">Clear</button>
+            </div>
+            <div class="terminal-body">
+              <pre id="playground-output" class="terminal-output-viewport">// Write code and click Run Code to execute...</pre>
+            </div>
+          </div>
+        </div>
+      </section>
       
       <!-- CONTACT SECTION -->
       <section id="contact" class="portfolio-section">
@@ -517,6 +574,7 @@
     </div><!-- /right-col -->
   </main>
 
+  <script src="typr.js"></script>
   <script src="main.js?v=3"></script>
 </body>
 </html>
