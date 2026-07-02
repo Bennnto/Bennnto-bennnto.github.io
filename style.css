@@ -1315,3 +1315,303 @@ input, textarea, button, select {
     font-size: 0.9rem;
   }
 }
+
+/* Logo SVGs */
+.logo-symbol-svg {
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-top: -3px;
+  color: var(--accent-color);
+  transition: color var(--transition);
+}
+
+.hero-logo-dot-svg {
+  width: 0.8em;
+  height: 0.8em;
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 0.2rem;
+  color: var(--accent-color);
+  transition: color var(--transition);
+}
+
+/* ── RESUME SECTION STYLING ── */
+.resume-actions {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.resume-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.2rem;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: transform var(--transition), box-shadow var(--transition), background-color var(--transition), color var(--transition);
+}
+
+.resume-btn.primary-btn {
+  background-color: var(--text-primary);
+  color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+}
+.resume-btn.primary-btn:hover {
+  background-color: var(--accent-color);
+  color: #FFFFFF;
+  transform: translate(-2px, -2px);
+  box-shadow: 3px 3px 0px var(--border-color);
+}
+
+.resume-btn.secondary-btn {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color-muted);
+}
+.resume-btn.secondary-btn:hover {
+  border-color: var(--border-color);
+  transform: translate(-2px, -2px);
+  box-shadow: 3px 3px 0px var(--border-color);
+}
+
+.resume-content-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.resume-block {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.resume-block-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-color-muted);
+  color: var(--text-primary);
+}
+
+.resume-list {
+  padding-left: 1.2rem;
+}
+.resume-list li {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin-bottom: 0.6rem;
+}
+
+/* Timeline */
+.experience-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  border-left: 2px solid var(--border-color-muted);
+  padding-left: 1.5rem;
+  margin-left: 0.5rem;
+}
+
+.timeline-item {
+  position: relative;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -1.95rem;
+  top: 0.35rem;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--bg-primary);
+  border: 2px solid var(--accent-color);
+  transition: background-color var(--transition);
+}
+
+.timeline-item:hover::before {
+  background-color: var(--accent-color);
+}
+
+.timeline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.3rem;
+}
+
+.role-company {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.timeline-role {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.timeline-separator {
+  color: var(--accent-color);
+  font-weight: bold;
+}
+
+.timeline-company {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.timeline-date {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color-muted);
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+}
+
+.timeline-location {
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 0.8rem;
+}
+
+.timeline-details {
+  padding-left: 1.2rem;
+}
+.timeline-details li {
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+/* Resume Grid Columns */
+.resume-grid-two-col {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 3rem;
+}
+
+/* Education List */
+.education-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+}
+
+.education-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.edu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.edu-degree {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.edu-date {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color-muted);
+  padding: 0.15rem 0.4rem;
+  border-radius: 3px;
+}
+
+.edu-school {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+}
+
+.edu-details {
+  padding-left: 1.2rem;
+  margin-top: 0.3rem;
+}
+.edu-details li {
+  font-size: 0.88rem;
+  line-height: 1.4;
+  color: var(--text-muted);
+  margin-bottom: 0.3rem;
+}
+
+/* Certifications List */
+.certifications-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.cert-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.cert-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cert-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.cert-date {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color-muted);
+  padding: 0.15rem 0.4rem;
+  border-radius: 3px;
+}
+
+.cert-detail {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+}
+
+/* Responsive adjustment for resume-grid-two-col */
+@media (max-width: 768px) {
+  .resume-grid-two-col {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+}
+

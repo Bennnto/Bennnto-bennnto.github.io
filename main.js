@@ -1,5 +1,5 @@
-// ── INTERACTIVE COLOR BLOCK GRID (GITHUB COMMIT SIMULATOR) ──
-(function () {
+// ── INTERACTIVE COLOR BLOCK GRID (GITHUB COMMIT SIMULATOR & LIVE FETCHER) ──
+(async function () {
   const gridContainer = document.getElementById('interactive-grid');
   const tooltip = document.getElementById('grid-tooltip');
   if (!gridContainer || !tooltip) return;
@@ -36,72 +36,113 @@
 
   const daysData = [];
 
-  // Generate 168 days of contribution history ending today
-  const targetDate = new Date('2026-06-22');
-  const startMs = targetDate.getTime() - (TOTAL_CELLS - 1) * 24 * 60 * 60 * 1000;
-  const startDate = new Date(startMs);
-
-  for (let i = 0; i < TOTAL_CELLS; i++) {
-    const currentDate = new Date(startDate.getTime() + i * 24 * 60 * 60 * 1000);
-    const dateString = currentDate.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    });
-
-    // Randomize activity level: 0 (72%), 1 (14%), 2 (8%), 3 (4%), 4 (2%)
-    const rand = Math.random();
-    let commitsCount = 0;
-    let level = 0;
-
-    if (rand > 0.72 && rand <= 0.86) {
-      commitsCount = 1;
-      level = 1;
-    } else if (rand > 0.86 && rand <= 0.94) {
-      commitsCount = 2;
-      level = 2;
-    } else if (rand > 0.94 && rand <= 0.98) {
-      commitsCount = 3;
-      level = 3;
-    } else if (rand > 0.98) {
-      commitsCount = Math.floor(Math.random() * 3) + 4; // 4 to 6 commits
-      level = 4;
+  // Attempt to fetch real contributions from public api proxy
+  let realContributions = null;
+  try {
+    const res = await fetch('https://github-contributions-api.jogruber.de/v4/bennnto');
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.contributions && data.contributions.length >= TOTAL_CELLS) {
+        realContributions = data.contributions.slice(-TOTAL_CELLS);
+      }
     }
+  } catch (e) {
+    console.warn("Could not fetch real GitHub contributions, running fallback simulation.", e);
+  }
 
-    const dayCommits = [];
-    for (let c = 0; c < commitsCount; c++) {
-      const msg = COMMIT_MESSAGES[Math.floor(Math.random() * COMMIT_MESSAGES.length)];
-      dayCommits.push(msg);
-    }
+  if (realContributions) {
+    realContributions.forEach(day => {
+      const dateObj = new Date(day.date + 'T00:00:00');
+      const dateString = dateObj.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      });
 
-    daysData.push({
-      date: dateString,
-      commitsCount,
-      commits: dayCommits,
-      level
+      const dayCommits = [];
+      for (let c = 0; c < day.count; c++) {
+        const msg = COMMIT_MESSAGES[Math.floor(Math.random() * COMMIT_MESSAGES.length)];
+        dayCommits.push(msg);
+      }
+
+      daysData.push({
+        date: dateString,
+        commitsCount: day.count,
+        commits: dayCommits,
+        level: day.level
+      });
     });
+  } else {
+    // Fallback simulation generator
+    const targetDate = new Date();
+    const startMs = targetDate.getTime() - (TOTAL_CELLS - 1) * 24 * 60 * 60 * 1000;
+    const startDate = new Date(startMs);
+
+    for (let i = 0; i < TOTAL_CELLS; i++) {
+      const currentDate = new Date(startDate.getTime() + i * 24 * 60 * 60 * 1000);
+      const dateString = currentDate.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      });
+
+      const rand = Math.random();
+      let commitsCount = 0;
+      let level = 0;
+
+      if (rand > 0.72 && rand <= 0.86) {
+        commitsCount = 1;
+        level = 1;
+      } else if (rand > 0.86 && rand <= 0.94) {
+        commitsCount = 2;
+        level = 2;
+      } else if (rand > 0.94 && rand <= 0.98) {
+        commitsCount = 3;
+        level = 3;
+      } else if (rand > 0.98) {
+        commitsCount = Math.floor(Math.random() * 3) + 4;
+        level = 4;
+      }
+
+      const dayCommits = [];
+      for (let c = 0; c < commitsCount; c++) {
+        const msg = COMMIT_MESSAGES[Math.floor(Math.random() * COMMIT_MESSAGES.length)];
+        dayCommits.push(msg);
+      }
+
+      daysData.push({
+        date: dateString,
+        commitsCount,
+        commits: dayCommits,
+        level
+      });
+    }
   }
 
   // Render Grid Cells
-  daysData.forEach((day, index) => {
+  daysData.forEach((day) => {
     const cell = document.createElement('div');
     cell.classList.add('grid-cell', `lvl-${day.level}`);
     
     // Mouse Interaction: Tooltip Position & Data
-    cell.addEventListener('mouseenter', (e) => {
+    cell.addEventListener('mouseenter', () => {
       let tooltipContent = `<strong style="color:var(--text-primary)">${day.date}</strong><br>`;
       if (day.commitsCount === 0) {
         tooltipContent += `<span style="color:var(--text-secondary)">No contributions</span>`;
       } else {
         tooltipContent += `<span style="color:var(--accent-color); font-weight:600">${day.commitsCount} contribution${day.commitsCount > 1 ? 's' : ''}</span><br>`;
-        day.commits.forEach(msg => {
+        // Cap commits list rendering to max 5 in tooltip to avoid overflow
+        const displayCommits = day.commits.slice(0, 5);
+        displayCommits.forEach(msg => {
           tooltipContent += `<span style="color:var(--text-muted)">└</span> ${msg}<br>`;
         });
+        if (day.commits.length > 5) {
+          tooltipContent += `<span style="color:var(--text-muted)">...and ${day.commits.length - 5} more</span>`;
+        }
       }
       
       tooltip.innerHTML = tooltipContent;
       
-      // Calculate coordinates relative to .interactive-grid-container
       const containerRect = gridContainer.closest('.interactive-grid-container').getBoundingClientRect();
       const cellRect = cell.getBoundingClientRect();
       
@@ -118,34 +159,33 @@
     });
 
     gridContainer.appendChild(cell);
-    day.element = cell; // Reference element for real-time commits simulation
+    day.element = cell;
   });
 
-  // Simulate Real-time commits (Dynamic activity updates)
-  setInterval(() => {
-    // Pick a random day index (preferring recent weeks for realism)
-    const recentIndex = TOTAL_CELLS - 1 - Math.floor(Math.random() * 28); // last 4 weeks
-    const day = daysData[recentIndex];
-    if (!day || !day.element) return;
+  // Real-time dynamic simulator updates (only for simulation fallback)
+  if (!realContributions) {
+    setInterval(() => {
+      const recentIndex = TOTAL_CELLS - 1 - Math.floor(Math.random() * 28);
+      const day = daysData[recentIndex];
+      if (!day || !day.element) return;
 
-    day.commitsCount += 1;
-    // Cap level at 4
-    if (day.level < 4) {
-      day.element.classList.remove(`lvl-${day.level}`);
-      day.level += 1;
-      day.element.classList.add(`lvl-${day.level}`);
-    }
+      day.commitsCount += 1;
+      if (day.level < 4) {
+        day.element.classList.remove(`lvl-${day.level}`);
+        day.level += 1;
+        day.element.classList.add(`lvl-${day.level}`);
+      }
 
-    const newCommit = COMMIT_MESSAGES[Math.floor(Math.random() * COMMIT_MESSAGES.length)];
-    day.commits.unshift(newCommit); // Add to beginning
+      const newCommit = COMMIT_MESSAGES[Math.floor(Math.random() * COMMIT_MESSAGES.length)];
+      day.commits.unshift(newCommit);
 
-    // Visual Flash Effect
-    day.element.style.transition = 'none';
-    day.element.style.backgroundColor = '#FFFFFF';
-    day.element.offsetHeight; // Trigger repaint
-    day.element.style.transition = 'background-color 1.2s ease';
-    day.element.style.backgroundColor = '';
-  }, 5000);
+      day.element.style.transition = 'none';
+      day.element.style.backgroundColor = '#FFFFFF';
+      day.element.offsetHeight;
+      day.element.style.transition = 'background-color 1.2s ease';
+      day.element.style.backgroundColor = '';
+    }, 5000);
+  }
 })();
 
 

@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vissarut Promkaew - Resume</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  
+  <style>
+    :root {
+      --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+      --text-color: #111111;
+      --text-muted: #555555;
+      --border-color: #111111;
+      --accent-color: #EA580C;
+      --bg-color: #FFFFFF;
+      --card-bg: #F9F8F6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      color: var(--text-color);
+      background-color: #F0EFFB; /* Neutral page container background */
+      line-height: 1.4;
+      padding: 40px 20px;
+    }
+
+    /* Utility Bar */
+    .utility-bar {
+      max-width: 800px;
+      margin: 0 auto 20px auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #FFFFFF;
+      padding: 12px 24px;
+      border: 1px solid var(--border-color);
+      box-shadow: 4px 4px 0px var(--border-color);
+      border-radius: 4px;
+    }
+
+    .utility-bar a, .utility-bar button {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      text-decoration: none;
+      color: var(--text-color);
+      background: none;
+      border: 1px solid var(--border-color);
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .utility-bar a:hover, .utility-bar button:hover {
+      background-color: var(--accent-color);
+      color: #FFFFFF;
+      transform: translate(-2px, -2px);
+      box-shadow: 2px 2px 0px var(--border-color);
+    }
+
+    .utility-bar .back-btn {
+      border-color: #CCCCCC;
+      background-color: #FAFAFA;
+    }
+    .utility-bar .back-btn:hover {
+      border-color: var(--border-color);
+      background-color: #EEEEEE;
+      color: var(--text-color);
+    }
+
+    /* Resume Container */
+    .resume-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: var(--bg-color);
+      padding: 50px;
+      border: 1px solid var(--border-color);
+      box-shadow: 8px 8px 0px var(--border-color);
+      border-radius: 4px;
+    }
+
+    /* Header */
+    .resume-header {
+      text-align: center;
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 20px;
+      margin-bottom: 24px;
+    }
+
+    .resume-name {
+      font-size: 2.2rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+      margin-bottom: 8px;
+    }
+
+    .resume-contact {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      color: var(--text-muted);
+    }
+
+    .resume-contact a {
+      color: inherit;
+      text-decoration: none;
+    }
+    .resume-contact a:hover {
+      color: var(--accent-color);
+      text-decoration: underline;
+    }
+
+    .contact-separator {
+      color: #CCCCCC;
+    }
+
+    /* Section structure */
+    .resume-section {
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 4px;
+      margin-bottom: 12px;
+      color: var(--text-color);
+    }
+
+    .qualification-list, .details-list {
+      list-style-type: none;
+      padding-left: 0;
+    }
+
+    .qualification-list li, .details-list li {
+      position: relative;
+      padding-left: 15px;
+      margin-bottom: 6px;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .qualification-list li::before, .details-list li::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      color: var(--accent-color);
+      font-weight: bold;
+    }
+
+    /* Skills Grid */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .skill-category {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+      position: relative;
+      padding-left: 15px;
+    }
+
+    .skill-category::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      color: var(--accent-color);
+      font-weight: bold;
+    }
+
+    /* Timeline Items */
+    .experience-item, .education-item {
+      margin-bottom: 16px;
+    }
+    .experience-item:last-child, .education-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 3px;
+    }
+
+    .item-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-color);
+    }
+
+    .item-company-school {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .item-date {
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      color: var(--text-color);
+      font-weight: 600;
+      background-color: var(--card-bg);
+      border: 1px solid #E0E0E0;
+      padding: 2px 6px;
+      border-radius: 3px;
+      white-space: nowrap;
+    }
+
+    .item-location {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      font-style: italic;
+    }
+
+    /* Certifications Grid */
+    .certs-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .cert-card {
+      background: var(--card-bg);
+      border: 1px solid #E0E0E0;
+      padding: 10px 14px;
+      border-radius: 4px;
+    }
+
+    .cert-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .cert-meta {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--accent-color);
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+
+    .cert-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* Print Styles */
+    @media print {
+      body {
+        background-color: #FFFFFF;
+        padding: 0;
+      }
+
+      .utility-bar {
+        display: none !important;
+      }
+
+      .resume-container {
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        max-width: 100% !important;
+      }
+
+      .item-date {
+        border: none !important;
+        background: transparent !important;
+        padding: 0 !important;
+      }
+
+      .cert-card {
+        border: none !important;
+        background: transparent !important;
+        padding: 0 !important;
+      }
+
+      a {
+        text-decoration: none !important;
+        color: var(--text-color) !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Utility Bar -->
+  <div class="utility-bar">
+    <a href="index.html#resume" class="back-btn">← Back to Portfolio</a>
+    <button onclick="window.print()">🖨️ Print / Save to PDF</button>
+  </div>
+
+  <!-- Main Resume Content -->
+  <div class="resume-container">
+    
+    <header class="resume-header">
+      <h1 class="resume-name">Vissarut Promkaew</h1>
+      <div class="resume-contact">
+        <span>1809-85 Wood St. Toronto, ON, M4Y 0E8</span>
+        <span class="contact-separator">|</span>
+        <span>+1 (365) 351 5636</span>
+        <span class="contact-separator">|</span>
+        <a href="mailto:ben.promkaew@icloud.com">ben.promkaew@icloud.com</a>
+        <span class="contact-separator">|</span>
+        <a href="https://linkedin.com/in/vissarutp/" target="_blank">linkedin.com/in/vissarutp</a>
+      </div>
+    </header>
+
+    <!-- Highlights of Qualifications -->
+    <section class="resume-section">
+      <h2 class="section-title">Highlight of Qualifications</h2>
+      <ul class="qualification-list">
+        <li>Extensive experience in customer service, finance and operations in both Canada and Thailand.</li>
+        <li>Adept at problem-solving, teamwork and adapting to fast-paced environments, proven by successful roles in both food service and finance sectors.</li>
+        <li>Recognized for delivering exceptional customer satisfaction and maintaining high standards in regulatory, accuracy and service.</li>
+        <li>Certified in Food Safety and Smart Serve, prepared for diverse roles in operations and customer-facing environments.</li>
+      </ul>
+    </section>
+
+    <!-- Skills -->
+    <section class="resume-section">
+      <h2 class="section-title">Skills</h2>
+      <div class="skills-grid">
+        <div class="skill-category">Problem Solving</div>
+        <div class="skill-category">Customer Service Skill</div>
+        <div class="skill-category">Interpersonal Skill</div>
+        <div class="skill-category">Cash Handling</div>
+        <div class="skill-category">Communication</div>
+        <div class="skill-category">Computer Literacy</div>
+        <div class="skill-category">Time Management</div>
+        <div class="skill-category">Risk Analysis</div>
+        <div class="skill-category">Detail Oriented</div>
+        <div class="skill-category">Food Handler Safety and Hygiene</div>
+        <div class="skill-category">Multi-tasking Skill</div>
+        <div class="skill-category">Python Object Oriented Programming</div>
+        <div class="skill-category">Positive Attitude</div>
+        <div class="skill-category">JavaScript, HTML, CSS</div>
+      </div>
+    </section>
+
+    <!-- Work Experiences -->
+    <section class="resume-section">
+      <h2 class="section-title">Work Experiences</h2>
+
+      <div class="experience-item">
+        <div class="item-header">
+          <div>
+            <span class="item-title">Caller</span>, 
+            <span class="item-company-school">Silom Thai Bistro</span>
+          </div>
+          <span class="item-date">Oct 2023 - Jul 2025</span>
+        </div>
+        <div class="item-location">Toronto, ON, Canada</div>
+        <ul class="details-list">
+          <li>Coordinated communication between kitchen and service staff, ensuring ~98% order accuracy and accommodation 100% of all special requests/dietary needs.</li>
+          <li>Assisted in preparing food ingredients for cooks during busy service periods, enabling cooks to serve each order within 7-10 minutes, and performed monitoring ingredients inventory to maintain ingredient levels and FIFO of ingredients.</li>
+          <li>Packed and organized delivery and take-out orders with 100% accuracy during busy service periods.</li>
+        </ul>
+      </div>
+
+      <div class="experience-item">
+        <div class="item-header">
+          <div>
+            <span class="item-title">Global New Account</span>, 
+            <span class="item-company-school">American Express Co., Ltd.</span>
+          </div>
+          <span class="item-date">Oct 2022 - Sep 2023</span>
+        </div>
+        <div class="item-location">Bangkok, Thailand</div>
+        <ul class="details-list">
+          <li>Set up new accounts from card applications by verifying financial and personal information, ensuring 100% compliance with regulatory and audit accuracy.</li>
+          <li>Analyzed approximately 50 credit reports and financial support documents (such as bank statements or business income statements) per week to assess risk and determine lines of credit.</li>
+          <li>Delivered exceptional customer service to card applicants during onboarding process by resolving concerns with professionalism and care.</li>
+        </ul>
+      </div>
+
+      <div class="experience-item">
+        <div class="item-header">
+          <div>
+            <span class="item-title">KYC Associate</span>, 
+            <span class="item-company-school">Bitkub Online Co., Ltd.</span>
+          </div>
+          <span class="item-date">Feb 2021 - Sep 2022</span>
+        </div>
+        <div class="item-location">Bangkok, Thailand</div>
+        <ul class="details-list">
+          <li>Onboarded and evaluated 70 - 100 customer accounts per day in alignment with company policies and Anti-Money Laundering Acts (AML).</li>
+          <li>Verified and documented account risk levels for further KYC reassessment cycle to ensure 100% adherence to regulatory requirements.</li>
+          <li>Performed daily KYC related tasks and supported risk analysis activities.</li>
+        </ul>
+      </div>
+
+      <div class="experience-item">
+        <div class="item-header">
+          <div>
+            <span class="item-title">Cabin Mechanic</span>, 
+            <span class="item-company-school">Bangkok Airways Co., Ltd.</span>
+          </div>
+          <span class="item-date">Dec 2018 - Jul 2020</span>
+        </div>
+        <div class="item-location">Bangkok, Thailand</div>
+        <ul class="details-list">
+          <li>Performed daily overnight cabin and flight deck inspection.</li>
+          <li>Monitored in-flight cabin related issues, resolved them promptly to ensure smooth operations contributing to 80% on-time departure rates.</li>
+          <li>Processed and issued P.O.s for required cabin parts, ensuring timely available maintenance.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Educations -->
+    <section class="resume-section">
+      <h2 class="section-title">Educations</h2>
+
+      <div class="education-item">
+        <div class="item-header">
+          <div>
+            <span class="item-title">Diploma in Computer Programming</span>, 
+            <span class="item-company-school">George Brown College</span>
+          </div>
+          <span class="item-date">Enrolled - Jul 2026</span>
+        </div>
+        <div class="item-location">Toronto, ON, Canada</div>
+        <ul class="details-list">
+          <li>Full-Stack Developer, Python</li>
+          <li>C# and Shell Script</li>
+          <li>Database Management</li>
+        </ul>
+      </div>
+
+      <div class="education-item">
+        <div class="item-header">
+          <div>
+            <span class="item-title">Diploma in Service Excellence for Business Communication</span>, 
+            <span class="item-company-school">ILAC International College</span>
+          </div>
+          <span class="item-date">Graduated 2024</span>
+        </div>
+        <div class="item-location">Toronto, ON, Canada</div>
+        <ul class="details-list">
+          <li>Sales Fundamentals, Food and Beverage services</li>
+          <li>Hospitality, Front Desk Services</li>
+        </ul>
+      </div>
+
+      <div class="education-item">
+        <div class="item-header">
+          <div>
+            <span class="item-title">Diploma in Aircraft Technology Aviation Electronics</span>, 
+            <span class="item-company-school">Civil Aviation Training Center</span>
+          </div>
+          <span class="item-date">Graduated 2018</span>
+        </div>
+        <div class="item-location">Bangkok, Thailand</div>
+        <ul class="details-list">
+          <li>Aircraft Systems, Pneumatic, Electrical, Hydraulic</li>
+          <li>Fundamentals of Electric Circuits and Soldering</li>
+          <li>Digital Circuit Analysis</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Certifications -->
+    <section class="resume-section">
+      <h2 class="section-title">Certifications</h2>
+      <div class="certs-grid">
+        <div class="cert-card">
+          <div class="cert-title">Food Safety</div>
+          <div class="cert-meta">Apr 2024 - Apr 2029</div>
+          <div class="cert-desc">Food Handler Certificate</div>
+        </div>
+        <div class="cert-card">
+          <div class="cert-title">Smart Serve</div>
+          <div class="cert-meta">Sep 2023 - Sep 2028</div>
+          <div class="cert-desc">Smart Serve Certificate by AGCO</div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+</body>
+</html>
