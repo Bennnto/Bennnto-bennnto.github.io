@@ -330,6 +330,8 @@ select {
 .interactive-grid-container {
   position: relative;
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   margin-top: 2.5rem;
   border: 1px solid var(--border-color);
   background-color: var(--bg-secondary);
@@ -382,6 +384,7 @@ select {
 /* The Grid lanes and tracks */
 .interactive-grid {
   width: 100%;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
   gap: 3px;
