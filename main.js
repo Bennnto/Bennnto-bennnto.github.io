@@ -4,8 +4,8 @@
   const tooltip = document.getElementById('grid-tooltip');
   if (!gridContainer || !tooltip) return;
 
-  const COLS = 20;
-  const ROWS = 7;
+  const COLS = 40;
+  const ROWS = 13;
   const TOTAL_CELLS = COLS * ROWS;
 
   // Curated lists of commit messages reflecting Ben's actual stack & projects
