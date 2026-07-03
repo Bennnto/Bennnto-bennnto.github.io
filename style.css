@@ -357,20 +357,19 @@ select {
   transition: border-color var(--transition);
 }
 
-/* Interactive Technical Grid Block — full height */
+/* Interactive Technical Grid Block — fixed symmetrical height */
 .interactive-grid-container {
   position: relative;
   width: auto;
   margin-left: -2rem;
   margin-right: -2rem;
-  margin-top: 1rem;
-  flex: 1;            /* stretch to fill remaining column height */
-  height: auto;       /* override fixed height */
+  margin-top: 1.5rem;
+  height: 270px;      /* 5 rows × 54px = symmetrical block */
   background-color: #ff5400;
   overflow: hidden;
   display: flex;
   justify-content: center;
-  align-items: stretch;
+  align-items: center;
   transition: background-color var(--transition);
   border-top: 1px solid rgba(0, 0, 0, 0.08);
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
@@ -401,7 +400,7 @@ select {
 .interactive-grid {
   width: 100%;
   max-width: 100%;
-  height: 100%;          /* fill full container height */
+  height: 100%;
   display: flex;
   flex-direction: column;
   gap: 0;
@@ -410,14 +409,14 @@ select {
 }
 
 .grid-lane {
-  flex: 1;              /* each lane gets equal share of vertical height */
+  width: 100%;
+  height: 54px;    /* fixed row height matching cell size */
   overflow: hidden;
   position: relative;
 }
 
 .lane-track {
   display: flex;
-  height: 100%;         /* fill lane height */
   gap: 0;
   width: max-content;
   transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1);
@@ -429,8 +428,7 @@ select {
   cursor: crosshair;
   position: relative;
   width: 54px;
-  height: 100%;         /* stretch to fill lane height */
-  min-height: 40px;
+  height: 54px;    /* fixed square cells */
   flex-shrink: 0;
   border: 0.5px solid rgba(0, 0, 0, 0.08);
   opacity: 0;
