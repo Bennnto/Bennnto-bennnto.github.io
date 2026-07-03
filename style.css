@@ -356,33 +356,8 @@ input, textarea, button, select {
   display: flex;
   gap: 3px;
   width: max-content;
-}
-
-/* Infinite sliding animations */
-.track-left {
-  animation: slideLeft var(--speed, 30s) linear infinite;
-}
-
-.track-right {
-  animation: slideRight var(--speed, 30s) linear infinite;
-}
-
-@keyframes slideLeft {
-  0% {
-    transform: translate3d(0, 0, 0);
-  }
-  100% {
-    transform: translate3d(-50%, 0, 0);
-  }
-}
-
-@keyframes slideRight {
-  0% {
-    transform: translate3d(-50%, 0, 0);
-  }
-  100% {
-    transform: translate3d(0, 0, 0);
-  }
+  /* Smooth out scroll-linked updates */
+  transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .grid-cell {

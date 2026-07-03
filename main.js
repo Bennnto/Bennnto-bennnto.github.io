@@ -119,19 +119,18 @@
     }
   }
 
-  // Render Grid Cells in 7 alternating horizontal sliding lanes (Mistral AI style)
+  // Render Grid Cells in 7 horizontal lanes (Mistral AI style scroll parallax)
   const ROWS_COUNT = 7;
   const COLS_COUNT = 20;
-  const laneSpeeds = ['28s', '35s', '24s', '32s', '26s', '36s', '30s'];
-  const laneDirections = ['left', 'right', 'left', 'right', 'left', 'right', 'left'];
 
   for (let r = 0; r < ROWS_COUNT; r++) {
     const lane = document.createElement('div');
     lane.classList.add('grid-lane');
-    lane.style.setProperty('--speed', laneSpeeds[r]);
 
     const track = document.createElement('div');
-    track.classList.add('lane-track', `track-${laneDirections[r]}`);
+    track.classList.add('lane-track');
+    // Set initial centered position
+    track.style.transform = 'translate3d(-250px, 0, 0)';
 
     // Get the 20 days for this row
     const rowDays = daysData.slice(r * COLS_COUNT, (r + 1) * COLS_COUNT);
@@ -179,13 +178,12 @@
     // Render original cells
     rowDays.forEach((day, colIdx) => {
       const cell = createCellElement(day);
-      // Entry animation delay based on coordinates
       cell.style.animationDelay = `${(r * 25) + (colIdx * 15)}ms`;
       track.appendChild(cell);
       day.element = cell;
     });
 
-    // Render duplicate cells for seamless infinite marquee loop
+    // Render duplicate cells for seamless infinite loop
     rowDays.forEach((day) => {
       const duplicateCell = createCellElement(day);
       track.appendChild(duplicateCell);
@@ -596,17 +594,32 @@ disp("Score:", score)`
 })();
 
 
-// ── SHRINK LEFT COLUMN ON SCROLL ──
+// ── SHRINK LEFT COLUMN ON SCROLL & GRID PARALLAX ──
 (function () {
   const twoCol = document.querySelector('.two-col');
+  const tracks = document.querySelectorAll('.lane-track');
   if (!twoCol) return;
 
   window.addEventListener('scroll', () => {
-    if (window.scrollY > 80) {
+    const scrollY = window.scrollY;
+
+    // Toggle column shrink
+    if (scrollY > 80) {
       twoCol.classList.add('scrolled');
     } else {
       twoCol.classList.remove('scrolled');
     }
+
+    // Scroll-driven horizontal parallax of grid rows (marquee tracks)
+    tracks.forEach((track, idx) => {
+      const direction = idx % 2 === 0 ? -1 : 1;
+      // Varying speeds: 0.12px, 0.22px, 0.32px per scroll pixel
+      const speed = 0.12 + (idx % 3) * 0.1;
+      const xOffset = direction * scrollY * speed;
+      
+      const baseOffset = -250; // initial centered offset
+      track.style.transform = `translate3d(${baseOffset + xOffset}px, 0, 0)`;
+    });
   }, { passive: true });
 })();
 
