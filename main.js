@@ -68,24 +68,6 @@
       let count = day.count;
       let level = day.level;
 
-      // If the real data has no contributions for this day, randomly generate some to ensure 100% full grid
-      if (count === 0) {
-        const rand = Math.random();
-        if (rand <= 0.40) {
-          count = 1;
-          level = 1;
-        } else if (rand <= 0.70) {
-          count = 2;
-          level = 2;
-        } else if (rand <= 0.90) {
-          count = 3;
-          level = 3;
-        } else {
-          count = Math.floor(Math.random() * 3) + 4;
-          level = 4;
-        }
-      }
-
       const dayCommits = [];
       for (let c = 0; c < count; c++) {
         const msg = COMMIT_MESSAGES[Math.floor(Math.random() * COMMIT_MESSAGES.length)];
