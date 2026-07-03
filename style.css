@@ -238,6 +238,11 @@ input, textarea, button, select {
   display: grid;
   grid-template-columns: 1.4fr 1fr;
   min-height: calc(100vh - 70px);
+  transition: grid-template-columns 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.two-col.scrolled {
+  grid-template-columns: 1fr 1.4fr;
 }
 
 /* LEFT COLUMN: Sticky Hero Section */
@@ -250,9 +255,12 @@ input, textarea, button, select {
 .left-sticky-content {
   position: sticky;
   top: 110px;
+  height: calc(100vh - 160px);
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   gap: 2.5rem;
+  transition: gap 0.5s cubic-bezier(0.25, 1, 0.5, 1), height 0.5s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .hero-text-block {
@@ -265,7 +273,13 @@ input, textarea, button, select {
   letter-spacing: -0.05em;
   margin-bottom: 1.2rem;
   text-transform: uppercase;
+  transition: font-size 0.5s cubic-bezier(0.25, 1, 0.5, 1);
 }
+
+.two-col.scrolled .hero-title {
+  font-size: clamp(2.4rem, 4vw, 3.6rem);
+}
+
 .hero-subtitle {
   font-family: var(--font-mono);
   font-size: 0.85rem;
@@ -1240,6 +1254,10 @@ input, textarea, button, select {
     position: static;
     height: auto;
     min-height: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 2rem;
   }
   
   .hero-title {

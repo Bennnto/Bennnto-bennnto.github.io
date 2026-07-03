@@ -589,5 +589,20 @@ disp("Score:", score)`
 })();
 
 
+// ── SHRINK LEFT COLUMN ON SCROLL ──
+(function () {
+  const twoCol = document.querySelector('.two-col');
+  if (!twoCol) return;
+
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 80) {
+      twoCol.classList.add('scrolled');
+    } else {
+      twoCol.classList.remove('scrolled');
+    }
+  }, { passive: true });
+})();
+
+
 
 
