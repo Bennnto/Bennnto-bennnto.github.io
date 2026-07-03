@@ -263,22 +263,20 @@ select {
   max-width: 1440px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 0.5fr 1.9fr;
+  grid-template-columns: 1fr 1fr;
   min-height: calc(100vh - 70px);
   transition: grid-template-columns 0.5s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .two-col.scrolled {
-  grid-template-columns: 0.35fr 2.05fr;
+  grid-template-columns: 0.8fr 1.2fr;
 }
 
 /* LEFT COLUMN: Sticky Hero Section */
 .left-col {
   padding: 4rem 2rem;
-  border-right: 1px solid rgba(0, 0, 0, 0.15);
-  background-color: #ff5400 !important;
-  color: #111111 !important;
-  transition: border-color var(--transition), background-color var(--transition);
+  border-right: 1px solid var(--border-color-muted);
+  transition: border-color var(--transition);
 }
 
 .left-sticky-content {
@@ -302,7 +300,6 @@ select {
   margin-bottom: 1.2rem;
   text-transform: uppercase;
   transition: font-size 0.5s cubic-bezier(0.25, 1, 0.5, 1);
-  color: #111111 !important;
 }
 
 .two-col.scrolled .hero-title {
@@ -312,7 +309,7 @@ select {
 .hero-subtitle {
   font-family: var(--font-mono);
   font-size: 0.85rem;
-  color: rgba(0, 0, 0, 0.7) !important;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   display: flex;
@@ -325,16 +322,18 @@ select {
   display: inline-block;
   width: 8px;
   height: 8px;
-  background-color: #111111 !important;
+  background-color: var(--accent-color);
   border-radius: 50%;
 }
 
 /* Interactive Technical Grid Block (Frontier AI Style) */
 .interactive-grid-container {
   position: relative;
-  width: 100%;
-  margin-top: 2rem;
-  background-color: transparent;
+  width: auto;
+  margin-left: -2rem;
+  margin-right: -2rem;
+  margin-top: 4rem;
+  background-color: #ff5400; /* vibrant brand orange background for the graph only */
   height: 200px;
   overflow: hidden;
   display: flex;
