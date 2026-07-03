@@ -99,21 +99,26 @@
       </div>
     </aside>
 
-    <!-- RIGHT COLUMN: Scrollable Sections -->
+    <!-- RIGHT COLUMN: Mistral-style two-zone layout -->
     <div class="right-col">
 
-      <!-- Intro Section -->
-      <div class="intro-block">
-        <p class="intro-text">
-          I build practical applications and focus on continuous learning.
-        </p>
-        <div class="scroll-down-indicator" aria-hidden="true">
-          <span>↓</span>
-          <span>↓</span>
-          <span>↓</span>
+      <!-- TOP: Vertically centered intro (grey-tinted, fixed viewport height) -->
+      <div class="right-col-intro">
+        <!-- Intro Section -->
+        <div class="intro-block">
+          <p class="intro-text">
+            I build practical applications and focus on continuous learning.
+          </p>
+          <div class="scroll-down-indicator" aria-hidden="true">
+            <span>↓</span>
+            <span>↓</span>
+            <span>↓</span>
+          </div>
         </div>
       </div>
 
+      <!-- BOTTOM: Scrollable portfolio content -->
+      <div class="right-col-scroll">
       <!-- INFO SECTION -->
       <section id="info" class="portfolio-section">
         <h2 class="section-title">Info</h2>
@@ -815,6 +820,8 @@ disp("pi is:", pi)</textarea>
       <footer class="site-footer">
         <p>© 2026 Vissarut Promkaew. Built in Toronto, Canada.</p>
       </footer>
+
+      </div><!-- /right-col-scroll -->
 
     </div><!-- /right-col -->
   </main>

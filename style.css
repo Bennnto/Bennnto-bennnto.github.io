@@ -293,12 +293,11 @@ select {
 }
 
 .hero-title {
-  font-size: clamp(3rem, 5vw, 4.8rem);
+  font-size: clamp(3.2rem, 5.5vw, 5.5rem);
   font-weight: 800;
-  line-height: 0.95;
-  letter-spacing: -0.05em;
+  line-height: 0.92;
+  letter-spacing: -0.04em;
   margin-bottom: 1.2rem;
-  text-transform: uppercase;
   transition: font-size 0.5s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
@@ -324,6 +323,33 @@ select {
   height: 8px;
   background-color: var(--accent-color);
   border-radius: 50%;
+}
+
+/* ── RIGHT COLUMN MISTRAL-STYLE ── */
+.right-col {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+/* Top fixed-height intro area (grey-tinted, like Mistral right panel) */
+.right-col-intro {
+  background-color: var(--bg-secondary);
+  border-left: 1px solid var(--border-color-muted);
+  flex: 0 0 auto;
+  min-height: calc(100vh - 70px);
+  display: flex;
+  flex-direction: column;
+  padding: 4rem 2.5rem;
+  border-bottom: 1px solid var(--border-color-muted);
+  transition: background-color var(--transition), border-color var(--transition);
+}
+
+.right-col-scroll {
+  border-left: 1px solid var(--border-color-muted);
+  flex: 1;
+  padding: 4rem 2.5rem;
+  transition: border-color var(--transition);
 }
 
 /* Interactive Technical Grid Block (Frontier AI Style) */
@@ -609,26 +635,22 @@ select {
   border-bottom: 1px solid #2D2D35;
 }
 
-/* RIGHT COLUMN: Scrollable content */
-.right-col {
-  padding: 4rem 2rem 6rem 3rem;
-}
-
+/* Intro block inside the grey right panel */
 .intro-block {
-  margin-bottom: 5rem;
-  min-height: calc(100vh - 280px);
+  flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  margin-bottom: 2rem;
 }
 
 .intro-text {
-  font-size: clamp(1.4rem, 2.5vw, 2.2rem);
+  font-size: clamp(1.3rem, 2.2vw, 2rem);
   font-weight: 400;
-  line-height: 1.3;
+  line-height: 1.35;
   letter-spacing: -0.02em;
   color: var(--text-primary);
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .scroll-down-indicator {
