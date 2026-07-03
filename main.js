@@ -129,8 +129,8 @@
 
     const track = document.createElement('div');
     track.classList.add('lane-track');
-    // Set initial centered position
-    track.style.transform = 'translate3d(-270px, 0, 0)';
+    // Set initial position — must be exact multiple of cell width (36px) to avoid partial tiles
+    track.style.transform = 'translate3d(-252px, 0, 0)';
 
     // Get the 20 days for this row
     const rowDays = daysData.slice(r * COLS_COUNT, (r + 1) * COLS_COUNT);
@@ -620,7 +620,7 @@ disp("Score:", score)`
       const speed = 0.12 + (idx % 3) * 0.1;
       const xOffset = direction * scrollY * speed;
 
-      const baseOffset = -270; // initial centered offset
+      const baseOffset = -252; // exact 7×36px cell boundary — no partial tile on left
       track.style.transform = `translate3d(${baseOffset + xOffset}px, 0, 0)`;
     });
   }, { passive: true });
