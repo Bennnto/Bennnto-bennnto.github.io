@@ -119,8 +119,8 @@
     }
   }
 
-  // Render Grid Cells in 4 horizontal lanes (Mistral AI style scroll parallax)
-  const ROWS_COUNT = 4;
+  // Render Grid Cells in 5 horizontal lanes (Mistral AI style scroll parallax)
+  const ROWS_COUNT = 5;
   const COLS_COUNT = 20;
 
   for (let r = 0; r < ROWS_COUNT; r++) {
@@ -130,7 +130,7 @@
     const track = document.createElement('div');
     track.classList.add('lane-track');
     // Set initial centered position
-    track.style.transform = 'translate3d(-617px, 0, 0)';
+    track.style.transform = 'translate3d(-270px, 0, 0)';
 
     // Get the 20 days for this row
     const rowDays = daysData.slice(r * COLS_COUNT, (r + 1) * COLS_COUNT);
@@ -620,7 +620,7 @@ disp("Score:", score)`
       const speed = 0.12 + (idx % 3) * 0.1;
       const xOffset = direction * scrollY * speed;
 
-      const baseOffset = -617; // initial centered offset
+      const baseOffset = -270; // initial centered offset
       track.style.transform = `translate3d(${baseOffset + xOffset}px, 0, 0)`;
     });
   }, { passive: true });
