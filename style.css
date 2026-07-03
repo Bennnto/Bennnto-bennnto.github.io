@@ -288,10 +288,12 @@ input, textarea, button, select {
 /* Interactive Technical Grid Block */
 .interactive-grid-container {
   position: relative;
-  width: 100%;
-  border: 1px solid var(--border-color);
-  background-color: var(--bg-secondary);
-  padding: 2.5rem 1.2rem 1.2rem 1.2rem;
+  width: auto;
+  margin-left: -2rem;
+  margin-right: -2rem;
+  border: none;
+  background-color: transparent;
+  padding: 0;
   transition: border-color var(--transition), background-color var(--transition);
 
   /* Theme variables for Git Levels */
@@ -312,31 +314,12 @@ input, textarea, button, select {
 
 /* Corner details */
 .crosshair {
-  position: absolute;
-  font-family: var(--font-mono);
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--text-primary);
-  line-height: 1;
-  pointer-events: none;
+  display: none;
 }
-.crosshair.tl { top: -4px; left: -3px; }
-.crosshair.tr { top: -4px; right: -3px; }
-.crosshair.bl { bottom: -7px; left: -3px; }
-.crosshair.br { bottom: -7px; right: -3px; }
 
 .grid-meta {
-  position: absolute;
-  font-family: var(--font-mono);
-  font-size: 0.6rem;
-  color: var(--text-muted);
-  letter-spacing: 0.05em;
-  pointer-events: none;
+  display: none;
 }
-.grid-meta.tl { top: 6px; left: 8px; }
-.grid-meta.tr { top: 6px; right: 8px; }
-.grid-meta.bl { bottom: 6px; left: 8px; }
-.grid-meta.br { bottom: 6px; right: 8px; }
 
 /* The Grid cells */
 .interactive-grid {
@@ -346,7 +329,7 @@ input, textarea, button, select {
   grid-template-columns: repeat(24, 1fr);
   grid-template-rows: repeat(7, 1fr);
   gap: 3px;
-  background-color: var(--bg-secondary);
+  background-color: transparent;
   transition: background-color var(--transition);
 }
 
@@ -357,6 +340,19 @@ input, textarea, button, select {
   position: relative;
   border-radius: 2px;
   aspect-ratio: 1;
+  opacity: 0;
+  animation: cellAppear 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes cellAppear {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 /* Commit Levels */
@@ -378,7 +374,9 @@ input, textarea, button, select {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 0.8rem;
+  margin-top: 1rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
   font-family: var(--font-mono);
   font-size: 0.62rem;
   color: var(--text-muted);
@@ -1249,8 +1247,8 @@ input, textarea, button, select {
   }
   
   .interactive-grid-container {
-    max-width: 600px;
-    margin: 2rem 0 0 0;
+    max-width: none;
+    margin: 2rem -2rem 0 -2rem;
   }
   
   .right-col {
@@ -1277,6 +1275,15 @@ input, textarea, button, select {
   
   .left-col, .right-col {
     padding: 2.5rem 1rem;
+  }
+  
+  .interactive-grid-container {
+    margin: 2rem -1rem 0 -1rem;
+  }
+  
+  .grid-legend {
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
   
   .info-row {

@@ -120,9 +120,10 @@
   }
 
   // Render Grid Cells
-  daysData.forEach((day) => {
+  daysData.forEach((day, index) => {
     const cell = document.createElement('div');
     cell.classList.add('grid-cell', `lvl-${day.level}`);
+    cell.style.animationDelay = `${index * 3}ms`;
     
     // Mouse Interaction: Tooltip Position & Data
     cell.addEventListener('mouseenter', () => {
