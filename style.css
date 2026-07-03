@@ -312,18 +312,18 @@ input, textarea, button, select {
 
   /* Theme variables for Git Levels */
   --git-lvl-0: #E5E4DE;
-  --git-lvl-1: #FFEDD5;
-  --git-lvl-2: #FED7AA;
-  --git-lvl-3: #FB923C;
-  --git-lvl-4: #EA580C;
+  --git-lvl-1: #FFBC80;
+  --git-lvl-2: #FF8838;
+  --git-lvl-3: #FF5500;
+  --git-lvl-4: #E60000;
 }
 
 [data-theme="dark"] .interactive-grid-container {
   --git-lvl-0: #1C1C20;
-  --git-lvl-1: #2E1B10;
-  --git-lvl-2: #5F2E10;
-  --git-lvl-3: #9A3412;
-  --git-lvl-4: #F97316;
+  --git-lvl-1: #3D1D07;
+  --git-lvl-2: #702F03;
+  --git-lvl-3: #BD4700;
+  --git-lvl-4: #FF6200;
 }
 
 /* Corner details */
