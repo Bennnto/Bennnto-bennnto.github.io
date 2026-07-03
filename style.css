@@ -371,8 +371,8 @@ select {
   border-top: 1px solid rgba(0, 0, 0, 0.08);
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 
-  /* Warm brand color levels */
-  --git-lvl-0: #ff5400;
+  /* Warm brand color levels — lvl-0 is lighter so it's visible against #ff5400 background */
+  --git-lvl-0: #ff8533;
   --git-lvl-1: #ffd166;
   --git-lvl-2: #ff9f1c;
   --git-lvl-3: #ff4500;
@@ -380,7 +380,7 @@ select {
 }
 
 [data-theme="dark"] .interactive-grid-container {
-  --git-lvl-0: #ff5400;
+  --git-lvl-0: #ff8533;
   --git-lvl-1: #ffd166;
   --git-lvl-2: #ff9f1c;
   --git-lvl-3: #ff4500;
