@@ -263,13 +263,13 @@ select {
   max-width: 1440px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1fr 1.4fr;
+  grid-template-columns: 0.7fr 1.7fr;
   min-height: calc(100vh - 70px);
   transition: grid-template-columns 0.5s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .two-col.scrolled {
-  grid-template-columns: 0.8fr 1.6fr;
+  grid-template-columns: 0.5fr 1.9fr;
 }
 
 /* LEFT COLUMN: Sticky Hero Section */
