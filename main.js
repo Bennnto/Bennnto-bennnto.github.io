@@ -4,59 +4,25 @@
   const tooltip = document.getElementById('grid-tooltip');
   if (!gridContainer || !tooltip) return;
 
-  const COLS = 40;
-  const ROWS = 13;
+  const COLS = 24;
+  const ROWS = 7;
   const TOTAL_CELLS = COLS * ROWS;
-
-  // Curated lists of commit messages reflecting Ben's actual stack & projects
-  const COMMIT_MESSAGES = [
-    "feat: implement lexical parser and static type checker for Typr",
-    "refactor: optimize AST evaluation logic in Typr interpreter",
-    "feat: add SQLAlchemy relationships for snippet schema",
-    "fix: patch PyQt5 event loop freeze in weather forecast",
-    "feat: implement OpenCV frame blurring filter using MediaPipe",
-    "refactor: clean up FastAPI endpoints in snippet_api",
-    "docs: document REST endpoints for Vault API in Swagger",
-    "style: design dark terminal console for CLI task tracker",
-    "test: write unit tests for JWT user identity validation",
-    "feat: add macOS memory diagnostics monitoring in bash tool",
-    "fix: resolve SQLite lock exception in Django tracking calendar",
-    "feat: implement pomodoro countdown timers with multi-threading",
-    "refactor: convert temperature converter GUI from PyQt5 to PyQt6",
-    "docs: write comprehensive README for expense ledger",
-    "feat: handle OAuth2 registration workflow in Django identity module",
-    "feat: support CSV exports for local expense tracking tool",
-    "fix: solve CORS middleware block in FastAPI deployments",
-    "refactor: simplify routing logic in python bookmarks dashboard",
-    "feat: cache OpenWeather API responses to limit endpoint throttling",
-    "perf: optimize contour detection speeds in face blurring script",
-    "style: override standard focus outlines with brutalist borders",
-    "feat: implement copy-to-clipboard for API response terminal"
-  ];
 
   const daysData = [];
 
   // Attempt to fetch real contributions from public api proxy
   let realContributions = null;
   try {
-    const res = await fetch('https://github-contributions-api.deno.dev/Bennnto.json');
+    const res = await fetch('https://github-contributions-api.jogruber.de/v4/bennnto');
     if (res.ok) {
       const data = await res.json();
       if (data && data.contributions && data.contributions.length > 0) {
-        // Flatten the array of weeks into a 1D array of days
-        const flatDays = Array.isArray(data.contributions[0]) ? data.contributions.flat() : data.contributions;
-        
-        // If API returns fewer days than TOTAL_CELLS, loop the data to fill the grid
-        realContributions = [];
-        while (realContributions.length < TOTAL_CELLS) {
-          const needed = TOTAL_CELLS - realContributions.length;
-          const chunk = flatDays.slice(-needed);
-          realContributions = chunk.concat(realContributions);
-        }
+        // jogruber.de returns a flat array, just slice the end
+        realContributions = data.contributions.slice(-TOTAL_CELLS);
       }
     }
   } catch (e) {
-    console.warn("Could not fetch real GitHub contributions, running fallback simulation.", e);
+    console.warn("Could not fetch real GitHub contributions. Rendering empty grid.", e);
   }
 
   if (realContributions) {
@@ -79,21 +45,14 @@
         level = day.level;
       }
 
-      const dayCommits = [];
-      for (let c = 0; c < count; c++) {
-        const msg = COMMIT_MESSAGES[Math.floor(Math.random() * COMMIT_MESSAGES.length)];
-        dayCommits.push(msg);
-      }
-
       daysData.push({
         date: dateString,
         commitsCount: count,
-        commits: dayCommits,
         level: level
       });
     });
   } else {
-    // Fallback simulation generator
+    // Generate empty fallback grid (no fake data)
     const targetDate = new Date();
     const startMs = targetDate.getTime() - (TOTAL_CELLS - 1) * 24 * 60 * 60 * 1000;
     const startDate = new Date(startMs);
@@ -106,116 +65,49 @@
         year: 'numeric'
       });
 
-      const rand = Math.random();
-      let commitsCount = 0;
-      let level = 0;
-
-      // 100% dense simulation: no empty tiles
-      if (rand <= 0.40) {
-        commitsCount = 1;
-        level = 1;
-      } else if (rand <= 0.70) {
-        commitsCount = 2;
-        level = 2;
-      } else if (rand <= 0.90) {
-        commitsCount = 3;
-        level = 3;
-      } else {
-        commitsCount = Math.floor(Math.random() * 3) + 4;
-        level = 4;
-      }
-
-      const dayCommits = [];
-      for (let c = 0; c < commitsCount; c++) {
-        const msg = COMMIT_MESSAGES[Math.floor(Math.random() * COMMIT_MESSAGES.length)];
-        dayCommits.push(msg);
-      }
-
       daysData.push({
         date: dateString,
-        commitsCount,
-        commits: dayCommits,
-        level
+        commitsCount: 0,
+        level: 0
       });
     }
   }
 
-  // Render Grid Cells in 13 horizontal lanes
-  const ROWS_COUNT = 13;
-  const COLS_COUNT = 40;
-
-  for (let r = 0; r < ROWS_COUNT; r++) {
-    const lane = document.createElement('div');
-    lane.classList.add('grid-lane');
-
-    const track = document.createElement('div');
-    track.classList.add('lane-track');
-    // Set initial position — must be exact multiple of cell width (36px) to avoid partial tiles
-    track.style.transform = 'translate3d(-252px, 0, 0)';
-
-    // Get the 20 days for this row
-    const rowDays = daysData.slice(r * COLS_COUNT, (r + 1) * COLS_COUNT);
-
-    // Helper to create and bind event listeners to a cell
-    const createCellElement = (day, colIdx) => {
-      const cell = document.createElement('div');
-      cell.classList.add('grid-cell', `lvl-${day.level}`);
-      if (r === 0 && colIdx === 5) {
-        cell.classList.add('tilted-cell');
+  // Render Grid Cells
+  daysData.forEach((day) => {
+    const cell = document.createElement('div');
+    cell.classList.add('grid-cell', `lvl-${day.level}`);
+    
+    // Mouse Interaction: Tooltip Position & Data
+    cell.addEventListener('mouseenter', () => {
+      let tooltipContent = `<strong style="color:var(--text-primary)">${day.date}</strong><br>`;
+      if (day.commitsCount === 0) {
+        tooltipContent += `<span style="color:var(--text-secondary)">No contributions</span>`;
+      } else {
+        tooltipContent += `<span style="color:var(--accent-color); font-weight:600">${day.commitsCount} contribution${day.commitsCount > 1 ? 's' : ''}</span>`;
       }
-
-      // Mouse Interaction: Tooltip Position & Data
-      cell.addEventListener('mouseenter', () => {
-        let tooltipContent = `<strong style="color:var(--text-primary)">${day.date}</strong><br>`;
-        if (day.commitsCount === 0) {
-          tooltipContent += `<span style="color:var(--text-secondary)">No contributions</span>`;
-        } else {
-          tooltipContent += `<span style="color:var(--accent-color); font-weight:600">${day.commitsCount} contribution${day.commitsCount > 1 ? 's' : ''}</span><br>`;
-          // Cap commits list rendering to max 5 in tooltip to avoid overflow
-          const displayCommits = day.commits.slice(0, 5);
-          displayCommits.forEach(msg => {
-            tooltipContent += `<span style="color:var(--text-muted)">└</span> ${msg}<br>`;
-          });
-          if (day.commits.length > 5) {
-            tooltipContent += `<span style="color:var(--text-muted)">...and ${day.commits.length - 5} more</span>`;
-          }
-        }
-        tooltip.innerHTML = tooltipContent;
-        tooltip.classList.add('visible');
-      });
-
-      cell.addEventListener('mousemove', (e) => {
-        const containerRect = gridContainer.closest('.interactive-grid-container').getBoundingClientRect();
-        const left = e.clientX - containerRect.left;
-        const top = e.clientY - containerRect.top - 15; // float above cursor
-        tooltip.style.left = `${left}px`;
-        tooltip.style.top = `${top}px`;
-      });
-
-      cell.addEventListener('mouseleave', () => {
-        tooltip.classList.remove('visible');
-      });
-
-      return cell;
-    };
-
-    // Render original cells
-    rowDays.forEach((day, colIdx) => {
-      const cell = createCellElement(day, colIdx);
-      cell.style.animationDelay = `${(r * 25) + (colIdx * 15)}ms`;
-      track.appendChild(cell);
-      day.element = cell;
+      
+      tooltip.innerHTML = tooltipContent;
+      
+      const containerRect = gridContainer.closest('.interactive-grid-container').getBoundingClientRect();
+      const cellRect = cell.getBoundingClientRect();
+      
+      const left = cellRect.left - containerRect.left + (cellRect.width / 2);
+      const top = cellRect.top - containerRect.top;
+      
+      tooltip.style.left = `${left}px`;
+      tooltip.style.top = `${top}px`;
+      tooltip.classList.add('visible');
     });
 
-    // Render duplicate cells for seamless infinite loop
-    rowDays.forEach((day, colIdx) => {
-      const duplicateCell = createCellElement(day, colIdx);
-      track.appendChild(duplicateCell);
+    cell.addEventListener('mouseleave', () => {
+      tooltip.classList.remove('visible');
     });
 
-    lane.appendChild(track);
-    gridContainer.appendChild(lane);
-  }
+    gridContainer.appendChild(cell);
+    day.element = cell;
+  });
+
 })();
 
 
@@ -243,7 +135,7 @@
   function setTheme(theme) {
     html.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
-
+    
     if (theme === 'dark') {
       themeIcon.textContent = '☾';
       themeToggle.setAttribute('aria-label', 'Switch to light theme');
@@ -272,7 +164,7 @@
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         const id = entry.target.getAttribute('id');
-
+        
         navLinks.forEach(link => {
           if (link.getAttribute('href') === `#${id}`) {
             link.classList.add('active');
@@ -292,17 +184,17 @@
       e.preventDefault();
       const targetId = link.getAttribute('href');
       const targetSection = document.querySelector(targetId);
-
+      
       if (targetSection) {
         const headerOffset = 80;
         const elementPosition = targetSection.getBoundingClientRect().top;
         const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
+        
         window.scrollTo({
           top: offsetPosition,
           behavior: 'smooth'
         });
-
+        
         // Push state manually
         history.pushState(null, null, targetId);
       }
@@ -383,7 +275,7 @@
       // Test request to wake up Render instance (GET /snip/)
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 6000); // 6s timeout for wake up test
-
+      
       const res = await fetch(`${baseUrl}/snip/`, {
         method: 'GET',
         signal: controller.signal
@@ -410,7 +302,7 @@
     const needsId = activeEndpoint.dataset.needsId === 'true';
     const needsBody = activeEndpoint.dataset.needsBody === 'true';
     const baseUrl = apiBaseInput.value.trim().replace(/\/$/, '');
-
+    
     // Replace URL parameters
     if (needsId) {
       const idVal = inputId.value.trim();
@@ -468,7 +360,7 @@
 
       const statusText = `${res.status} ${res.statusText || getHttpStatusText(res.status)}`;
       const statusClass = res.ok ? 'success' : 'error';
-
+      
       showResponse(statusClass, statusText, formattedBody);
 
       // If successful, ensure indicator is green
@@ -587,7 +479,7 @@ disp("Score:", score)`
   runBtn.addEventListener('click', () => {
     const code = codeTextarea.value;
     outputConsole.textContent = '';
-
+    
     let logs = [];
     const logOutput = (text) => {
       logs.push(text);
@@ -596,7 +488,7 @@ disp("Score:", score)`
     // Run custom Javascript-based interpreter
     if (typeof window.runTyprCode === 'function') {
       const res = window.runTyprCode(code, logOutput);
-
+      
       if (res.success) {
         if (logs.length === 0) {
           outputConsole.textContent = '// Program executed successfully with no output.\n';
@@ -615,36 +507,6 @@ disp("Score:", score)`
       outputConsole.textContent = 'Error: Typr interpreter engine (typr.js) failed to load.';
     }
   });
-})();
-
-
-// ── SHRINK LEFT COLUMN ON SCROLL & GRID PARALLAX ──
-(function () {
-  const twoCol = document.querySelector('.two-col');
-  const tracks = document.querySelectorAll('.lane-track');
-  if (!twoCol) return;
-
-  window.addEventListener('scroll', () => {
-    const scrollY = window.scrollY;
-
-    // Toggle column shrink
-    if (scrollY > 80) {
-      twoCol.classList.add('scrolled');
-    } else {
-      twoCol.classList.remove('scrolled');
-    }
-
-    // Scroll-driven horizontal parallax of grid rows (marquee tracks)
-    tracks.forEach((track, idx) => {
-      const direction = idx % 2 === 0 ? -1 : 1;
-      // Varying speeds: 0.12px, 0.22px, 0.32px per scroll pixel
-      const speed = 0.12 + (idx % 3) * 0.1;
-      const xOffset = direction * scrollY * speed;
-
-      const baseOffset = -252; // exact 7×36px cell boundary — no partial tile on left
-      track.style.transform = `translate3d(${baseOffset + xOffset}px, 0, 0)`;
-    });
-  }, { passive: true });
 })();
 
 
