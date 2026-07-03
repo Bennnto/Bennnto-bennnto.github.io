@@ -357,20 +357,20 @@ select {
   transition: border-color var(--transition);
 }
 
-/* Interactive Technical Grid Block — fixed symmetrical height */
+/* Interactive Technical Grid Block — scaled symmetrical height */
 .interactive-grid-container {
   position: relative;
   width: auto;
   margin-left: -2rem;
   margin-right: -2rem;
-  margin-top: 1.5rem;
-  height: 270px;      /* 5 rows × 54px = symmetrical block */
+  margin-top: 4rem;          /* pushed further down from the name */
+  height: clamp(180px, 22vh, 270px);  /* scales down with page, max 270px */
   background-color: #ff5400;
   overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: background-color var(--transition);
+  transition: background-color var(--transition), height var(--transition);
   border-top: 1px solid rgba(0, 0, 0, 0.08);
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 
