@@ -163,6 +163,57 @@
     day.element = cell;
   });
 
+  // Mouse proximity effect (Mistral AI style bubble)
+  gridContainer.addEventListener('mousemove', (e) => {
+    const rect = gridContainer.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+
+    daysData.forEach((day) => {
+      const cell = day.element;
+      if (!cell) return;
+
+      const cellRect = cell.getBoundingClientRect();
+      const cellCenterX = cellRect.left - rect.left + cellRect.width / 2;
+      const cellCenterY = cellRect.top - rect.top + cellRect.height / 2;
+
+      const dx = mouseX - cellCenterX;
+      const dy = mouseY - cellCenterY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+
+      const activeRadius = 90; // Radius of interaction in pixels
+      if (dist < activeRadius) {
+        const strength = 1 - dist / activeRadius; // 0 to 1
+        const scale = 1 + strength * 0.28; // scale from 1 to 1.28
+        cell.style.transform = `scale(${scale})`;
+        cell.style.zIndex = strength > 0.6 ? '10' : '1';
+        cell.style.boxShadow = `0 0 ${strength * 12}px var(--accent-glow)`;
+        if (strength > 0.7) {
+          cell.style.filter = 'brightness(1.25)';
+        } else {
+          cell.style.filter = '';
+        }
+      } else {
+        cell.style.transform = '';
+        cell.style.zIndex = '';
+        cell.style.boxShadow = '';
+        cell.style.filter = '';
+      }
+    });
+  });
+
+  // Reset on mouse leave
+  gridContainer.addEventListener('mouseleave', () => {
+    daysData.forEach((day) => {
+      const cell = day.element;
+      if (!cell) return;
+      cell.style.transform = '';
+      cell.style.zIndex = '';
+      cell.style.boxShadow = '';
+      cell.style.filter = '';
+    });
+  });
+
   // Real-time dynamic simulator updates (only for simulation fallback)
   if (!realContributions) {
     setInterval(() => {
