@@ -364,7 +364,7 @@ select {
   margin-left: -2rem;
   margin-right: -2rem;
   margin-top: 4rem;          /* pushed further down from the name */
-  height: clamp(180px, 22vh, 270px);  /* scales down with page, max 270px */
+  height: clamp(360px, 40vh, 540px);  /* 10 rows × 54px, scales with page */
   background-color: #ff5400;
   overflow: hidden;
   display: flex;

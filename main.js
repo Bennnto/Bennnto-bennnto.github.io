@@ -119,8 +119,8 @@
     }
   }
 
-  // Render Grid Cells in 5 horizontal lanes (Mistral AI style scroll parallax)
-  const ROWS_COUNT = 5;
+  // Render Grid Cells in 10 horizontal lanes
+  const ROWS_COUNT = 10;
   const COLS_COUNT = 20;
 
   for (let r = 0; r < ROWS_COUNT; r++) {
