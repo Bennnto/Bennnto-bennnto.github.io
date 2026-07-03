@@ -119,124 +119,80 @@
     }
   }
 
-  // Render Grid Cells
-  daysData.forEach((day, index) => {
-    const cell = document.createElement('div');
-    cell.classList.add('grid-cell', `lvl-${day.level}`);
-    cell.style.animationDelay = `${index * 3}ms`;
-    
-    // Mouse Interaction: Tooltip Position & Data
-    cell.addEventListener('mouseenter', () => {
-      let tooltipContent = `<strong style="color:var(--text-primary)">${day.date}</strong><br>`;
-      if (day.commitsCount === 0) {
-        tooltipContent += `<span style="color:var(--text-secondary)">No contributions</span>`;
-      } else {
-        tooltipContent += `<span style="color:var(--accent-color); font-weight:600">${day.commitsCount} contribution${day.commitsCount > 1 ? 's' : ''}</span><br>`;
-        // Cap commits list rendering to max 5 in tooltip to avoid overflow
-        const displayCommits = day.commits.slice(0, 5);
-        displayCommits.forEach(msg => {
-          tooltipContent += `<span style="color:var(--text-muted)">└</span> ${msg}<br>`;
-        });
-        if (day.commits.length > 5) {
-          tooltipContent += `<span style="color:var(--text-muted)">...and ${day.commits.length - 5} more</span>`;
-        }
-      }
+  // Render Grid Cells in 7 alternating horizontal sliding lanes (Mistral AI style)
+  const ROWS_COUNT = 7;
+  const COLS_COUNT = 20;
+  const laneSpeeds = ['28s', '35s', '24s', '32s', '26s', '36s', '30s'];
+  const laneDirections = ['left', 'right', 'left', 'right', 'left', 'right', 'left'];
+
+  for (let r = 0; r < ROWS_COUNT; r++) {
+    const lane = document.createElement('div');
+    lane.classList.add('grid-lane');
+    lane.style.setProperty('--speed', laneSpeeds[r]);
+
+    const track = document.createElement('div');
+    track.classList.add('lane-track', `track-${laneDirections[r]}`);
+
+    // Get the 20 days for this row
+    const rowDays = daysData.slice(r * COLS_COUNT, (r + 1) * COLS_COUNT);
+
+    // Helper to create and bind event listeners to a cell
+    const createCellElement = (day) => {
+      const cell = document.createElement('div');
+      cell.classList.add('grid-cell', `lvl-${day.level}`);
       
-      tooltip.innerHTML = tooltipContent;
-      
-      const containerRect = gridContainer.closest('.interactive-grid-container').getBoundingClientRect();
-      const cellRect = cell.getBoundingClientRect();
-      
-      const left = cellRect.left - containerRect.left + (cellRect.width / 2);
-      const top = cellRect.top - containerRect.top;
-      
-      tooltip.style.left = `${left}px`;
-      tooltip.style.top = `${top}px`;
-      tooltip.classList.add('visible');
-    });
-
-    cell.addEventListener('mouseleave', () => {
-      tooltip.classList.remove('visible');
-    });
-
-    gridContainer.appendChild(cell);
-    day.element = cell;
-  });
-
-  // Mouse proximity effect (Mistral AI style bubble)
-  gridContainer.addEventListener('mousemove', (e) => {
-    const rect = gridContainer.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
-
-    daysData.forEach((day) => {
-      const cell = day.element;
-      if (!cell) return;
-
-      const cellRect = cell.getBoundingClientRect();
-      const cellCenterX = cellRect.left - rect.left + cellRect.width / 2;
-      const cellCenterY = cellRect.top - rect.top + cellRect.height / 2;
-
-      const dx = mouseX - cellCenterX;
-      const dy = mouseY - cellCenterY;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-
-      const activeRadius = 90; // Radius of interaction in pixels
-      if (dist < activeRadius) {
-        const strength = 1 - dist / activeRadius; // 0 to 1
-        const scale = 1 + strength * 0.28; // scale from 1 to 1.28
-        cell.style.transform = `scale(${scale})`;
-        cell.style.zIndex = strength > 0.6 ? '10' : '1';
-        cell.style.boxShadow = `0 0 ${strength * 12}px var(--accent-glow)`;
-        if (strength > 0.7) {
-          cell.style.filter = 'brightness(1.25)';
+      // Mouse Interaction: Tooltip Position & Data
+      cell.addEventListener('mouseenter', () => {
+        let tooltipContent = `<strong style="color:var(--text-primary)">${day.date}</strong><br>`;
+        if (day.commitsCount === 0) {
+          tooltipContent += `<span style="color:var(--text-secondary)">No contributions</span>`;
         } else {
-          cell.style.filter = '';
+          tooltipContent += `<span style="color:var(--accent-color); font-weight:600">${day.commitsCount} contribution${day.commitsCount > 1 ? 's' : ''}</span><br>`;
+          // Cap commits list rendering to max 5 in tooltip to avoid overflow
+          const displayCommits = day.commits.slice(0, 5);
+          displayCommits.forEach(msg => {
+            tooltipContent += `<span style="color:var(--text-muted)">└</span> ${msg}<br>`;
+          });
+          if (day.commits.length > 5) {
+            tooltipContent += `<span style="color:var(--text-muted)">...and ${day.commits.length - 5} more</span>`;
+          }
         }
-      } else {
-        cell.style.transform = '';
-        cell.style.zIndex = '';
-        cell.style.boxShadow = '';
-        cell.style.filter = '';
-      }
+        tooltip.innerHTML = tooltipContent;
+        tooltip.classList.add('visible');
+      });
+
+      cell.addEventListener('mousemove', (e) => {
+        const containerRect = gridContainer.closest('.interactive-grid-container').getBoundingClientRect();
+        const left = e.clientX - containerRect.left;
+        const top = e.clientY - containerRect.top - 15; // float above cursor
+        tooltip.style.left = `${left}px`;
+        tooltip.style.top = `${top}px`;
+      });
+
+      cell.addEventListener('mouseleave', () => {
+        tooltip.classList.remove('visible');
+      });
+
+      return cell;
+    };
+
+    // Render original cells
+    rowDays.forEach((day, colIdx) => {
+      const cell = createCellElement(day);
+      // Entry animation delay based on coordinates
+      cell.style.animationDelay = `${(r * 25) + (colIdx * 15)}ms`;
+      track.appendChild(cell);
+      day.element = cell;
     });
-  });
 
-  // Reset on mouse leave
-  gridContainer.addEventListener('mouseleave', () => {
-    daysData.forEach((day) => {
-      const cell = day.element;
-      if (!cell) return;
-      cell.style.transform = '';
-      cell.style.zIndex = '';
-      cell.style.boxShadow = '';
-      cell.style.filter = '';
+    // Render duplicate cells for seamless infinite marquee loop
+    rowDays.forEach((day) => {
+      const duplicateCell = createCellElement(day);
+      track.appendChild(duplicateCell);
     });
-  });
 
-  // Real-time dynamic simulator updates (only for simulation fallback)
-  if (!realContributions) {
-    setInterval(() => {
-      const recentIndex = TOTAL_CELLS - 1 - Math.floor(Math.random() * 28);
-      const day = daysData[recentIndex];
-      if (!day || !day.element) return;
-
-      day.commitsCount += 1;
-      if (day.level < 4) {
-        day.element.classList.remove(`lvl-${day.level}`);
-        day.level += 1;
-        day.element.classList.add(`lvl-${day.level}`);
-      }
-
-      const newCommit = COMMIT_MESSAGES[Math.floor(Math.random() * COMMIT_MESSAGES.length)];
-      day.commits.unshift(newCommit);
-
-      day.element.style.transition = 'none';
-      day.element.style.backgroundColor = '#FFFFFF';
-      day.element.offsetHeight;
-      day.element.style.transition = 'background-color 1.2s ease';
-      day.element.style.backgroundColor = '';
-    }, 5000);
+    lane.appendChild(track);
+    gridContainer.appendChild(lane);
   }
 })();
 
