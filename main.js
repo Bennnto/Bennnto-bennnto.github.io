@@ -121,7 +121,7 @@
 
   // Render Grid Cells in 13 horizontal lanes
   const ROWS_COUNT = 13;
-  const COLS_COUNT = 20;
+  const COLS_COUNT = 40;
 
   for (let r = 0; r < ROWS_COUNT; r++) {
     const lane = document.createElement('div');

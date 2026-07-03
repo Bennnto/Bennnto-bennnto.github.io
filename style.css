@@ -427,7 +427,7 @@ select {
   transition: background-color 0.3s ease, transform 0.15s ease, box-shadow 0.15s ease;
   cursor: crosshair;
   position: relative;
-  width: 54px;
+  width: 36px;
   height: 100%;           /* stretch to fill row height */
   min-height: 30px;
   flex-shrink: 0;
