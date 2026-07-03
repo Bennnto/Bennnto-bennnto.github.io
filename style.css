@@ -274,6 +274,8 @@ select {
 
 /* LEFT COLUMN: Full-height flex layout */
 .left-col {
+  min-width: 0;          /* prevent lane-track max-content from blowing out the column */
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   padding: 2.5rem 2rem 0 2rem;
@@ -330,6 +332,7 @@ select {
 
 /* ── RIGHT COLUMN MISTRAL-STYLE ── */
 .right-col {
+  min-width: 0;          /* enforce grid track — don't let content overflow */
   display: flex;
   flex-direction: column;
   padding: 0;
