@@ -139,7 +139,7 @@
     const createCellElement = (day) => {
       const cell = document.createElement('div');
       cell.classList.add('grid-cell', `lvl-${day.level}`);
-      
+
       // Mouse Interaction: Tooltip Position & Data
       cell.addEventListener('mouseenter', () => {
         let tooltipContent = `<strong style="color:var(--text-primary)">${day.date}</strong><br>`;
@@ -219,7 +219,7 @@
   function setTheme(theme) {
     html.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
-    
+
     if (theme === 'dark') {
       themeIcon.textContent = '☾';
       themeToggle.setAttribute('aria-label', 'Switch to light theme');
@@ -248,7 +248,7 @@
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         const id = entry.target.getAttribute('id');
-        
+
         navLinks.forEach(link => {
           if (link.getAttribute('href') === `#${id}`) {
             link.classList.add('active');
@@ -268,17 +268,17 @@
       e.preventDefault();
       const targetId = link.getAttribute('href');
       const targetSection = document.querySelector(targetId);
-      
+
       if (targetSection) {
         const headerOffset = 80;
         const elementPosition = targetSection.getBoundingClientRect().top;
         const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-        
+
         window.scrollTo({
           top: offsetPosition,
           behavior: 'smooth'
         });
-        
+
         // Push state manually
         history.pushState(null, null, targetId);
       }
@@ -359,7 +359,7 @@
       // Test request to wake up Render instance (GET /snip/)
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 6000); // 6s timeout for wake up test
-      
+
       const res = await fetch(`${baseUrl}/snip/`, {
         method: 'GET',
         signal: controller.signal
@@ -386,7 +386,7 @@
     const needsId = activeEndpoint.dataset.needsId === 'true';
     const needsBody = activeEndpoint.dataset.needsBody === 'true';
     const baseUrl = apiBaseInput.value.trim().replace(/\/$/, '');
-    
+
     // Replace URL parameters
     if (needsId) {
       const idVal = inputId.value.trim();
@@ -444,7 +444,7 @@
 
       const statusText = `${res.status} ${res.statusText || getHttpStatusText(res.status)}`;
       const statusClass = res.ok ? 'success' : 'error';
-      
+
       showResponse(statusClass, statusText, formattedBody);
 
       // If successful, ensure indicator is green
@@ -563,7 +563,7 @@ disp("Score:", score)`
   runBtn.addEventListener('click', () => {
     const code = codeTextarea.value;
     outputConsole.textContent = '';
-    
+
     let logs = [];
     const logOutput = (text) => {
       logs.push(text);
@@ -572,7 +572,7 @@ disp("Score:", score)`
     // Run custom Javascript-based interpreter
     if (typeof window.runTyprCode === 'function') {
       const res = window.runTyprCode(code, logOutput);
-      
+
       if (res.success) {
         if (logs.length === 0) {
           outputConsole.textContent = '// Program executed successfully with no output.\n';
@@ -616,8 +616,8 @@ disp("Score:", score)`
       // Varying speeds: 0.12px, 0.22px, 0.32px per scroll pixel
       const speed = 0.12 + (idx % 3) * 0.1;
       const xOffset = direction * scrollY * speed;
-      
-      const baseOffset = -180; // initial centered offset
+
+      const baseOffset = -358; // initial centered offset
       track.style.transform = `translate3d(${baseOffset + xOffset}px, 0, 0)`;
     });
   }, { passive: true });

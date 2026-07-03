@@ -412,8 +412,8 @@ select {
   cursor: crosshair;
   position: relative;
   border-radius: 2px;
-  width: 20px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
   flex-shrink: 0;
   opacity: 0;
   animation: cellAppear 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
