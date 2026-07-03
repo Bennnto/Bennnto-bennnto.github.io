@@ -72,32 +72,26 @@
 
         <!-- Interactive Technical Grid Block -->
         <div class="interactive-grid-container" aria-hidden="true">
-          <!-- Decorative corner crosshairs -->
-          <div class="crosshair tl">+</div>
-          <div class="crosshair tr">+</div>
-          <div class="crosshair bl">+</div>
-          <div class="crosshair br">+</div>
-
-          <!-- Decorative Technical Labels -->
-          <span class="grid-meta tl">SYSTEM_ACTIVE: TRUE</span>
-          <span class="grid-meta tr">LAT: 43.6532° N / LON: 79.3832° W</span>
-          <span class="grid-meta bl">COMMIT_GRAPH // 2026</span>
-          <span class="grid-meta br">B.PROMKAEW</span>
-
           <!-- The Color Grid Container (Populated via JS) -->
           <div id="interactive-grid" class="interactive-grid"></div>
 
-          <!-- Contribution Legend & Cursor Tooltip -->
-          <div class="grid-legend">
-            <span class="legend-text">Contribution History</span>
-            <div class="legend-scale">
-              <span>Less</span>
-              <span class="legend-box lvl-0"></span>
-              <span class="legend-box lvl-1"></span>
-              <span class="legend-box lvl-2"></span>
-              <span class="legend-box lvl-3"></span>
-              <span class="legend-box lvl-4"></span>
-              <span>More</span>
+          <!-- The static overlay on top (Frontier AI style) -->
+          <div class="grid-overlay-decor">
+            <div class="decor-tick tl"></div>
+            <div class="decor-tick tr"></div>
+            <div class="decor-tick bl"></div>
+            <div class="decor-tick br"></div>
+
+            <span class="decor-label tl">FRONTIER AI</span>
+            <span class="decor-label tr">IN YOUR HANDS</span>
+
+            <!-- Pixel-art cat in the bottom-right -->
+            <div class="decor-cat">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6 18H8V20H6V18ZM8 14H10V18H8V14ZM10 10H12V14H10V10ZM12 8H14V10H12V8ZM14 10H16V14H14V10ZM16 14H18V18H16V14ZM18 18H20V20H18V18ZM4 8H6V10H4V8ZM20 8H22V10H20V8ZM6 4H8V8H6V4ZM16 4H18V8H16V4Z" fill="#111111"/>
+                <path d="M8 8H16V10H8V8Z" fill="#111111"/>
+                <path d="M10 11H14V13H10V11Z" fill="#FFA500"/>
+              </svg>
             </div>
           </div>
           <div id="grid-tooltip" class="grid-tooltip"></div>

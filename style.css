@@ -263,13 +263,13 @@ select {
   max-width: 1440px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1.8fr 1fr;
   min-height: calc(100vh - 70px);
   transition: grid-template-columns 0.5s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .two-col.scrolled {
-  grid-template-columns: 0.8fr 1.2fr;
+  grid-template-columns: 1.6fr 1.2fr;
 }
 
 /* LEFT COLUMN: Sticky Hero Section */
@@ -329,57 +329,41 @@ select {
 /* Interactive Technical Grid Block (Frontier AI Style) */
 .interactive-grid-container {
   position: relative;
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-  margin-top: 2.5rem;
-  border: 1px solid var(--border-color);
-  background-color: var(--bg-secondary);
-  padding: 1.8rem 1.8rem 1rem 1.8rem;
-  transition: border-color var(--transition), background-color var(--transition);
+  width: auto;
+  margin-left: -2rem;
+  margin-right: -2rem;
+  margin-top: 4rem;
+  background-color: #ff5400; /* vibrant brand orange background for the graph only */
+  height: 220px; /* fits 4 rows of 54px cells perfectly */
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color var(--transition);
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 
-  /* Theme variables for Git Levels */
-  --git-lvl-0: #E5E4DE;
-  --git-lvl-1: #FFBC80;
-  --git-lvl-2: #FF8838;
-  --git-lvl-3: #FF5500;
-  --git-lvl-4: #E60000;
+  /* Warm brand color levels */
+  --git-lvl-0: #ff5400;
+  --git-lvl-1: #ffd166;
+  --git-lvl-2: #ff9f1c;
+  --git-lvl-3: #ff4500;
+  --git-lvl-4: #c3073f;
 }
 
 [data-theme="dark"] .interactive-grid-container {
-  --git-lvl-0: #1C1C20;
-  --git-lvl-1: #3D1D07;
-  --git-lvl-2: #702F03;
-  --git-lvl-3: #BD4700;
-  --git-lvl-4: #FF6200;
-  border-color: var(--border-color);
+  --git-lvl-0: #ff5400;
+  --git-lvl-1: #ffd166;
+  --git-lvl-2: #ff9f1c;
+  --git-lvl-3: #ff4500;
+  --git-lvl-4: #c3073f;
 }
 
-/* Corner details */
-.crosshair {
-  position: absolute;
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  color: var(--border-color-muted);
-  user-select: none;
-  z-index: 10;
-}
-.crosshair.tl { top: 2px; left: 6px; }
-.crosshair.tr { top: 2px; right: 6px; }
-.crosshair.bl { bottom: 2px; left: 6px; }
-.crosshair.br { bottom: 2px; right: 6px; }
-
+/* Hide legacy elements */
+.crosshair,
 .grid-meta {
-  position: absolute;
-  font-family: var(--font-mono);
-  font-size: 0.58rem;
-  color: var(--text-muted);
-  opacity: 0.8;
+  display: none;
 }
-.grid-meta.tl { top: 5px; left: 24px; }
-.grid-meta.tr { top: 5px; right: 24px; }
-.grid-meta.bl { bottom: 5px; left: 24px; }
-.grid-meta.br { bottom: 5px; right: 24px; }
 
 /* The Grid lanes and tracks */
 .interactive-grid {
@@ -387,7 +371,7 @@ select {
   max-width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 0;
   background-color: transparent;
   overflow: hidden;
 }
@@ -400,7 +384,7 @@ select {
 
 .lane-track {
   display: flex;
-  gap: 3px;
+  gap: 0;
   width: max-content;
   /* Smooth out scroll-linked updates */
   transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1);
@@ -411,10 +395,10 @@ select {
   transition: background-color 0.3s ease, transform 0.15s ease, box-shadow 0.15s ease;
   cursor: crosshair;
   position: relative;
-  border-radius: 2px;
-  width: 30px;
-  height: 30px;
+  width: 54px;
+  height: 54px;
   flex-shrink: 0;
+  border: 0.5px solid rgba(0, 0, 0, 0.08); /* thin grid lines */
   opacity: 0;
   animation: cellAppear 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
@@ -430,11 +414,6 @@ select {
   }
 }
 
-/* Commit Levels */
-.grid-cell.lvl-0 { background-color: var(--git-lvl-0); }
-.grid-cell.lvl-1 { background-color: var(--git-lvl-1); }
-.grid-cell.lvl-2 { background-color: var(--git-lvl-2); }
-.grid-cell.lvl-3 { background-color: var(--git-lvl-3); }
 .grid-cell.lvl-4 { background-color: var(--git-lvl-4); }
 
 .grid-cell:hover {
@@ -481,7 +460,77 @@ select {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
-/* Contribution Legend */
+/* Overlay decorations */
+.grid-overlay-decor {
+  position: absolute;
+  width: 432px; /* 8 * 54px = 432px active grid area */
+  height: 216px; /* 4 * 54px = 216px active grid height */
+  pointer-events: none;
+  z-index: 10;
+}
+
+.decor-tick {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background-color: #111111;
+}
+
+.decor-tick.tl {
+  top: -3px;
+  left: -3px;
+}
+
+.decor-tick.tr {
+  top: -3px;
+  right: -3px;
+}
+
+.decor-tick.bl {
+  bottom: -3px;
+  left: -3px;
+}
+
+.decor-tick.br {
+  bottom: -3px;
+  right: -3px;
+}
+
+.decor-label {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: #111111;
+  letter-spacing: 0.05em;
+}
+
+.decor-label.tl {
+  top: -18px;
+  left: 0px;
+}
+
+.decor-label.tr {
+  top: 8px;
+  right: -100px;
+}
+
+.decor-cat {
+  position: absolute;
+  bottom: -2px;
+  right: -40px;
+  width: 24px;
+  height: 24px;
+}
+
+/* Tilted cell effect */
+.tilted-cell {
+  transform: rotate(6deg) scale(1.03);
+  z-index: 2;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Hide legend scale since it's removed */
 .grid-legend {
   display: none !important;
 }

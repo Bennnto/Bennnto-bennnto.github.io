@@ -119,8 +119,8 @@
     }
   }
 
-  // Render Grid Cells in 7 horizontal lanes (Mistral AI style scroll parallax)
-  const ROWS_COUNT = 7;
+  // Render Grid Cells in 4 horizontal lanes (Mistral AI style scroll parallax)
+  const ROWS_COUNT = 4;
   const COLS_COUNT = 20;
 
   for (let r = 0; r < ROWS_COUNT; r++) {
@@ -130,15 +130,18 @@
     const track = document.createElement('div');
     track.classList.add('lane-track');
     // Set initial centered position
-    track.style.transform = 'translate3d(-180px, 0, 0)';
+    track.style.transform = 'translate3d(-617px, 0, 0)';
 
     // Get the 20 days for this row
     const rowDays = daysData.slice(r * COLS_COUNT, (r + 1) * COLS_COUNT);
 
     // Helper to create and bind event listeners to a cell
-    const createCellElement = (day) => {
+    const createCellElement = (day, colIdx) => {
       const cell = document.createElement('div');
       cell.classList.add('grid-cell', `lvl-${day.level}`);
+      if (r === 0 && colIdx === 5) {
+        cell.classList.add('tilted-cell');
+      }
 
       // Mouse Interaction: Tooltip Position & Data
       cell.addEventListener('mouseenter', () => {
@@ -177,15 +180,15 @@
 
     // Render original cells
     rowDays.forEach((day, colIdx) => {
-      const cell = createCellElement(day);
+      const cell = createCellElement(day, colIdx);
       cell.style.animationDelay = `${(r * 25) + (colIdx * 15)}ms`;
       track.appendChild(cell);
       day.element = cell;
     });
 
     // Render duplicate cells for seamless infinite loop
-    rowDays.forEach((day) => {
-      const duplicateCell = createCellElement(day);
+    rowDays.forEach((day, colIdx) => {
+      const duplicateCell = createCellElement(day, colIdx);
       track.appendChild(duplicateCell);
     });
 
@@ -617,7 +620,7 @@ disp("Score:", score)`
       const speed = 0.12 + (idx % 3) * 0.1;
       const xOffset = direction * scrollY * speed;
 
-      const baseOffset = -358; // initial centered offset
+      const baseOffset = -617; // initial centered offset
       track.style.transform = `translate3d(${baseOffset + xOffset}px, 0, 0)`;
     });
   }, { passive: true });
