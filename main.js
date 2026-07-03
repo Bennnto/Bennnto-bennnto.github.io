@@ -39,15 +39,18 @@
   // Attempt to fetch real contributions from public api proxy
   let realContributions = null;
   try {
-    const res = await fetch('https://github-contributions-api.jogruber.de/v4/bennnto');
+    const res = await fetch('https://github-contributions-api.deno.dev/Bennnto.json');
     if (res.ok) {
       const data = await res.json();
       if (data && data.contributions && data.contributions.length > 0) {
+        // Flatten the array of weeks into a 1D array of days
+        const flatDays = Array.isArray(data.contributions[0]) ? data.contributions.flat() : data.contributions;
+        
         // If API returns fewer days than TOTAL_CELLS, loop the data to fill the grid
         realContributions = [];
         while (realContributions.length < TOTAL_CELLS) {
           const needed = TOTAL_CELLS - realContributions.length;
-          const chunk = data.contributions.slice(-needed);
+          const chunk = flatDays.slice(-needed);
           realContributions = chunk.concat(realContributions);
         }
       }
@@ -65,8 +68,16 @@
         year: 'numeric'
       });
 
-      let count = day.count;
-      let level = day.level;
+      let count = day.contributionCount !== undefined ? day.contributionCount : (day.count || 0);
+      let level = 0;
+      if (day.contributionLevel) {
+        if (day.contributionLevel === "FIRST_QUARTILE") level = 1;
+        else if (day.contributionLevel === "SECOND_QUARTILE") level = 2;
+        else if (day.contributionLevel === "THIRD_QUARTILE") level = 3;
+        else if (day.contributionLevel === "FOURTH_QUARTILE") level = 4;
+      } else if (day.level !== undefined) {
+        level = day.level;
+      }
 
       const dayCommits = [];
       for (let c = 0; c < count; c++) {
