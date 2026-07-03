@@ -236,13 +236,13 @@ input, textarea, button, select {
   max-width: 1440px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1.4fr 1fr;
+  grid-template-columns: 1fr 1.4fr;
   min-height: calc(100vh - 70px);
   transition: grid-template-columns 0.5s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .two-col.scrolled {
-  grid-template-columns: 1fr 1.4fr;
+  grid-template-columns: 0.8fr 1.6fr;
 }
 
 /* LEFT COLUMN: Sticky Hero Section */
@@ -255,12 +255,10 @@ input, textarea, button, select {
 .left-sticky-content {
   position: sticky;
   top: 110px;
-  height: calc(100vh - 160px);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   gap: 2.5rem;
-  transition: gap 0.5s cubic-bezier(0.25, 1, 0.5, 1), height 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+  transition: gap 0.5s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .hero-text-block {
