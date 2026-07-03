@@ -4,7 +4,7 @@
   const tooltip = document.getElementById('grid-tooltip');
   if (!gridContainer || !tooltip) return;
 
-  const COLS = 24;
+  const COLS = 20;
   const ROWS = 7;
   const TOTAL_CELLS = COLS * ROWS;
 
