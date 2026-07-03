@@ -42,8 +42,14 @@
     const res = await fetch('https://github-contributions-api.jogruber.de/v4/bennnto');
     if (res.ok) {
       const data = await res.json();
-      if (data && data.contributions && data.contributions.length >= TOTAL_CELLS) {
-        realContributions = data.contributions.slice(-TOTAL_CELLS);
+      if (data && data.contributions && data.contributions.length > 0) {
+        // If API returns fewer days than TOTAL_CELLS, loop the data to fill the grid
+        realContributions = [];
+        while (realContributions.length < TOTAL_CELLS) {
+          const needed = TOTAL_CELLS - realContributions.length;
+          const chunk = data.contributions.slice(-needed);
+          realContributions = chunk.concat(realContributions);
+        }
       }
     }
   } catch (e) {
@@ -59,17 +65,38 @@
         year: 'numeric'
       });
 
+      let count = day.count;
+      let level = day.level;
+
+      // If the real data has no contributions for this day, randomly generate some to ensure 100% full grid
+      if (count === 0) {
+        const rand = Math.random();
+        if (rand <= 0.40) {
+          count = 1;
+          level = 1;
+        } else if (rand <= 0.70) {
+          count = 2;
+          level = 2;
+        } else if (rand <= 0.90) {
+          count = 3;
+          level = 3;
+        } else {
+          count = Math.floor(Math.random() * 3) + 4;
+          level = 4;
+        }
+      }
+
       const dayCommits = [];
-      for (let c = 0; c < day.count; c++) {
+      for (let c = 0; c < count; c++) {
         const msg = COMMIT_MESSAGES[Math.floor(Math.random() * COMMIT_MESSAGES.length)];
         dayCommits.push(msg);
       }
 
       daysData.push({
         date: dateString,
-        commitsCount: day.count,
+        commitsCount: count,
         commits: dayCommits,
-        level: day.level
+        level: level
       });
     });
   } else {
@@ -90,16 +117,17 @@
       let commitsCount = 0;
       let level = 0;
 
-      if (rand > 0.72 && rand <= 0.86) {
+      // 100% dense simulation: no empty tiles
+      if (rand <= 0.40) {
         commitsCount = 1;
         level = 1;
-      } else if (rand > 0.86 && rand <= 0.94) {
+      } else if (rand <= 0.70) {
         commitsCount = 2;
         level = 2;
-      } else if (rand > 0.94 && rand <= 0.98) {
+      } else if (rand <= 0.90) {
         commitsCount = 3;
         level = 3;
-      } else if (rand > 0.98) {
+      } else {
         commitsCount = Math.floor(Math.random() * 3) + 4;
         level = 4;
       }
