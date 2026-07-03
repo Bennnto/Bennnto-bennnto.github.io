@@ -326,37 +326,40 @@ select {
   border-radius: 50%;
 }
 
-/* Interactive Technical Grid Block */
+/* Interactive Technical Grid Block (Frontier AI Style) */
 .interactive-grid-container {
   position: relative;
-  width: 100%;
-  border: none;
-  background-color: transparent;
-  padding: 0;
-  transition: border-color var(--transition), background-color var(--transition);
+  width: auto;
+  margin-left: -2rem;
+  margin-right: -2rem;
+  background-color: #ff5400; /* vibrant brand orange background */
+  height: 200px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color var(--transition);
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 
-  /* Theme variables for Git Levels */
-  --git-lvl-0: #E5E4DE;
-  --git-lvl-1: #FFBC80;
-  --git-lvl-2: #FF8838;
-  --git-lvl-3: #FF5500;
-  --git-lvl-4: #E60000;
+  /* Warm brand color levels */
+  --git-lvl-0: #ff5400;
+  --git-lvl-1: #ffd166;
+  --git-lvl-2: #ff9f1c;
+  --git-lvl-3: #ff4500;
+  --git-lvl-4: #c3073f;
 }
 
 [data-theme="dark"] .interactive-grid-container {
-  --git-lvl-0: #1C1C20;
-  --git-lvl-1: #3D1D07;
-  --git-lvl-2: #702F03;
-  --git-lvl-3: #BD4700;
-  --git-lvl-4: #FF6200;
+  --git-lvl-0: #ff5400;
+  --git-lvl-1: #ffd166;
+  --git-lvl-2: #ff9f1c;
+  --git-lvl-3: #ff4500;
+  --git-lvl-4: #c3073f;
 }
 
-/* Corner details */
-.crosshair {
-  display: none;
-}
-
-.grid-meta {
+/* Hide legacy elements */
+.crosshair, .grid-meta {
   display: none;
 }
 
@@ -365,9 +368,8 @@ select {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 0;
   background-color: transparent;
-  transition: background-color var(--transition);
   overflow: hidden;
 }
 
@@ -379,7 +381,7 @@ select {
 
 .lane-track {
   display: flex;
-  gap: 3px;
+  gap: 0;
   width: max-content;
   /* Smooth out scroll-linked updates */
   transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1);
@@ -390,10 +392,10 @@ select {
   transition: background-color 0.3s ease, transform 0.15s ease, box-shadow 0.15s ease;
   cursor: crosshair;
   position: relative;
-  border-radius: 2px;
-  width: 36px;
-  height: 22px;
+  width: 50px;
+  height: 50px;
   flex-shrink: 0;
+  border: 0.5px solid rgba(0, 0, 0, 0.08); /* thin grid lines */
   opacity: 0;
   animation: cellAppear 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
@@ -403,50 +405,75 @@ select {
     opacity: 0;
     transform: scale(0.3);
   }
-
   100% {
     opacity: 1;
     transform: scale(1);
   }
 }
 
+/* Tilted cell effect */
+.tilted-cell {
+  transform: rotate(6deg) scale(1.03);
+  z-index: 2;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Overlay decorations */
+.grid-overlay-decor {
+  position: absolute;
+  width: 400px;
+  height: 200px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.decor-tick {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background-color: #111111;
+}
+.decor-tick.tl { top: -3px; left: -3px; }
+.decor-tick.tr { top: -3px; right: -3px; }
+.decor-tick.bl { bottom: -3px; left: -3px; }
+.decor-tick.br { bottom: -3px; right: -3px; }
+
+.decor-label {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: #111111;
+  letter-spacing: 0.05em;
+}
+.decor-label.tl { top: -18px; left: 0px; }
+.decor-label.tr { top: 8px; right: -100px; }
+
+.decor-cat {
+  position: absolute;
+  bottom: -2px;
+  right: -40px;
+  width: 24px;
+  height: 24px;
+}
+
 /* Commit Levels */
-.grid-cell.lvl-0 {
-  background-color: var(--git-lvl-0);
-}
-
-.grid-cell.lvl-1 {
-  background-color: var(--git-lvl-1);
-}
-
-.grid-cell.lvl-2 {
-  background-color: var(--git-lvl-2);
-}
-
-.grid-cell.lvl-3 {
-  background-color: var(--git-lvl-3);
-}
-
-.grid-cell.lvl-4 {
-  background-color: var(--git-lvl-4);
-}
+.grid-cell.lvl-0 { background-color: var(--git-lvl-0); }
+.grid-cell.lvl-1 { background-color: var(--git-lvl-1); }
+.grid-cell.lvl-2 { background-color: var(--git-lvl-2); }
+.grid-cell.lvl-3 { background-color: var(--git-lvl-3); }
+.grid-cell.lvl-4 { background-color: var(--git-lvl-4); }
 
 .grid-cell:hover {
-  background-color: var(--text-primary) !important;
-  transform: scale(1.15);
+  background-color: #111111 !important; /* dark hover like overlay elements */
+  transform: scale(1.08);
   z-index: 5;
-  box-shadow: 0 0 8px var(--accent-glow);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 
 /* Contribution Legend */
 .grid-legend {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 1rem;
-  font-family: var(--font-mono);
-  font-size: 0.62rem;
-  color: var(--text-muted);
+  display: none !important;
 }
 
 .legend-text {
