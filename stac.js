@@ -1,4 +1,4 @@
-// ── TYPR LEXER, PARSER, TYPE CHECKER & INTERPRETER IN JAVASCRIPT ──
+// ── STAC LEXER, PARSER, TYPE CHECKER & INTERPRETER IN JAVASCRIPT ──
 
 class TyprType {
   constructor(name, isOptional = false) {
@@ -742,7 +742,7 @@ function evaluateTypr(node, env, outputFn) {
 }
 
 // Global API
-window.runTyprCode = function(code, outputFn) {
+window.runStacCode = function(code, outputFn) {
   try {
     const tokens = tokenizeTypr(code);
     const parser = new TyprParser(tokens);

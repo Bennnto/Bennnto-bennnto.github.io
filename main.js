@@ -418,7 +418,7 @@
 })();
 
 
-// ── TYPR PLAYGROUND INTERACTIVE RUNNER ──
+// ── STAC PLAYGROUND INTERACTIVE RUNNER ──
 (function () {
   const codeTextarea = document.getElementById('playground-code');
   const templateSelect = document.getElementById('playground-template');
@@ -428,10 +428,10 @@
 
   if (!codeTextarea || !templateSelect || !runBtn || !outputConsole) return;
 
-  const TYPR_TEMPLATES = {
-    vars: `// Typr statically-typed variable declarations
-init int: x = 42
-init str: greeting = "Hello, Typr!"
+  const STAC_TEMPLATES = {
+    vars: `// Stac variable declarations
+let x = 42
+let greeting = "Hello, Stac!"
 let pi = 3.14159
 
 disp(greeting)
@@ -439,8 +439,8 @@ disp("x is:", x)
 disp("pi is:", pi)`,
 
     loops: `// While loops & built-in math functions
-init int: i = 1
-init int: sum = 0
+let i = 1
+let sum = 0
 
 while (i <= 5) {
   disp("Loop step:", i)
@@ -451,10 +451,10 @@ while (i <= 5) {
 disp("Sum of 1..5 is:", sum)
 disp("Square root of 100 is:", sqrt(100))`,
 
-    'type-error': `// Demonstrating Typr's static type checker
-init int: score = 95
+    'type-error': `// Demonstrating Stac's type checker (Simulated)
+let score = 95
 
-// Type Error! Cannot assign string to int
+// Type Error Demo (If statically checked)
 score = "Excellent"
 
 disp("Score:", score)`
@@ -463,8 +463,8 @@ disp("Score:", score)`
   // 1. Template picker change
   templateSelect.addEventListener('change', () => {
     const selected = templateSelect.value;
-    if (TYPR_TEMPLATES[selected]) {
-      codeTextarea.value = TYPR_TEMPLATES[selected];
+    if (STAC_TEMPLATES[selected]) {
+      codeTextarea.value = STAC_TEMPLATES[selected];
     }
   });
 
@@ -475,7 +475,7 @@ disp("Score:", score)`
     });
   }
 
-  // 3. Run Typr script
+  // 3. Run Stac script
   runBtn.addEventListener('click', () => {
     const code = codeTextarea.value;
     outputConsole.textContent = '';
@@ -486,8 +486,8 @@ disp("Score:", score)`
     };
 
     // Run custom Javascript-based interpreter
-    if (typeof window.runTyprCode === 'function') {
-      const res = window.runTyprCode(code, logOutput);
+    if (typeof window.runStacCode === 'function') {
+      const res = window.runStacCode(code, logOutput);
       
       if (res.success) {
         if (logs.length === 0) {
@@ -504,7 +504,7 @@ disp("Score:", score)`
         outputConsole.innerHTML += `<span style="color:#EF4444">${res.error}</span>`;
       }
     } else {
-      outputConsole.textContent = 'Error: Typr interpreter engine (typr.js) failed to load.';
+      outputConsole.textContent = 'Error: Stac interpreter engine (stac.js) failed to load.';
     }
   });
 })();
