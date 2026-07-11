@@ -1,4 +1,4 @@
-// ── ENVO LEXER, PARSER, TYPE CHECKER & INTERPRETER IN JAVASCRIPT ──
+// ── TERYX LEXER, PARSER, TYPE CHECKER & INTERPRETER IN JAVASCRIPT ──
 
 class TyprType {
   constructor(name, isOptional = false) {
@@ -742,7 +742,7 @@ function evaluateTypr(node, env, outputFn) {
 }
 
 // Global API
-window.runEnvoCode = function(code, outputFn) {
+window.runTeryxCode = function(code, outputFn) {
   try {
     const tokens = tokenizeTypr(code);
     const parser = new TyprParser(tokens);
