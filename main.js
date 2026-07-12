@@ -418,7 +418,7 @@
 })();
 
 
-// ── TERYX PLAYGROUND INTERACTIVE RUNNER ──
+// ── TRAC PLAYGROUND INTERACTIVE RUNNER ──
 (function () {
   const codeTextarea = document.getElementById('playground-code');
   const templateSelect = document.getElementById('playground-template');
@@ -428,10 +428,10 @@
 
   if (!codeTextarea || !templateSelect || !runBtn || !outputConsole) return;
 
-  const TERYX_TEMPLATES = {
-    vars: `// Teryx variable declarations
+  const TRAC_TEMPLATES = {
+    vars: `// Trac variable declarations
 
-let greeting = "Hello, Teryx!"
+let greeting = "Hello, Trac!"
 let pi = 3.14159
 
 disp(greeting)
@@ -451,7 +451,7 @@ while (i <= 5) {
 disp("Sum of 1..5 is:", sum)
 disp("Square root of 100 is:", sqrt(100))`,
 
-    'type-error': `// Demonstrating Teryx's type checker (Simulated)
+    'type-error': `// Demonstrating Trac's type checker (Simulated)
 let score = 95
 
 // Type Error Demo (If statically checked)
@@ -463,8 +463,8 @@ disp("Score:", score)`
   // 1. Template picker change
   templateSelect.addEventListener('change', () => {
     const selected = templateSelect.value;
-    if (TERYX_TEMPLATES[selected]) {
-      codeTextarea.value = TERYX_TEMPLATES[selected];
+    if (TRAC_TEMPLATES[selected]) {
+      codeTextarea.value = TRAC_TEMPLATES[selected];
     }
   });
 
@@ -475,7 +475,7 @@ disp("Score:", score)`
     });
   }
 
-  // 3. Run Teryx script
+  // 3. Run Trac script
   runBtn.addEventListener('click', () => {
     const code = codeTextarea.value;
     outputConsole.textContent = '';
@@ -486,8 +486,8 @@ disp("Score:", score)`
     };
 
     // Run custom Javascript-based interpreter
-    if (typeof window.runTeryxCode === 'function') {
-      const res = window.runTeryxCode(code, logOutput);
+    if (typeof window.runTracCode === 'function') {
+      const res = window.runTracCode(code, logOutput);
       
       if (res.success) {
         if (logs.length === 0) {
@@ -504,7 +504,7 @@ disp("Score:", score)`
         outputConsole.innerHTML += `<span style="color:#EF4444">${res.error}</span>`;
       }
     } else {
-      outputConsole.textContent = 'Error: Teryx interpreter engine (teryx.js) failed to load.';
+      outputConsole.textContent = 'Error: Trac interpreter engine (trac.js) failed to load.';
     }
   });
 })();
