@@ -1,4 +1,4 @@
-// ── TRAC LEXER, PARSER, TYPE CHECKER & INTERPRETER IN JAVASCRIPT ──
+// ── TRESS LEXER, PARSER, TYPE CHECKER & INTERPRETER IN JAVASCRIPT ──
 
 class TyprType {
   constructor(name, isOptional = false) {
@@ -742,7 +742,7 @@ function evaluateTypr(node, env, outputFn) {
 }
 
 // Global API
-window.runTracCode = function(code, outputFn) {
+window.runTressCode = function(code, outputFn) {
   try {
     const tokens = tokenizeTypr(code);
     const parser = new TyprParser(tokens);

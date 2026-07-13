@@ -418,7 +418,7 @@
 })();
 
 
-// ── TRAC PLAYGROUND INTERACTIVE RUNNER ──
+// ── TRESS PLAYGROUND INTERACTIVE RUNNER ──
 (function () {
   const codeTextarea = document.getElementById('playground-code');
   const templateSelect = document.getElementById('playground-template');
@@ -428,10 +428,10 @@
 
   if (!codeTextarea || !templateSelect || !runBtn || !outputConsole) return;
 
-  const TRAC_TEMPLATES = {
-    vars: `// Trac variable declarations
+  const TRESS_TEMPLATES = {
+    vars: `// Tress variable declarations
 
-let greeting = "Hello, Trac!"
+let greeting = "Hello, Tress!"
 let pi = 3.14159
 
 disp(greeting)
@@ -451,7 +451,7 @@ while (i <= 5) {
 disp("Sum of 1..5 is:", sum)
 disp("Square root of 100 is:", sqrt(100))`,
 
-    'type-error': `// Demonstrating Trac's type checker (Simulated)
+    'type-error': `// Demonstrating Tress's type checker (Simulated)
 let score = 95
 
 // Type Error Demo (If statically checked)
@@ -463,8 +463,8 @@ disp("Score:", score)`
   // 1. Template picker change
   templateSelect.addEventListener('change', () => {
     const selected = templateSelect.value;
-    if (TRAC_TEMPLATES[selected]) {
-      codeTextarea.value = TRAC_TEMPLATES[selected];
+    if (TRESS_TEMPLATES[selected]) {
+      codeTextarea.value = TRESS_TEMPLATES[selected];
     }
   });
 
@@ -475,7 +475,7 @@ disp("Score:", score)`
     });
   }
 
-  // 3. Run Trac script
+  // 3. Run Tress script
   runBtn.addEventListener('click', () => {
     const code = codeTextarea.value;
     outputConsole.textContent = '';
@@ -486,8 +486,8 @@ disp("Score:", score)`
     };
 
     // Run custom Javascript-based interpreter
-    if (typeof window.runTracCode === 'function') {
-      const res = window.runTracCode(code, logOutput);
+    if (typeof window.runTressCode === 'function') {
+      const res = window.runTressCode(code, logOutput);
       
       if (res.success) {
         if (logs.length === 0) {
@@ -504,7 +504,7 @@ disp("Score:", score)`
         outputConsole.innerHTML += `<span style="color:#EF4444">${res.error}</span>`;
       }
     } else {
-      outputConsole.textContent = 'Error: Trac interpreter engine (trac.js) failed to load.';
+      outputConsole.textContent = 'Error: Tress interpreter engine (tress.js) failed to load.';
     }
   });
 })();
