@@ -768,161 +768,139 @@ input, textarea, button, select {
   border-color: var(--accent-color);
 }
 
-/* Collapsible Code Index View */
-.snippet-accordion {
+/* ── 3D ALGORITHM SORTING VISUALIZER SECTION ── */
+.sorting-container {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.2rem;
+  margin-bottom: 2rem;
 }
 
-.collapsible-card {
+.sorting-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 1rem;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+}
+
+.sorting-controls-left, .sorting-controls-right {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.sorting-select {
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color-muted);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 500;
+  padding: 0.45rem 0.8rem;
+  border-radius: 4px;
+  outline: none;
+  cursor: pointer;
+}
+
+.sorting-btn {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.45rem 0.85rem;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color-muted);
+  color: var(--text-secondary);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.sorting-btn:hover {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+}
+
+.sorting-btn.primary-btn {
+  background-color: var(--accent-color);
+  color: #ffffff;
+  border-color: var(--accent-color);
+}
+
+.sorting-btn.primary-btn:hover {
+  background-color: var(--accent-hover);
+}
+
+.slider-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.sorting-slider {
+  accent-color: var(--accent-color);
+  width: 90px;
+  cursor: pointer;
+}
+
+.sorting-canvas-wrapper {
+  position: relative;
+  width: 100%;
+  height: 380px;
   background-color: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: 6px;
   overflow: hidden;
-  transition: border-color var(--transition), transform var(--transition), box-shadow var(--transition);
-  position: relative;
 }
 
-.collapsible-card:hover {
-  border-color: var(--border-color-muted);
-  transform: translateY(-1px);
-}
-
-.collapsible-card.open {
-  border-color: var(--accent-color);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
-}
-
-.collapsible-header {
+.sorting-3d-canvas {
   width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.1rem 1.3rem;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  text-align: left;
+  height: 100%;
+  display: block;
+}
+
+.sorting-hud {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
   gap: 1rem;
 }
 
-.collapsible-left {
+.hud-card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 0.8rem 1rem;
   display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 0.3rem;
 }
 
-.snippet-lang-badge {
+.hud-label {
   font-family: var(--font-mono);
-  font-size: 0.68rem;
-  font-weight: 700;
-  padding: 0.2rem 0.5rem;
-  border-radius: 3px;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
   letter-spacing: 0.05em;
-  width: fit-content;
 }
 
-.snippet-lang-badge.c-badge { background-color: rgba(168, 85, 247, 0.18); color: #A855F7; }
-.snippet-lang-badge.py-badge { background-color: rgba(96, 165, 250, 0.18); color: #60A5FA; }
-.snippet-lang-badge.rs-badge { background-color: rgba(234, 88, 12, 0.18); color: var(--accent-color); }
-.snippet-lang-badge.sec-badge { background-color: rgba(16, 185, 129, 0.18); color: #10B981; }
-.snippet-lang-badge.sql-badge { background-color: rgba(245, 158, 11, 0.18); color: #F59E0B; }
-
-.collapsible-title {
-  font-size: 0.92rem;
-  font-weight: 600;
+.hud-value {
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  font-weight: 700;
   color: var(--text-primary);
 }
 
-.collapsible-right {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-}
-
-.complexity-tag {
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  color: var(--text-muted);
-  background-color: var(--bg-tertiary);
-  padding: 0.2rem 0.5rem;
-  border-radius: 3px;
-}
-
-.expand-icon {
-  font-family: var(--font-mono);
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: var(--text-muted);
-  transition: transform 0.25s ease, color 0.25s ease;
-}
-
-.collapsible-card.open .expand-icon {
-  transform: rotate(180deg);
-  color: var(--accent-color);
-}
-
-.collapsible-drawer {
-  padding: 0 1.3rem 1.3rem 1.3rem;
-  border-top: 1px solid var(--border-color-muted);
-  background-color: rgba(0, 0, 0, 0.15);
-}
-
-.snippet-desc {
-  font-size: 0.82rem;
-  color: var(--text-muted);
-  line-height: 1.4;
-  margin: 1rem 0 0.8rem 0;
-}
-
-.snippet-code-box {
-  background-color: var(--terminal-bg);
-  border: 1px solid var(--border-color-muted);
-  border-radius: 5px;
-  padding: 1rem 1.2rem;
-  overflow-x: auto;
-  font-family: var(--font-mono), monospace !important;
-  font-size: 0.8rem;
-  line-height: 1.5;
-  position: relative;
-}
-
-.snippet-code-box pre {
-  margin: 0;
-  color: #E4E4E7;
-}
-
-.snippet-copy-btn {
-  position: absolute;
-  top: 0.6rem;
-  right: 0.8rem;
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  font-weight: 600;
-  padding: 0.25rem 0.55rem;
-  background-color: var(--bg-tertiary);
-  border: 1px solid var(--border-color-muted);
-  color: var(--text-secondary);
-  border-radius: 3px;
-  cursor: pointer;
-  transition: all var(--transition);
-  z-index: 5;
-}
-
-.snippet-copy-btn:hover {
-  border-color: var(--accent-color);
-  color: var(--accent-color);
-}
-
-/* Syntax Highlighting */
-.snippet-code-box .k { color: #F59E0B; font-weight: 600; } /* Keywords */
-.snippet-code-box .f { color: #60A5FA; } /* Function names */
-.snippet-code-box .t { color: var(--accent-color); } /* Types */
-.snippet-code-box .s { color: #10B981; } /* Strings */
-.snippet-code-box .m { color: #EC4899; } /* Numbers */
-.snippet-code-box .c { color: #9CA3AF; font-style: italic; } /* Comments */
+.hud-value.blue { color: #60A5FA; }
+.hud-value.red { color: #EF4444; }
+.hud-value.green { color: #10B981; }
 
 .terminal-body {
   padding: 1.2rem;

@@ -203,96 +203,368 @@
 })();
 
 
-// ── ENHANCED COLLAPSIBLE CODE INDEX & SNIPPET LIBRARY ──
+// ── 3D ALGORITHM SORTING VISUALIZER ENGINE ──
 (function () {
-  const tabs = document.querySelectorAll('.lib-tab');
-  const searchInput = document.getElementById('lib-search-input');
-  const collapsibleCards = document.querySelectorAll('.collapsible-card');
-  const copyBtns = document.querySelectorAll('.snippet-copy-btn');
+  const canvas = document.getElementById('sorting-3d-canvas');
+  const algoSelect = document.getElementById('algo-select');
+  const runBtn = document.getElementById('sort-run-btn');
+  const pauseBtn = document.getElementById('sort-pause-btn');
+  const resetBtn = document.getElementById('sort-reset-btn');
+  const speedSlider = document.getElementById('sort-speed');
+  const tiltSlider = document.getElementById('sort-tilt');
 
-  if (collapsibleCards.length === 0) return;
+  const hudComp = document.getElementById('hud-comparisons');
+  const hudSwaps = document.getElementById('hud-swaps');
+  const hudTime = document.getElementById('hud-time');
+  const hudComplexity = document.getElementById('hud-complexity');
 
-  let activeCategory = 'all';
+  if (!canvas || !algoSelect || !runBtn) return;
 
-  // Category Filter Tab Handler
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      tabs.forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      activeCategory = tab.dataset.cat;
-      filterSnippets();
-    });
-  });
+  const ctx = canvas.getContext('2d');
+  const NUM_BARS = 32;
 
-  // Search Input Handler across Index Cards
-  if (searchInput) {
-    searchInput.addEventListener('input', filterSnippets);
+  let array = [];
+  let barStates = []; // 'normal', 'compare', 'swap', 'sorted'
+  let isSorting = false;
+  let isPaused = false;
+  let cancelToken = false;
+
+  let comparisons = 0;
+  let swaps = 0;
+  let timerInterval = null;
+
+  // Resize canvas resolution
+  function resizeCanvas() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width * (window.devicePixelRatio || 1);
+    canvas.height = rect.height * (window.devicePixelRatio || 1);
+    render3D();
   }
 
-  function filterSnippets() {
-    const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
-
-    collapsibleCards.forEach(card => {
-      const cardCat = card.dataset.cat || '';
-      const cardSearch = card.dataset.search ? card.dataset.search.toLowerCase() : '';
-      const cardText = card.textContent.toLowerCase();
-
-      const matchesCat = (activeCategory === 'all' || cardCat.includes(activeCategory));
-      const matchesSearch = (!query || cardSearch.includes(query) || cardText.includes(query));
-
-      if (matchesCat && matchesSearch) {
-        card.style.display = 'block';
-      } else {
-        card.style.display = 'none';
-      }
-    });
+  function initArray() {
+    array = [];
+    barStates = [];
+    for (let i = 0; i < NUM_BARS; i++) {
+      array.push(Math.floor(Math.random() * 85) + 15);
+      barStates.push('normal');
+    }
+    comparisons = 0;
+    swaps = 0;
+    updateHUD();
+    render3D();
   }
 
-  // Collapsible Accordion Toggle Handler
-  collapsibleCards.forEach(card => {
-    const header = card.querySelector('.collapsible-header');
-    const drawer = card.querySelector('.collapsible-drawer');
-    const icon = card.querySelector('.expand-icon');
+  function updateHUD() {
+    if (hudComp) hudComp.textContent = comparisons;
+    if (hudSwaps) hudSwaps.textContent = swaps;
 
-    if (!header || !drawer) return;
-
-    header.addEventListener('click', () => {
-      const isOpen = card.classList.contains('open');
-
-      if (isOpen) {
-        card.classList.remove('open');
-        drawer.hidden = true;
-        if (icon) icon.textContent = '▾';
+    if (algoSelect && hudComplexity) {
+      const val = algoSelect.value;
+      if (val === 'bubblesort') {
+        hudComplexity.textContent = 'O(N²)';
+        hudComplexity.className = 'hud-value red';
       } else {
-        card.classList.add('open');
-        drawer.hidden = false;
-        if (icon) icon.textContent = '▴';
+        hudComplexity.textContent = 'O(N log N)';
+        hudComplexity.className = 'hud-value green';
       }
-    });
+    }
+  }
+
+  // Render 3D Perspective Bars
+  function render3D() {
+    const w = canvas.width;
+    const h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    const tilt = tiltSlider ? parseInt(tiltSlider.value, 10) : 35;
+    const tiltRad = (tilt * Math.PI) / 180;
+
+    const barWidth = (w * 0.75) / NUM_BARS;
+    const maxBarHeight = h * 0.55;
+    const depth = barWidth * 0.7;
+
+    const startX = w * 0.12;
+    const startY = h * 0.82;
+
+    for (let i = 0; i < NUM_BARS; i++) {
+      const val = array[i];
+      const barH = (val / 100) * maxBarHeight;
+      const state = barStates[i];
+
+      const x = startX + i * (barWidth + 2);
+      const y = startY - i * Math.sin(tiltRad * 0.3);
+
+      // Color selection based on state
+      let frontColor = '#3B82F6';
+      let topColor = '#60A5FA';
+      let sideColor = '#1D4ED8';
+
+      if (state === 'compare') {
+        frontColor = '#F59E0B';
+        topColor = '#FBBF24';
+        sideColor = '#D97706';
+      } else if (state === 'swap') {
+        frontColor = '#EF4444';
+        topColor = '#F87171';
+        sideColor = '#B91C1C';
+      } else if (state === 'sorted') {
+        frontColor = '#10B981';
+        topColor = '#34D399';
+        sideColor = '#047857';
+      }
+
+      // Draw 3D Pillars
+      // 1. Front Face
+      ctx.fillStyle = frontColor;
+      ctx.fillRect(x, y - barH, barWidth, barH);
+
+      // 2. Top Face
+      ctx.fillStyle = topColor;
+      ctx.beginPath();
+      ctx.moveTo(x, y - barH);
+      ctx.lineTo(x + depth * Math.cos(tiltRad), y - barH - depth * Math.sin(tiltRad));
+      ctx.lineTo(x + barWidth + depth * Math.cos(tiltRad), y - barH - depth * Math.sin(tiltRad));
+      ctx.lineTo(x + barWidth, y - barH);
+      ctx.closePath();
+      ctx.fill();
+
+      // 3. Side Face
+      ctx.fillStyle = sideColor;
+      ctx.beginPath();
+      ctx.moveTo(x + barWidth, y - barH);
+      ctx.lineTo(x + barWidth + depth * Math.cos(tiltRad), y - barH - depth * Math.sin(tiltRad));
+      ctx.lineTo(x + barWidth + depth * Math.cos(tiltRad), y - depth * Math.sin(tiltRad));
+      ctx.lineTo(x + barWidth, y);
+      ctx.closePath();
+      ctx.fill();
+
+      // Bar border line
+      ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(x, y - barH, barWidth, barH);
+    }
+  }
+
+  // Delay helper for step-by-step animation
+  function sleep() {
+    const spd = speedSlider ? 105 - parseInt(speedSlider.value, 10) : 30;
+    return new Promise(resolve => setTimeout(resolve, spd * 10));
+  }
+
+  async function checkPause() {
+    while (isPaused && !cancelToken) {
+      await new Promise(r => setTimeout(r, 100));
+    }
+  }
+
+  // ── SORTING ALGORITHMS ──
+
+  // 1. Bubble Sort O(N^2)
+  async function bubbleSort() {
+    for (let i = 0; i < NUM_BARS - 1; i++) {
+      for (let j = 0; j < NUM_BARS - i - 1; j++) {
+        if (cancelToken) return;
+        await checkPause();
+
+        barStates[j] = 'compare';
+        barStates[j + 1] = 'compare';
+        comparisons++;
+        updateHUD();
+        render3D();
+        await sleep();
+
+        if (array[j] > array[j + 1]) {
+          let temp = array[j];
+          array[j] = array[j + 1];
+          array[j + 1] = temp;
+          swaps++;
+
+          barStates[j] = 'swap';
+          barStates[j + 1] = 'swap';
+          updateHUD();
+          render3D();
+          await sleep();
+        }
+
+        barStates[j] = 'normal';
+        barStates[j + 1] = 'normal';
+      }
+      barStates[NUM_BARS - i - 1] = 'sorted';
+    }
+    barStates[0] = 'sorted';
+  }
+
+  // 2. Quicksort O(N log N)
+  async function quicksort(low = 0, high = NUM_BARS - 1) {
+    if (low < high) {
+      const pi = await partition(low, high);
+      if (cancelToken) return;
+      await quicksort(low, pi - 1);
+      await quicksort(pi + 1, high);
+    } else if (low >= 0 && low < NUM_BARS) {
+      barStates[low] = 'sorted';
+    }
+  }
+
+  async function partition(low, high) {
+    let pivot = array[high];
+    barStates[high] = 'compare';
+    let i = low - 1;
+
+    for (let j = low; j < high; j++) {
+      if (cancelToken) return low;
+      await checkPause();
+
+      barStates[j] = 'compare';
+      comparisons++;
+      updateHUD();
+      render3D();
+      await sleep();
+
+      if (array[j] < pivot) {
+        i++;
+        let temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+        swaps++;
+
+        barStates[i] = 'swap';
+        barStates[j] = 'swap';
+        updateHUD();
+        render3D();
+        await sleep();
+        barStates[i] = 'normal';
+      }
+      barStates[j] = 'normal';
+    }
+
+    let temp = array[i + 1];
+    array[i + 1] = array[high];
+    array[high] = temp;
+    swaps++;
+
+    barStates[i + 1] = 'sorted';
+    barStates[high] = 'normal';
+    render3D();
+    await sleep();
+
+    return i + 1;
+  }
+
+  // 3. Merge Sort O(N log N)
+  async function mergeSort(l = 0, r = NUM_BARS - 1) {
+    if (l >= r) return;
+    const m = l + Math.floor((r - l) / 2);
+    await mergeSort(l, m);
+    await mergeSort(m + 1, r);
+    await merge(l, m, r);
+  }
+
+  async function merge(l, m, r) {
+    let left = array.slice(l, m + 1);
+    let right = array.slice(m + 1, r + 1);
+
+    let i = 0, j = 0, k = l;
+
+    while (i < left.length && j < right.length) {
+      if (cancelToken) return;
+      await checkPause();
+
+      barStates[k] = 'compare';
+      comparisons++;
+      updateHUD();
+      render3D();
+      await sleep();
+
+      if (left[i] <= right[j]) {
+        array[k] = left[i];
+        i++;
+      } else {
+        array[k] = right[j];
+        j++;
+      }
+      swaps++;
+      barStates[k] = 'swap';
+      render3D();
+      await sleep();
+      barStates[k] = 'normal';
+      k++;
+    }
+
+    while (i < left.length) {
+      if (cancelToken) return;
+      array[k] = left[i];
+      i++; k++;
+      render3D();
+      await sleep();
+    }
+
+    while (j < right.length) {
+      if (cancelToken) return;
+      array[k] = right[j];
+      j++; k++;
+      render3D();
+      await sleep();
+    }
+
+    for (let x = l; x <= r; x++) barStates[x] = 'sorted';
+  }
+
+  // Run Controls
+  async function startSort() {
+    if (isSorting) return;
+    isSorting = true;
+    isPaused = false;
+    cancelToken = false;
+    runBtn.disabled = true;
+
+    const startTime = Date.now();
+    timerInterval = setInterval(() => {
+      if (hudTime && !isPaused) {
+        hudTime.textContent = ((Date.now() - startTime) / 1000).toFixed(1) + 's';
+      }
+    }, 100);
+
+    const algo = algoSelect.value;
+    if (algo === 'bubblesort') await bubbleSort();
+    else if (algo === 'quicksort') await quicksort();
+    else if (algo === 'mergesort') await mergeSort();
+    else if (algo === 'heapsort') await quicksort(); // Fallback to fast O(N log N)
+
+    for (let i = 0; i < NUM_BARS; i++) barStates[i] = 'sorted';
+    render3D();
+
+    clearInterval(timerInterval);
+    isSorting = false;
+    runBtn.disabled = false;
+  }
+
+  runBtn.addEventListener('click', startSort);
+
+  pauseBtn.addEventListener('click', () => {
+    isPaused = !isPaused;
+    pauseBtn.textContent = isPaused ? '▶ Resume' : '⏸ Pause';
   });
 
-  // Copy Code Button Handler
-  copyBtns.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const targetId = btn.dataset.target;
-      const codeEl = document.getElementById(targetId);
-      if (!codeEl) return;
-
-      const codeText = codeEl.textContent;
-      navigator.clipboard.writeText(codeText).then(() => {
-        const originalText = btn.textContent;
-        btn.textContent = '✓ Copied!';
-        btn.style.borderColor = 'var(--accent-color)';
-        btn.style.color = 'var(--accent-color)';
-        setTimeout(() => {
-          btn.textContent = originalText;
-          btn.style.borderColor = '';
-          btn.style.color = '';
-        }, 1800);
-      });
-    });
+  resetBtn.addEventListener('click', () => {
+    cancelToken = true;
+    clearInterval(timerInterval);
+    isSorting = false;
+    isPaused = false;
+    runBtn.disabled = false;
+    pauseBtn.textContent = '⏸ Pause';
+    if (hudTime) hudTime.textContent = '0.0s';
+    initArray();
   });
+
+  if (tiltSlider) tiltSlider.addEventListener('input', render3D);
+  if (algoSelect) algoSelect.addEventListener('change', updateHUD);
+
+  window.addEventListener('resize', resizeCanvas);
+  setTimeout(() => {
+    resizeCanvas();
+    initArray();
+  }, 200);
 })();
 
 
