@@ -203,217 +203,208 @@
 })();
 
 
-// ── REST API PLAYGROUND CONSOLE ──
+// ── SYSTEM ARCHITECTURE VISUALIZER ──
 (function () {
-  const apiBaseInput = document.getElementById('api-base-url');
-  const endpointBtns = document.querySelectorAll('.api-endpoint-btn');
-  const endpointDesc = document.getElementById('endpoint-description');
-  const fieldIdWrapper = document.getElementById('field-id-wrapper');
-  const fieldBodyWrapper = document.getElementById('field-body-wrapper');
-  const inputId = document.getElementById('endpoint-id');
-  const inputBody = document.getElementById('endpoint-body');
-  const submitBtn = document.getElementById('api-submit-btn');
-  const terminalStatus = document.getElementById('terminal-status');
-  const terminalOutput = document.getElementById('terminal-output');
-  const copyBtn = document.getElementById('api-copy-btn');
-  const statusIndicator = document.querySelector('.status-indicator-light');
+  const scenarioBtns = document.querySelectorAll('.arch-scenario-btn');
+  const triggerBtn = document.getElementById('arch-trigger-btn');
+  const statusBadge = document.getElementById('arch-packet-status');
+  const logStream = document.getElementById('arch-log-stream');
+  const payloadViewer = document.getElementById('arch-payload-viewer');
 
-  if (endpointBtns.length === 0) return;
+  if (scenarioBtns.length === 0 || !triggerBtn) return;
 
-  let activeEndpoint = endpointBtns[0];
+  let activeScenario = 'cache-hit';
+  let isSimulating = false;
 
-  // 1. Initial State Load
-  updateConsoleConfig(activeEndpoint);
-  checkApiHealth();
+  const scenariosData = {
+    'cache-hit': {
+      method: 'GET',
+      path: '/api/v1/users/active',
+      desc: 'GET request with Redis cache hit (4ms total latency)',
+      nodes: ['client', 'gateway', 'cache'],
+      steps: [
+        { node: 'client', status: 'Sending GET /api/v1/users/active', delay: 300 },
+        { node: 'gateway', status: 'JWT Verified & Rate Limit Pass', delay: 400 },
+        { node: 'cache', status: 'Cache Hit (Key: users:active)', delay: 400 }
+      ],
+      resultStatus: '200 OK (Cache Hit)',
+      resultClass: 'success',
+      payload: {
+        status: 200,
+        cache: 'HIT',
+        ttl: 298,
+        latency_ms: 4,
+        data: [
+          { id: 101, username: 'vissarut_p', role: 'admin' },
+          { id: 102, username: 'dev_ben', role: 'engineer' }
+        ]
+      }
+    },
+    'cache-miss': {
+      method: 'GET',
+      path: '/api/v1/analytics/daily',
+      desc: 'GET request with Cache Miss -> App Server -> Postgres DB -> Cache Populate',
+      nodes: ['client', 'gateway', 'cache', 'server', 'db'],
+      steps: [
+        { node: 'client', status: 'Sending GET /api/v1/analytics/daily', delay: 300 },
+        { node: 'gateway', status: 'JWT Auth OK -> Proxy to Cache', delay: 350 },
+        { node: 'cache', status: 'Cache Miss (Key: analytics:daily)', delay: 350 },
+        { node: 'server', status: 'Forward Query to App Server', delay: 400 },
+        { node: 'db', status: 'Execute Index Scan on PostgreSQL', delay: 500 },
+        { node: 'server', status: 'Write Payload Back to Redis Cache', delay: 300 }
+      ],
+      resultStatus: '200 OK (Cache Miss)',
+      resultClass: 'success',
+      payload: {
+        status: 200,
+        cache: 'MISS',
+        latency_ms: 45,
+        db_query_ms: 38,
+        data: {
+          total_requests: 14820,
+          p95_latency: '12ms',
+          uptime: '99.98%'
+        }
+      }
+    },
+    'db-write': {
+      method: 'POST',
+      path: '/api/v1/orders/new',
+      desc: 'POST request -> Write DB Transaction -> Invalidate Stale Cache',
+      nodes: ['client', 'gateway', 'server', 'db', 'cache'],
+      steps: [
+        { node: 'client', status: 'Sending POST /api/v1/orders/new', delay: 300 },
+        { node: 'gateway', status: 'Rate Limit OK -> Pass to App Server', delay: 400 },
+        { node: 'server', status: 'Validate Payload -> Begin DB Tx', delay: 400 },
+        { node: 'db', status: 'INSERT into PostgreSQL orders table', delay: 600 },
+        { node: 'cache', status: 'Evict Stale Cache (DEL orders:*)', delay: 400 }
+      ],
+      resultStatus: '201 Created',
+      resultClass: 'success',
+      payload: {
+        status: 201,
+        message: 'Order created successfully',
+        order_id: 'ord_984210',
+        cache_invalidated: true,
+        latency_ms: 68
+      }
+    },
+    'rate-limit': {
+      method: 'GET',
+      path: '/api/v1/sensitive/data',
+      desc: 'Exceeded Token Bucket Rate Limit at API Gateway',
+      nodes: ['client', 'gateway'],
+      steps: [
+        { node: 'client', status: 'Sending Burst GET Requests...', delay: 300 },
+        { node: 'gateway', status: 'Token Bucket Empty! Rate Limit Exceeded', delay: 500 }
+      ],
+      resultStatus: '429 Too Many Requests',
+      resultClass: 'error',
+      payload: {
+        status: 429,
+        error: 'Too Many Requests',
+        message: 'Rate limit exceeded: Max 100 req/min',
+        retry_after_sec: 42
+      }
+    }
+  };
 
-  // 2. Select Endpoint Click Handlers
-  endpointBtns.forEach(btn => {
+  // Scenario Selector Handler
+  scenarioBtns.forEach(btn => {
     btn.addEventListener('click', () => {
-      endpointBtns.forEach(b => {
-        b.classList.remove('active');
-        b.setAttribute('aria-selected', 'false');
-      });
-
+      if (isSimulating) return;
+      scenarioBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      btn.setAttribute('aria-selected', 'true');
-      activeEndpoint = btn;
-
-      updateConsoleConfig(btn);
+      activeScenario = btn.dataset.scenario;
+      appendLog('info', `[Scenario Selected] ${scenariosData[activeScenario].desc}`);
     });
   });
 
-  // 3. Update Form Config depending on endpoint dataset
-  function updateConsoleConfig(btn) {
-    const desc = btn.dataset.desc;
-    const needsId = btn.dataset.needsId === 'true';
-    const needsBody = btn.dataset.needsBody === 'true';
-    const bodyTemplate = btn.dataset.bodyTemplate || '';
+  // Simulation Trigger Handler
+  triggerBtn.addEventListener('click', async () => {
+    if (isSimulating) return;
+    isSimulating = true;
+    triggerBtn.disabled = true;
+    triggerBtn.innerHTML = '<span>⏳</span> ROUTING PACKET...';
 
-    // Description text update
-    endpointDesc.textContent = desc;
+    const scenario = scenariosData[activeScenario];
+    statusBadge.textContent = 'Status: Routing...';
+    statusBadge.className = 'status-code idle';
+    payloadViewer.textContent = '// Simulating packet flow through architecture...';
 
-    // Toggle Path Parameter {id} input field
-    fieldIdWrapper.hidden = !needsId;
+    clearAllNodeStates();
+    appendLog('info', `--- Starting Scenario: ${scenario.method} ${scenario.path} ---`);
 
-    // Toggle JSON Body textarea
-    fieldBodyWrapper.hidden = !needsBody;
-    if (needsBody) {
-      // Format template body JSON
-      try {
-        const parsed = JSON.parse(bodyTemplate);
-        inputBody.value = JSON.stringify(parsed, null, 2);
-      } catch (e) {
-        inputBody.value = bodyTemplate;
-      }
-    }
-  }
+    for (let i = 0; i < scenario.steps.length; i++) {
+      const step = scenario.steps[i];
+      const nodeEl = document.getElementById(`node-${step.node}`);
+      const badgeEl = nodeEl.querySelector('.node-status-badge');
 
-  // 4. Test API Health on load
-  async function checkApiHealth() {
-    const baseUrl = apiBaseInput.value.trim().replace(/\/$/, '');
-    try {
-      // Test request to wake up Render instance (GET /snip/)
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 6000); // 6s timeout for wake up test
-      
-      const res = await fetch(`${baseUrl}/snip/`, {
-        method: 'GET',
-        signal: controller.signal
-      });
-      clearTimeout(timeoutId);
+      // Highlight active node
+      setNodeState(nodeEl, badgeEl, 'processing', 'Processing');
+      appendLog('step', `[${getNodeLabel(step.node)}] ${step.status}`);
 
-      if (res.ok) {
-        statusIndicator.classList.add('live');
-        statusIndicator.title = 'API Status: Active';
+      await sleep(step.delay);
+
+      if (i < scenario.steps.length - 1) {
+        setNodeState(nodeEl, badgeEl, 'success', 'Done');
       } else {
-        statusIndicator.classList.remove('live');
-        statusIndicator.title = 'API Status: Offline';
+        const finalClass = scenario.resultClass === 'error' ? 'error' : 'success';
+        setNodeState(nodeEl, badgeEl, finalClass, finalClass.toUpperCase());
       }
-    } catch (err) {
-      statusIndicator.classList.remove('live');
-      statusIndicator.title = 'API Status: Offline';
-    }
-  }
-
-  // 5. Submit Query handler
-  submitBtn.addEventListener('click', async () => {
-    const method = activeEndpoint.dataset.method;
-    let path = activeEndpoint.dataset.path;
-    const needsId = activeEndpoint.dataset.needsId === 'true';
-    const needsBody = activeEndpoint.dataset.needsBody === 'true';
-    const baseUrl = apiBaseInput.value.trim().replace(/\/$/, '');
-    
-    // Replace URL parameters
-    if (needsId) {
-      const idVal = inputId.value.trim();
-      if (!idVal) {
-        showResponse('error', 'Client Error', 'Error: {id} path parameter is required.');
-        return;
-      }
-      path = path.replace('{id}', idVal);
     }
 
-    const requestUrl = baseUrl + path;
-    const originalText = submitBtn.innerHTML;
+    statusBadge.textContent = `Status: ${scenario.resultStatus}`;
+    statusBadge.className = `status-code ${scenario.resultClass}`;
+    payloadViewer.textContent = JSON.stringify(scenario.payload, null, 2);
+    appendLog(scenario.resultClass === 'error' ? 'error' : 'success', `[Complete] ${scenario.resultStatus}`);
 
-    // Set Loading state
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<span>⏳</span> SENDING...';
-    terminalStatus.textContent = 'Sending...';
-    terminalStatus.className = 'status-code idle';
-    terminalOutput.textContent = `// Connecting to ${requestUrl}...`;
-    copyBtn.disabled = true;
-
-    try {
-      const options = {
-        method: method,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        }
-      };
-
-      if (needsBody) {
-        const bodyContent = inputBody.value.trim();
-        // Validate JSON
-        try {
-          JSON.parse(bodyContent);
-          options.body = bodyContent;
-        } catch (jsonErr) {
-          submitBtn.disabled = false;
-          submitBtn.innerHTML = originalText;
-          showResponse('error', '400 Bad Request', `Client Error: Invalid JSON input.\n${jsonErr.message}`);
-          return;
-        }
-      }
-
-      const res = await fetch(requestUrl, options);
-      const text = await res.text();
-      let formattedBody;
-
-      try {
-        const json = JSON.parse(text);
-        formattedBody = JSON.stringify(json, null, 2);
-      } catch (e) {
-        formattedBody = text; // Display plain text if not JSON
-      }
-
-      const statusText = `${res.status} ${res.statusText || getHttpStatusText(res.status)}`;
-      const statusClass = res.ok ? 'success' : 'error';
-      
-      showResponse(statusClass, statusText, formattedBody);
-
-      // If successful, ensure indicator is green
-      if (res.ok) {
-        statusIndicator.classList.add('live');
-      }
-
-    } catch (fetchErr) {
-      showResponse('error', 'Fetch Failed', `Network Error: Could not connect to API server.\n- Check if the Base URL is correct.\n- Ensure the Render instance is online (it may take 1-2 minutes to spin up from sleep).\n\nDetails: ${fetchErr.message}`);
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = originalText;
-    }
+    triggerBtn.disabled = false;
+    triggerBtn.innerHTML = '<span>▶</span> SIMULATE REQUEST PACKET';
+    isSimulating = false;
   });
 
-  function showResponse(statusClass, statusText, responseBody) {
-    terminalStatus.textContent = statusText;
-    terminalStatus.className = `status-code ${statusClass}`;
-    terminalOutput.textContent = responseBody;
-    copyBtn.disabled = false;
-    copyBtn.textContent = 'Copy';
-  }
-
-  // Copy to Clipboard
-  copyBtn.addEventListener('click', () => {
-    if (copyBtn.disabled) return;
-    navigator.clipboard.writeText(terminalOutput.textContent).then(() => {
-      copyBtn.textContent = 'Copied!';
-      setTimeout(() => {
-        copyBtn.textContent = 'Copy';
-      }, 1500);
-    }).catch(err => {
-      console.error('Failed to copy text: ', err);
+  function clearAllNodeStates() {
+    document.querySelectorAll('.arch-node-card').forEach(card => {
+      card.classList.remove('active', 'active-success', 'active-error');
+      const badge = card.querySelector('.node-status-badge');
+      badge.textContent = 'Idle';
+      badge.className = 'node-status-badge';
     });
-  });
+  }
 
-  // Helper function to return standard HTTP status strings if statusText is missing
-  function getHttpStatusText(code) {
-    const statuses = {
-      200: 'OK',
-      201: 'Created',
-      202: 'Accepted',
-      204: 'No Content',
-      400: 'Bad Request',
-      401: 'Unauthorized',
-      403: 'Forbidden',
-      404: 'Not Found',
-      422: 'Unprocessable Entity',
-      500: 'Internal Server Error',
-      502: 'Bad Gateway',
-      503: 'Service Unavailable'
+  function setNodeState(cardEl, badgeEl, stateClass, labelText) {
+    cardEl.classList.remove('active', 'active-success', 'active-error');
+    if (stateClass === 'processing') cardEl.classList.add('active');
+    else if (stateClass === 'success') cardEl.classList.add('active-success');
+    else if (stateClass === 'error') cardEl.classList.add('active-error');
+
+    badgeEl.textContent = labelText;
+    badgeEl.className = `node-status-badge ${stateClass}`;
+  }
+
+  function getNodeLabel(nodeId) {
+    const labels = {
+      client: 'Client App',
+      gateway: 'API Gateway',
+      cache: 'Redis Cache',
+      server: 'App Server',
+      db: 'PostgreSQL DB'
     };
-    return statuses[code] || 'Unknown';
+    return labels[nodeId] || nodeId;
+  }
+
+  function appendLog(type, text) {
+    const line = document.createElement('div');
+    line.className = `log-line ${type}`;
+    const timestamp = new Date().toISOString().split('T')[1].slice(0, 8);
+    line.textContent = `[${timestamp}] ${text}`;
+    logStream.appendChild(line);
+    logStream.scrollTop = logStream.scrollHeight;
+  }
+
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 })();
 

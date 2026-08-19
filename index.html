@@ -41,7 +41,7 @@
         <a href="#info" class="nav-link">Info</a>
         <a href="#resume" class="nav-link">Resume</a>
         <a href="#projects" class="nav-link">Projects</a>
-        <a href="#api" class="nav-link">API Console</a>
+        <a href="#architecture" class="nav-link">Architecture</a>
         <a href="#playground" class="nav-link">Playground</a>
         <a href="#contact" class="nav-link">Contact</a>
       </nav>
@@ -617,113 +617,110 @@
         </div>
       </section>
 
-      <!-- API PLAYGROUND SECTION -->
-      <section id="api" class="portfolio-section">
-        <h2 class="section-title">API Console</h2>
-        <p class="api-intro">
-          Test my active REST API (Snippet Manager) below. Configure the endpoints, input custom query values, and
-          trigger live requests to the Render-hosted database server.
+      <!-- SYSTEM ARCHITECTURE VISUALIZER SECTION -->
+      <section id="architecture" class="portfolio-section">
+        <h2 class="section-title">System Architecture</h2>
+        <p class="arch-intro">
+          Interactive microservices architecture visualizer. Trigger real-time request scenarios to observe packet routing, API Gateway rate limiting, Redis caching layers, and database transactions.
         </p>
 
-        <div class="api-console-box">
-          <!-- Base URL Input -->
-          <div class="api-base-url-bar">
-            <label for="api-base-url" class="api-console-label">Base URL</label>
-            <div class="api-url-input-wrapper">
-              <input type="text" id="api-base-url" value="https://api.bennnnto.me" spellcheck="false"
-                class="api-url-field" />
-              <span class="status-indicator-light live" title="API Status: Active"></span>
-            </div>
-          </div>
-
-          <div class="api-dashboard-layout">
-            <!-- Left Side: Endpoint Selectors -->
-            <div class="api-endpoints-column" role="tablist" aria-label="REST Endpoints">
-
-              <button class="api-endpoint-btn active" data-method="GET" data-path="/snip/"
-                data-desc="List all snippets currently stored in the database." role="tab" aria-selected="true"
-                id="tab-get-all">
-                <span class="method-badge get">GET</span><span class="path-text">/snip/</span>
+        <div class="arch-container">
+          <!-- Scenario Trigger Controls -->
+          <div class="arch-controls-bar">
+            <span class="arch-controls-label">Scenarios:</span>
+            <div class="arch-scenarios-group">
+              <button class="arch-scenario-btn active" data-scenario="cache-hit">
+                <span class="scenario-badge get">GET</span> Cache Hit (4ms)
               </button>
-
-              <button class="api-endpoint-btn" data-method="GET" data-path="/snip/{id}"
-                data-desc="Fetch details of a single snippet using its integer ID." data-needs-id="true" role="tab"
-                aria-selected="false" id="tab-get-one">
-                <span class="method-badge get">GET</span><span class="path-text">/snip/{id}</span>
+              <button class="arch-scenario-btn" data-scenario="cache-miss">
+                <span class="scenario-badge get">GET</span> Cache Miss (45ms)
               </button>
-
-              <button class="api-endpoint-btn" data-method="POST" data-path="/snip/"
-                data-desc="Create a new code snippet and write it to the database." data-needs-body="true"
-                data-body-template='{"topic": "HTML Styling", "description": "Mistral-inspired styling block", "code": ".card {\n  border: 1px solid #1c1c1c;\n}"}'
-                role="tab" aria-selected="false" id="tab-post">
-                <span class="method-badge post">POST</span><span class="path-text">/snip/</span>
+              <button class="arch-scenario-btn" data-scenario="db-write">
+                <span class="scenario-badge post">POST</span> Write & Evict (68ms)
               </button>
-
-              <button class="api-endpoint-btn" data-method="PUT" data-path="/snip/{id}"
-                data-desc="Replace the entire content of an existing snippet." data-needs-id="true"
-                data-needs-body="true"
-                data-body-template='{"topic": "Updated Topic", "description": "Replaced snippet entry description", "code": "console.log(\"Updated snippet!\");"}'
-                role="tab" aria-selected="false" id="tab-put">
-                <span class="method-badge put">PUT</span><span class="path-text">/snip/{id}</span>
-              </button>
-
-              <button class="api-endpoint-btn" data-method="PUT" data-path="/snip/{id}/edit"
-                data-desc="Perform a partial search-and-replace modification of snippet code lines."
-                data-needs-id="true" data-needs-body="true"
-                data-body-template='{"old_code": "print(\"hello\")", "new_code": "print(\"hello world\")"}' role="tab"
-                aria-selected="false" id="tab-patch">
-                <span class="method-badge put">PUT</span><span class="path-text">/snip/{id}/edit</span>
-              </button>
-
-              <button class="api-endpoint-btn" data-method="DELETE" data-path="/snip/{id}"
-                data-desc="Remove a snippet permanently from the database table." data-needs-id="true" role="tab"
-                aria-selected="false" id="tab-delete">
-                <span class="method-badge del">DEL</span><span class="path-text">/snip/{id}</span>
-              </button>
-
-            </div>
-
-            <!-- Right Side: Parameters & Run Panel -->
-            <div class="api-config-column">
-              <div class="api-endpoint-details">
-                <p id="endpoint-description" class="endpoint-desc">List all snippets currently stored in the database.
-                </p>
-              </div>
-
-              <!-- Dynamic Fields -->
-              <div class="api-fields-group">
-                <!-- ID input (hidden by default unless endpoint needs ID) -->
-                <div class="api-field-item" id="field-id-wrapper" hidden>
-                  <label for="endpoint-id" class="api-console-label">Path Parameter: <code
-                      class="code-highlight">{id}</code></label>
-                  <input type="number" id="endpoint-id" value="1" min="1" class="api-input-field" />
-                </div>
-
-                <!-- Body input (hidden by default unless endpoint needs body) -->
-                <div class="api-field-item" id="field-body-wrapper" hidden>
-                  <label for="endpoint-body" class="api-console-label">Request Body (JSON)</label>
-                  <textarea id="endpoint-body" rows="6" class="api-textarea-field" spellcheck="false"></textarea>
-                </div>
-              </div>
-
-              <button id="api-submit-btn" class="api-submit-button">
-                <span>▶</span> SEND REQUEST
+              <button class="arch-scenario-btn" data-scenario="rate-limit">
+                <span class="scenario-badge err">429</span> Rate Limited (1ms)
               </button>
             </div>
           </div>
 
-          <!-- Console Terminal Output -->
-          <div class="api-terminal-block">
-            <div class="terminal-header">
-              <span class="terminal-title">RESPONSE VIEWER</span>
-              <button id="api-copy-btn" class="terminal-copy-btn" disabled>Copy</button>
-            </div>
-            <div class="terminal-body">
-              <div class="terminal-status-row">
-                Status: <span id="terminal-status" class="status-code idle">Idle</span>
+          <!-- Architecture Nodes Grid -->
+          <div class="arch-diagram-grid">
+            <!-- Node 1: Client -->
+            <div class="arch-node-card" id="node-client">
+              <div class="arch-node-header">
+                <span class="node-icon">💻</span>
+                <span class="node-name">Client App</span>
               </div>
-              <pre id="terminal-output"
-                class="terminal-output-viewport">// Select an endpoint and click Send Request to see results...</pre>
+              <p class="node-tech">Web / Mobile Client</p>
+              <div class="node-status-badge">Idle</div>
+            </div>
+
+            <!-- Node 2: API Gateway -->
+            <div class="arch-node-card" id="node-gateway">
+              <div class="arch-node-header">
+                <span class="node-icon">🛡️</span>
+                <span class="node-name">API Gateway</span>
+              </div>
+              <p class="node-tech">JWT Auth & Rate Limiter</p>
+              <div class="node-status-badge">Idle</div>
+            </div>
+
+            <!-- Node 3: Redis Cache -->
+            <div class="arch-node-card" id="node-cache">
+              <div class="arch-node-header">
+                <span class="node-icon">⚡</span>
+                <span class="node-name">Redis Cache</span>
+              </div>
+              <p class="node-tech">In-Memory Key-Value Store</p>
+              <div class="node-status-badge">Idle</div>
+            </div>
+
+            <!-- Node 4: Application Server -->
+            <div class="arch-node-card" id="node-server">
+              <div class="arch-node-header">
+                <span class="node-icon">⚙️</span>
+                <span class="node-name">App Server</span>
+              </div>
+              <p class="node-tech">Rust / Python Service</p>
+              <div class="node-status-badge">Idle</div>
+            </div>
+
+            <!-- Node 5: Database -->
+            <div class="arch-node-card" id="node-db">
+              <div class="arch-node-header">
+                <span class="node-icon">🗄️</span>
+                <span class="node-name">PostgreSQL</span>
+              </div>
+              <p class="node-tech">Relational Storage</p>
+              <div class="node-status-badge">Idle</div>
+            </div>
+          </div>
+
+          <!-- Action Button -->
+          <div class="arch-action-bar">
+            <button id="arch-trigger-btn" class="arch-trigger-button">
+              <span>▶</span> SIMULATE REQUEST PACKET
+            </button>
+          </div>
+
+          <!-- Packet Inspector & Log Console -->
+          <div class="arch-inspector-block">
+            <div class="inspector-header">
+              <span class="inspector-title">PACKET & TELEMETRY INSPECTOR</span>
+              <span id="arch-packet-status" class="status-code idle">Status: Ready</span>
+            </div>
+            <div class="inspector-body">
+              <div class="inspector-col logs-col">
+                <div class="inspector-sub-title">System Log Stream</div>
+                <div id="arch-log-stream" class="log-stream-viewport">
+                  <div class="log-line info">[System] Architecture Visualizer initialized. Select a scenario and click Simulate Request Packet.</div>
+                </div>
+              </div>
+              <div class="inspector-col payload-col">
+                <div class="inspector-sub-title">Payload Inspector</div>
+                <pre id="arch-payload-viewer" class="payload-viewport">// Response payload and HTTP headers will render here in real-time...</pre>
+              </div>
             </div>
           </div>
 
