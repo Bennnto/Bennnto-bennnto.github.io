@@ -203,102 +203,72 @@
 })();
 
 
-// ── INTERACTIVE WEB TERMINAL CLI (ben-shell v2.6) ──
+// ── INTERACTIVE CODE INDEX & SNIPPET LIBRARY ──
 (function () {
-  const cliScreen = document.getElementById('cli-screen');
-  const cliInput = document.getElementById('cli-input');
-  const chips = document.querySelectorAll('.cli-chip');
+  const tabs = document.querySelectorAll('.lib-tab');
+  const searchInput = document.getElementById('lib-search-input');
+  const cards = document.querySelectorAll('.snippet-card');
+  const copyBtns = document.querySelectorAll('.snippet-copy-btn');
 
-  if (!cliScreen || !cliInput) return;
+  if (cards.length === 0) return;
 
-  const COMMANDS = {
-    help: `Available Commands:
-  help            - Display this list of terminal commands
-  skills          - Output technical skills table (Languages, DBs, Systems)
-  projects        - List featured projects & GitHub repositories
-  cat resume.txt  - Render resume summary & technical background
-  whoami          - Output developer profile bio
-  status          - Query live system telemetry (Domain, SSL, Uptime)
-  theme           - Toggle site theme (Dark / Light)
-  clear           - Clear terminal buffer screen`,
+  let activeCategory = 'all';
 
-    skills: `Technical Skills & Stack Summary:
-  [Languages]     Python, Rust (Beginner), C#, JavaScript (ES6+), SQL
-  [Databases]     PostgreSQL, Redis (In-Memory Caching), SQLite
-  [Backend/Dev]   REST APIs, Microservices, Async I/O, Docker, Git
-  [Frontend]      HTML5, CSS3 (Vanilla), Next.js, AST Interpreters`,
-
-    projects: `Featured Projects:
-  1. Bennnto-bennnto.github.io (Custom Domain: bennnnto.me)
-     └── Personal engineering portfolio & interactive Tress AST playground.
-  2. Tress Scripting Language
-     └── Statically-typed client-side AST lexer, parser, type checker, & evaluator.
-  3. System Architecture Visualizer
-     └── Microservices packet routing & Redis caching telemetry engine.`,
-
-    'cat resume.txt': `Resume & Developer Profile (Ben - Software Engineer):
-  ├── Specialization: Backend Systems, Rust/Python Tooling, Custom AST Parsers
-  ├── Architecture:   Microservices, Caching Layering, High-Performance I/O
-  ├── Custom Domain:  bennnnto.me (Configured with GitHub Pages A/CNAME Records)
-  └── Contact:        ben@bennnnto.me`,
-
-    whoami: `ben — Software Engineer & Open Source Developer. Focused on Python, Rust, Database Indexing, and clean web architecture.`,
-
-    status: `System Status Telemetry [ben-shell v2.6]:
-  ├── Domain Resolution:  bennnnto.me -> [185.199.108.153 OK]
-  ├── SSL Certificate:    Active (HTTPS TLS v1.3)
-  ├── Host Environment:   GitHub Pages CDN
-  └── Terminal Status:    Operational (0 Errors)`,
-
-    sudo: `[Permission Denied: User 'guest' is not in the sudoers file. This incident will be reported.]`
-  };
-
-  // Command Execution Handler
-  function executeCommand(cmdStr) {
-    const rawCmd = cmdStr.trim();
-    if (!rawCmd) return;
-
-    // Append Prompt Line
-    appendLine('cmd-prompt', `ben@bennnnto.me:~$ ${rawCmd}`);
-
-    const lowerCmd = rawCmd.toLowerCase();
-
-    if (lowerCmd === 'clear') {
-      cliScreen.innerHTML = '';
-    } else if (lowerCmd === 'theme') {
-      const themeBtn = document.getElementById('theme-toggle');
-      if (themeBtn) themeBtn.click();
-      appendLine('success-tag', '[Theme] Site theme toggled successfully.');
-    } else if (COMMANDS[lowerCmd]) {
-      appendLine('output-text', COMMANDS[lowerCmd]);
-    } else {
-      appendLine('error-tag', `command not found: ${rawCmd}. Type 'help' for available commands.`);
-    }
-
-    cliScreen.scrollTop = cliScreen.scrollHeight;
-  }
-
-  function appendLine(className, text) {
-    const line = document.createElement('div');
-    line.className = `cli-line ${className}`;
-    line.textContent = text;
-    cliScreen.appendChild(line);
-  }
-
-  // Input Enter Key Listener
-  cliInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      const val = cliInput.value;
-      cliInput.value = '';
-      executeCommand(val);
-    }
+  // Category Tab Handler
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      activeCategory = tab.dataset.cat;
+      filterSnippets();
+    });
   });
 
-  // Quick Command Chips Listener
-  chips.forEach(chip => {
-    chip.addEventListener('click', () => {
-      const cmd = chip.dataset.cmd;
-      if (cmd) executeCommand(cmd);
+  // Search Input Handler
+  if (searchInput) {
+    searchInput.addEventListener('input', filterSnippets);
+  }
+
+  function filterSnippets() {
+    const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
+    cards.forEach(card => {
+      const cardCat = card.dataset.cat || '';
+      const cardSearch = card.dataset.search ? card.dataset.search.toLowerCase() : '';
+      const cardText = card.textContent.toLowerCase();
+
+      const matchesCat = (activeCategory === 'all' || cardCat.includes(activeCategory));
+      const matchesSearch = (!query || cardSearch.includes(query) || cardText.includes(query));
+
+      if (matchesCat && matchesSearch) {
+        card.style.display = 'flex';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  }
+
+  // Copy Code Button Handler
+  copyBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetId = btn.dataset.target;
+      const codeEl = document.getElementById(targetId);
+      if (!codeEl) return;
+
+      const codeText = codeEl.textContent;
+      navigator.clipboard.writeText(codeText).then(() => {
+        const originalText = btn.textContent;
+        btn.textContent = '✓ Copied!';
+        btn.style.borderColor = 'var(--accent-color)';
+        btn.style.color = 'var(--accent-color)';
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.style.borderColor = '';
+          btn.style.color = '';
+        }, 1800);
+      }).catch(err => {
+        console.error('Failed to copy code: ', err);
+      });
     });
   });
 })();

@@ -20,7 +20,7 @@
     href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
     rel="stylesheet" />
 
-  <link rel="stylesheet" href="style.css?v=8" />
+  <link rel="stylesheet" href="style.css?v=10" />
 </head>
 
 <body>
@@ -41,7 +41,7 @@
         <a href="#info" class="nav-link">Info</a>
         <a href="#resume" class="nav-link">Resume</a>
         <a href="#projects" class="nav-link">Projects</a>
-        <a href="#terminal" class="nav-link">Terminal</a>
+        <a href="#code-library" class="nav-link">Code Library</a>
         <a href="#playground" class="nav-link">Playground</a>
         <a href="#contact" class="nav-link">Contact</a>
       </nav>
@@ -617,45 +617,150 @@
         </div>
       </section>
 
-      <!-- WEB TERMINAL CLI SECTION -->
-      <section id="terminal" class="portfolio-section">
-        <h2 class="section-title">Developer Terminal</h2>
-        <p class="terminal-intro">
-          Interactive UNIX shell (<code>ben-shell v2.6</code>). Type or tap quick commands to query skills, experience, project repositories, and system telemetry.
+      <!-- CODE INDEX & SNIPPET LIBRARY SECTION -->
+      <section id="code-library" class="portfolio-section">
+        <h2 class="section-title">Code Index & Library</h2>
+        <p class="library-intro">
+          Interactive catalog of production-ready code patterns, data structures, concurrency primitives, and utility snippets in <strong>Python</strong>, <strong>Rust</strong>, and <strong>SQL</strong>.
         </p>
 
-        <div class="terminal-box">
-          <!-- Window Header Bar -->
-          <div class="terminal-top-bar">
-            <div class="window-controls">
-              <span class="dot red"></span>
-              <span class="dot yellow"></span>
-              <span class="dot green"></span>
+        <div class="library-container">
+          <!-- Filter & Search Toolbar -->
+          <div class="library-toolbar">
+            <div class="library-categories" role="tablist">
+              <button class="lib-tab active" data-cat="all">All Snippets</button>
+              <button class="lib-tab" data-cat="python">🐍 Python</button>
+              <button class="lib-tab" data-cat="rust">🦀 Rust</button>
+              <button class="lib-tab" data-cat="sql">🗄️ SQL</button>
             </div>
-            <span class="window-title">ben@bennnnto-me: ~ (zsh)</span>
+
+            <div class="library-search-wrapper">
+              <input type="text" id="lib-search-input" class="lib-search-input" placeholder="🔍 Search snippet index..." autocomplete="off" />
+            </div>
           </div>
 
-          <!-- Quick Command Chips for Mobile & Fast Tapping -->
-          <div class="terminal-quick-chips">
-            <span class="quick-chip-label">Quick Commands:</span>
-            <button class="cli-chip" data-cmd="help">help</button>
-            <button class="cli-chip" data-cmd="skills">skills</button>
-            <button class="cli-chip" data-cmd="projects">projects</button>
-            <button class="cli-chip" data-cmd="cat resume.txt">cat resume.txt</button>
-            <button class="cli-chip" data-cmd="status">status</button>
-            <button class="cli-chip" data-cmd="clear">clear</button>
-          </div>
+          <!-- Snippet Cards Grid -->
+          <div id="snippet-grid" class="snippet-grid">
 
-          <!-- Terminal Screen Output Buffer -->
-          <div id="cli-screen" class="cli-screen-viewport">
-            <div class="cli-line welcome">ben-shell v2.6.0 (x86_64-apple-darwin22)</div>
-            <div class="cli-line welcome">Type <span class="cmd-highlight">'help'</span> for a list of available commands.</div>
-          </div>
+            <!-- Snippet Card 1: Python Async Queue -->
+            <div class="snippet-card" data-cat="python" data-search="python async worker queue producer consumer asyncio">
+              <div class="snippet-header">
+                <div class="snippet-title-group">
+                  <span class="snippet-lang-badge py">PYTHON</span>
+                  <h3 class="snippet-title">Async Worker Queue</h3>
+                </div>
+                <div class="snippet-actions">
+                  <span class="complexity-tag">O(1) Push</span>
+                  <button class="snippet-copy-btn" data-target="code-snippet-1">📋 Copy</button>
+                </div>
+              </div>
+              <p class="snippet-desc">Producer-consumer queue pattern with non-blocking async workers and graceful task completion.</p>
+              <div class="snippet-code-box">
+                <pre><code id="code-snippet-1"><span class="k">import</span> asyncio
 
-          <!-- Interactive Command Input Line -->
-          <div class="cli-input-row">
-            <span class="cli-prompt">ben@bennnnto.me:~$</span>
-            <input type="text" id="cli-input" class="cli-input-field" placeholder="Type a command (e.g. 'help', 'skills', 'projects')..." autocomplete="off" spellcheck="false" />
+<span class="k">async def</span> <span class="f">worker</span>(name, queue):
+    <span class="k">while True</span>:
+        item = <span class="k">await</span> queue.get()
+        <span class="k">if</span> item <span class="k">is None</span>: <span class="k">break</span>
+        print(<span class="s">f"[{name}] Processed: {item}"</span>)
+        queue.task_done()
+
+<span class="k">async def</span> <span class="f">main</span>():
+    q = asyncio.Queue()
+    workers = [asyncio.create_task(worker(<span class="s">f"w{i}"</span>, q)) <span class="k">for</span> i <span class="k">in</span> range(<span class="m">2</span>)]
+    <span class="k">for</span> item <span class="k">in</span> range(<span class="m">5</span>): <span class="k">await</span> q.put(item)
+    <span class="k">await</span> q.join()</code></pre>
+              </div>
+            </div>
+
+            <!-- Snippet Card 2: Rust Safe Borrowing & Error Handling -->
+            <div class="snippet-card" data-cat="rust" data-search="rust result option borrow ownership match error">
+              <div class="snippet-header">
+                <div class="snippet-title-group">
+                  <span class="snippet-lang-badge rs">RUST</span>
+                  <h3 class="snippet-title">Safe Borrowing & Result</h3>
+                </div>
+                <div class="snippet-actions">
+                  <span class="complexity-tag">Zero-Cost</span>
+                  <button class="snippet-copy-btn" data-target="code-snippet-2">📋 Copy</button>
+                </div>
+              </div>
+              <p class="snippet-desc">Beginner-friendly Rust pattern showing immutable borrowing <code>&amp;T</code> and custom <code>Result&lt;T, E&gt;</code> matching.</p>
+              <div class="snippet-code-box">
+                <pre><code id="code-snippet-2"><span class="k">fn</span> <span class="f">parse_config</span>(val: <span class="t">&amp;str</span>) -&gt; <span class="t">Result</span>&lt;<span class="t">i32</span>, <span class="t">&amp;str</span>&gt; {
+    <span class="k">if</span> val.is_empty() {
+        <span class="k">return</span> <span class="t">Err</span>(<span class="s">"Config value empty"</span>);
+    }
+    val.parse::&lt;<span class="t">i32</span>&gt;().map_err(|_| <span class="s">"Parse error"</span>)
+}
+
+<span class="k">fn</span> <span class="f">main</span>() {
+    <span class="k">let</span> input = <span class="t">String</span>::from(<span class="s">"42"</span>);
+    <span class="k">match</span> parse_config(&amp;input) {
+        <span class="t">Ok</span>(num) =&gt; println!(<span class="s">"Value: {}"</span>, num),
+        <span class="t">Err</span>(err) =&gt; eprintln!(<span class="s">"Error: {}"</span>, err),
+    }
+}</code></pre>
+              </div>
+            </div>
+
+            <!-- Snippet Card 3: SQL B-Tree Partial Indexing -->
+            <div class="snippet-card" data-cat="sql" data-search="sql postgres b-tree index explain analyze query performance">
+              <div class="snippet-header">
+                <div class="snippet-title-group">
+                  <span class="snippet-lang-badge sql">SQL</span>
+                  <h3 class="snippet-title">Partial B-Tree Indexing</h3>
+                </div>
+                <div class="snippet-actions">
+                  <span class="complexity-tag">O(log N)</span>
+                  <button class="snippet-copy-btn" data-target="code-snippet-3">📋 Copy</button>
+                </div>
+              </div>
+              <p class="snippet-desc">PostgreSQL partial index optimization reducing index size and speeding up active row queries.</p>
+              <div class="snippet-code-box">
+                <pre><code id="code-snippet-3"><span class="c">-- Create Partial Index for active tasks</span>
+<span class="k">CREATE INDEX</span> idx_active_orders 
+<span class="k">ON</span> orders (user_id, created_at <span class="k">DESC</span>) 
+<span class="k">WHERE</span> status = <span class="s">'ACTIVE'</span>;
+
+<span class="c">-- High-speed B-Tree Index Scan Execution</span>
+<span class="k">EXPLAIN ANALYZE</span> 
+<span class="k">SELECT</span> order_id, total 
+<span class="k">FROM</span> orders 
+<span class="k">WHERE</span> user_id = <span class="m">1082</span> <span class="k">AND</span> status = <span class="s">'ACTIVE'</span>;</code></pre>
+              </div>
+            </div>
+
+            <!-- Snippet Card 4: Python Argon2 Password Hashing -->
+            <div class="snippet-card" data-cat="python" data-search="python argon2 password hash security cryptography salt">
+              <div class="snippet-header">
+                <div class="snippet-title-group">
+                  <span class="snippet-lang-badge py">PYTHON</span>
+                  <h3 class="snippet-title">Argon2id Password Hashing</h3>
+                </div>
+                <div class="snippet-actions">
+                  <span class="complexity-tag">OWASP Standard</span>
+                  <button class="snippet-copy-btn" data-target="code-snippet-4">📋 Copy</button>
+                </div>
+              </div>
+              <p class="snippet-desc">Memory-hard password hashing using Argon2id with automatic salt generation and verification.</p>
+              <div class="snippet-code-box">
+                <pre><code id="code-snippet-4"><span class="k">from</span> argon2 <span class="k">import</span> PasswordHasher
+
+ph = PasswordHasher()
+
+<span class="c"># Hash password with random salt</span>
+hash_str = ph.hash(<span class="s">"super_secret_pass"</span>)
+
+<span class="c"># Verify user login attempt</span>
+<span class="k">try</span>:
+    ph.verify(hash_str, <span class="s">"super_secret_pass"</span>)
+    print(<span class="s">"Authentication Successful"</span>)
+<span class="k">except</span> Exception:
+    print(<span class="s">"Invalid Password"</span>)</code></pre>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
@@ -801,7 +906,7 @@ disp("pi is:", pi)</textarea>
   </main>
 
   <script src="tress.js"></script>
-  <script src="main.js?v=6"></script>
+  <script src="main.js?v=7"></script>
 </body>
 
 </html>
