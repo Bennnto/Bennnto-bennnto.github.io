@@ -409,29 +409,32 @@
 })();
 
 
-// ── TRESS PLAYGROUND INTERACTIVE RUNNER ──
+// ── TRESS PLAYGROUND INTERACTIVE RUNNER & DOCS WAYFINDING ──
 (function () {
   const codeTextarea = document.getElementById('playground-code');
   const templateSelect = document.getElementById('playground-template');
   const runBtn = document.getElementById('playground-run-btn');
   const outputConsole = document.getElementById('playground-output');
   const clearBtn = document.getElementById('playground-clear-btn');
+  const docsToggle = document.getElementById('tress-docs-toggle');
+  const docsDrawer = document.getElementById('tress-docs-drawer');
+  const editorNumbers = document.getElementById('editor-numbers');
 
   if (!codeTextarea || !templateSelect || !runBtn || !outputConsole) return;
 
   const TRESS_TEMPLATES = {
-    vars: `// Tress variable declarations
-
-let greeting = "Hello, Tress!"
-let pi = 3.14159
+    vars: `// Tress statically-typed variable declarations
+init int: x = 42
+init str: greeting = "Hello, Tress!"
+init float: pi = 3.14159
 
 disp(greeting)
 disp("x is:", x)
 disp("pi is:", pi)`,
 
     loops: `// While loops & built-in math functions
-let i = 1
-let sum = 0
+init int: i = 1
+init int: sum = 0
 
 while (i <= 5) {
   disp("Loop step:", i)
@@ -442,31 +445,67 @@ while (i <= 5) {
 disp("Sum of 1..5 is:", sum)
 disp("Square root of 100 is:", sqrt(100))`,
 
-    'type-error': `// Demonstrating Tress's type checker (Simulated)
-let score = 95
+    'type-error': `// Demonstrating Tress's static type checker
+init int: score = 95
 
-// Type Error Demo (If statically checked)
+// Static Type Error: Cannot assign 'str' to 'int'
 score = "Excellent"
 
 disp("Score:", score)`
   };
 
-  // 1. Template picker change
+  // 1. Dynamic Line Numbers Sync
+  function updateLineNumbers() {
+    if (!editorNumbers || !codeTextarea) return;
+    const lineCount = codeTextarea.value.split('\n').length;
+    let numbersHtml = '';
+    for (let i = 1; i <= Math.max(lineCount, 1); i++) {
+      numbersHtml += `<span>${i}</span>`;
+    }
+    editorNumbers.innerHTML = numbersHtml;
+  }
+
+  codeTextarea.addEventListener('input', updateLineNumbers);
+  codeTextarea.addEventListener('scroll', () => {
+    if (editorNumbers) {
+      editorNumbers.scrollTop = codeTextarea.scrollTop;
+    }
+  });
+  updateLineNumbers();
+
+  // 2. Documentation Drawer Toggle
+  if (docsToggle && docsDrawer) {
+    docsToggle.addEventListener('click', () => {
+      const isHidden = docsDrawer.hasAttribute('hidden');
+      if (isHidden) {
+        docsDrawer.removeAttribute('hidden');
+        docsToggle.classList.add('active');
+        docsToggle.textContent = '✕ Close Reference';
+      } else {
+        docsDrawer.setAttribute('hidden', '');
+        docsToggle.classList.remove('active');
+        docsToggle.textContent = '📋 Quick Reference';
+      }
+    });
+  }
+
+  // 3. Template picker change
   templateSelect.addEventListener('change', () => {
     const selected = templateSelect.value;
     if (TRESS_TEMPLATES[selected]) {
       codeTextarea.value = TRESS_TEMPLATES[selected];
+      updateLineNumbers();
     }
   });
 
-  // 2. Clear terminal output
+  // 4. Clear terminal output
   if (clearBtn) {
     clearBtn.addEventListener('click', () => {
       outputConsole.textContent = '// Terminal cleared.';
     });
   }
 
-  // 3. Run Tress script
+  // 5. Run Tress script
   runBtn.addEventListener('click', () => {
     const code = codeTextarea.value;
     outputConsole.textContent = '';
@@ -476,7 +515,6 @@ disp("Score:", score)`
       logs.push(text);
     };
 
-    // Run custom Javascript-based interpreter
     if (typeof window.runTressCode === 'function') {
       const res = window.runTressCode(code, logOutput);
       
@@ -488,7 +526,6 @@ disp("Score:", score)`
         }
         outputConsole.innerHTML += `<span style="color:#10B981">// Process exited successfully with status 0</span>`;
       } else {
-        // Render error output
         if (logs.length > 0) {
           outputConsole.textContent = logs.join('\n') + '\n';
         }

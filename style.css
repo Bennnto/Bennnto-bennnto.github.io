@@ -1003,14 +1003,90 @@ input, textarea, button, select {
 .status-code.success { background-color: rgba(16, 185, 129, 0.15); color: #10B981; }
 .status-code.error { background-color: rgba(239, 68, 68, 0.15); color: #EF4444; }
 
-.terminal-output-viewport {
-  font-size: 0.76rem;
+/* Tress Playground Docs & Drawer */
+.playground-docs-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.tress-docs-btn {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  padding: 0.3rem 0.6rem;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color-muted);
+  color: var(--text-secondary);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.tress-docs-btn:hover {
+  border-color: var(--accent-color);
+  color: var(--text-primary);
+}
+
+.tress-docs-btn.active {
+  background-color: var(--accent-color);
+  color: #ffffff;
+  border-color: var(--accent-color);
+}
+
+.tress-docs-drawer {
+  padding: 1.2rem;
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--bg-tertiary);
+  transition: all var(--transition);
+}
+
+.tress-docs-drawer[hidden] {
+  display: none !important;
+}
+
+.docs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.docs-card {
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color-muted);
+  border-radius: 6px;
+  padding: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.docs-card-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.docs-syntax {
+  font-family: var(--font-mono);
+  font-size: 0.73rem;
+  color: var(--accent-color);
+}
+
+.docs-desc {
+  font-size: 0.73rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.docs-code-example {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  background-color: var(--bg-secondary);
+  border-radius: 4px;
+  padding: 0.5rem;
+  color: var(--text-primary);
+  margin: 0;
   white-space: pre-wrap;
-  word-break: break-all;
-  max-height: 250px;
-  overflow-y: auto;
-  line-height: 1.5;
-  color: #D1D5DB;
 }
 
 /* ── CONTACT SECTION ── */

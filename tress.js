@@ -457,10 +457,10 @@ function typeCheck(node, env) {
       const valType = typeCheck(node.value, env);
 
       if (valType.name === 'nil' && !expectedType.isOptional) {
-        throw new TypeError(`Error:Cannot Initialized ${expectedType} with Nil`);
+        throw new TypeError(`[Type Error] Cannot initialize '${expectedType}' with 'nil'`);
       }
       if (!expectedType.isCompatibleWith(valType)) {
-        throw new TypeError(`Error:Cannot initialized ${expectedType} with ${valType}`);
+        throw new TypeError(`[Type Error] Cannot initialize '${expectedType}' with '${valType}'`);
       }
       env.declare(node.ident, expectedType);
       return expectedType;
@@ -474,14 +474,14 @@ function typeCheck(node, env) {
 
     case 'AssignNode': {
       const varType = env.get(node.ident);
-      if (!varType) throw new TypeError(`Undefined variable : ${node.ident}`);
+      if (!varType) throw new TypeError(`[Type Error] Undefined variable: '${node.ident}'`);
       const valType = typeCheck(node.expression, env);
 
       if (valType.name === 'nil' && !varType.isOptional) {
-        throw new TypeError(`Error:Cannot assign ${valType} to ${varType}`);
+        throw new TypeError(`[Type Error] Cannot assign 'nil' to non-optional type '${varType}'`);
       }
       if (!varType.isCompatibleWith(valType)) {
-        throw new TypeError(`Error:Cannot assign ${valType} to ${varType}`);
+        throw new TypeError(`[Type Error] Cannot assign '${valType}' to '${varType}'`);
       }
       return varType;
     }
