@@ -768,148 +768,11 @@ input, textarea, button, select {
   border-color: var(--accent-color);
 }
 
-/* Knowledge Graph View */
-.graph-viewport {
-  position: relative;
-  width: 100%;
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  padding: 1.5rem;
-  overflow: hidden;
-}
-
-.graph-canvas-container {
-  position: relative;
-  width: 100%;
-  height: 380px;
-  background-color: rgba(0, 0, 0, 0.2);
-  border-radius: 6px;
-  overflow: hidden;
-  border: 1px solid var(--border-color-muted);
-}
-
-.graph-svg-canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.graph-line {
-  stroke: var(--border-color);
-  stroke-width: 1.5;
-  stroke-dasharray: 4;
-  transition: all 0.3s ease;
-}
-
-.graph-line.active {
-  stroke: var(--accent-color);
-  stroke-width: 2.5;
-  stroke-dasharray: none;
-  filter: drop-shadow(0 0 6px var(--accent-color));
-}
-
-.graph-nodes-layer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 2;
-}
-
-.graph-node {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  padding: 0.6rem 1rem;
-  background-color: var(--bg-tertiary);
-  border: 1px solid var(--border-color-muted);
-  border-radius: 6px;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.2rem;
-  transition: all 0.25s ease;
-  user-select: none;
-}
-
-.graph-node:hover, .graph-node.active {
-  border-color: var(--accent-color);
-  transform: translate(-50%, -50%) scale(1.08);
-  box-shadow: 0 4px 14px rgba(234, 88, 12, 0.25);
-  background-color: var(--bg-secondary);
-}
-
-.graph-node.c-node:hover, .graph-node.c-node.active {
-  border-color: #A855F7;
-  box-shadow: 0 4px 14px rgba(168, 85, 247, 0.25);
-}
-
-.graph-node.py-node:hover, .graph-node.py-node.active {
-  border-color: #60A5FA;
-  box-shadow: 0 4px 14px rgba(96, 165, 250, 0.25);
-}
-
-.graph-node.sec-node:hover, .graph-node.sec-node.active {
-  border-color: #10B981;
-  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);
-}
-
-.node-badge {
-  font-family: var(--font-mono);
-  font-size: 0.6rem;
-  font-weight: 700;
-  color: var(--text-muted);
-  letter-spacing: 0.05em;
-}
-
-.node-title {
-  font-size: 0.88rem;
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.node-sub {
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  color: var(--text-muted);
-}
-
-.tech-node {
-  border-radius: 20px;
-  padding: 0.4rem 0.8rem;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-  background-color: var(--bg-primary);
-  flex-direction: row;
-  gap: 0.4rem;
-}
-
-.graph-hint {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  text-align: center;
-  margin-top: 1rem;
-  margin-bottom: 0;
-}
-
 /* Collapsible Code Index View */
-.index-viewport {
-  width: 100%;
-}
-
 .snippet-accordion {
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
+  gap: 1rem;
 }
 
 .collapsible-card {
@@ -917,15 +780,18 @@ input, textarea, button, select {
   border: 1px solid var(--border-color);
   border-radius: 6px;
   overflow: hidden;
-  transition: border-color var(--transition);
+  transition: border-color var(--transition), transform var(--transition), box-shadow var(--transition);
+  position: relative;
 }
 
 .collapsible-card:hover {
   border-color: var(--border-color-muted);
+  transform: translateY(-1px);
 }
 
 .collapsible-card.open {
   border-color: var(--accent-color);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
 }
 
 .collapsible-header {
@@ -933,7 +799,7 @@ input, textarea, button, select {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 1.2rem;
+  padding: 1.1rem 1.3rem;
   background: transparent;
   border: none;
   cursor: pointer;
@@ -948,13 +814,24 @@ input, textarea, button, select {
   flex-wrap: wrap;
 }
 
+.snippet-lang-badge {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+  letter-spacing: 0.05em;
+  width: fit-content;
+}
+
 .snippet-lang-badge.c-badge { background-color: rgba(168, 85, 247, 0.18); color: #A855F7; }
 .snippet-lang-badge.py-badge { background-color: rgba(96, 165, 250, 0.18); color: #60A5FA; }
+.snippet-lang-badge.rs-badge { background-color: rgba(234, 88, 12, 0.18); color: var(--accent-color); }
 .snippet-lang-badge.sec-badge { background-color: rgba(16, 185, 129, 0.18); color: #10B981; }
 .snippet-lang-badge.sql-badge { background-color: rgba(245, 158, 11, 0.18); color: #F59E0B; }
 
 .collapsible-title {
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   font-weight: 600;
   color: var(--text-primary);
 }
@@ -965,34 +842,87 @@ input, textarea, button, select {
   gap: 0.8rem;
 }
 
+.complexity-tag {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  background-color: var(--bg-tertiary);
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+}
+
 .expand-icon {
   font-family: var(--font-mono);
-  font-size: 0.72rem;
-  font-weight: 600;
+  font-size: 0.9rem;
+  font-weight: 700;
   color: var(--text-muted);
-  transition: transform 0.2s ease;
+  transition: transform 0.25s ease, color 0.25s ease;
 }
 
 .collapsible-card.open .expand-icon {
-  transform: rotate(90deg);
+  transform: rotate(180deg);
   color: var(--accent-color);
 }
 
 .collapsible-drawer {
-  padding: 0 1.2rem 1.2rem 1.2rem;
+  padding: 0 1.3rem 1.3rem 1.3rem;
   border-top: 1px solid var(--border-color-muted);
+  background-color: rgba(0, 0, 0, 0.15);
 }
 
-.collapsible-drawer pre {
+.snippet-desc {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin: 1rem 0 0.8rem 0;
+}
+
+.snippet-code-box {
+  background-color: var(--terminal-bg);
+  border: 1px solid var(--border-color-muted);
+  border-radius: 5px;
+  padding: 1rem 1.2rem;
+  overflow-x: auto;
+  font-family: var(--font-mono), monospace !important;
+  font-size: 0.8rem;
+  line-height: 1.5;
   position: relative;
 }
 
-.collapsible-drawer .snippet-copy-btn {
+.snippet-code-box pre {
+  margin: 0;
+  color: #E4E4E7;
+}
+
+.snippet-copy-btn {
   position: absolute;
   top: 0.6rem;
   right: 0.8rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 0.25rem 0.55rem;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color-muted);
+  color: var(--text-secondary);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all var(--transition);
   z-index: 5;
 }
+
+.snippet-copy-btn:hover {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+}
+
+/* Syntax Highlighting */
+.snippet-code-box .k { color: #F59E0B; font-weight: 600; } /* Keywords */
+.snippet-code-box .f { color: #60A5FA; } /* Function names */
+.snippet-code-box .t { color: var(--accent-color); } /* Types */
+.snippet-code-box .s { color: #10B981; } /* Strings */
+.snippet-code-box .m { color: #EC4899; } /* Numbers */
+.snippet-code-box .c { color: #9CA3AF; font-style: italic; } /* Comments */
 
 .terminal-body {
   padding: 1.2rem;

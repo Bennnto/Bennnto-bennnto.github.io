@@ -20,7 +20,7 @@
     href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
     rel="stylesheet" />
 
-  <link rel="stylesheet" href="style.css?v=12" />
+  <link rel="stylesheet" href="style.css?v=13" />
 </head>
 
 <body>
@@ -633,103 +633,51 @@
         </div>
       </section>
 
-      <!-- PROJECT KNOWLEDGE GRAPH & COLLAPSIBLE CODE INDEX SECTION -->
+      <!-- COLLAPSIBLE CODE INDEX & SNIPPET LIBRARY SECTION -->
       <section id="code-library" class="portfolio-section">
-        <h2 class="section-title">Project Knowledge Graph & Index</h2>
+        <h2 class="section-title">Code Index & Library</h2>
         <p class="library-intro">
-          Interactive technology knowledge network connecting featured projects (<strong>GAFF</strong>, <strong>Tress</strong>, <strong>Snippet API</strong>, <strong>Vault API</strong>) with collapsible production code patterns.
+          Interactive catalog of production-ready code patterns, compiler abstractions, static type checkers, and database index optimizations in <strong>Python</strong>, <strong>Rust</strong>, <strong>C</strong>, and <strong>SQL</strong>.
         </p>
 
         <div class="library-container">
-          <!-- View Selector Toolbar -->
+          <!-- Filter & Search Toolbar -->
           <div class="library-toolbar">
             <div class="library-categories" role="tablist">
-              <button class="lib-tab active" data-view="graph">🕸️ Knowledge Graph View</button>
-              <button class="lib-tab" data-view="index">🗂️ Collapsible Code Index</button>
+              <button class="lib-tab active" data-cat="all">All Snippets</button>
+              <button class="lib-tab" data-cat="c">⚡ C (GAFF)</button>
+              <button class="lib-tab" data-cat="python">🐍 Python</button>
+              <button class="lib-tab" data-cat="rust">🦀 Rust</button>
+              <button class="lib-tab" data-cat="sec">🔒 Security</button>
+              <button class="lib-tab" data-cat="sql">🗄️ SQL</button>
             </div>
 
             <div class="library-search-wrapper">
-              <input type="text" id="lib-search-input" class="lib-search-input" placeholder="🔍 Search projects or technologies..." autocomplete="off" />
+              <input type="text" id="lib-search-input" class="lib-search-input" placeholder="🔍 Search code snippets..." autocomplete="off" />
             </div>
           </div>
 
-          <!-- View 1: Interactive Knowledge Network Graph -->
-          <div id="graph-viewport" class="graph-viewport">
-            <div class="graph-canvas-container">
-              <svg id="graph-svg-canvas" class="graph-svg-canvas"></svg>
+          <!-- Collapsible Code Index Cards -->
+          <div id="snippet-accordion" class="snippet-accordion">
 
-              <div class="graph-nodes-layer">
-                <!-- Project Node 1: GAFF (C Compiler) -->
-                <div class="graph-node project-node c-node" data-node="gaff" style="top: 15%; left: 20%;">
-                  <span class="node-badge">PROJECT</span>
-                  <span class="node-title">GAFF</span>
-                  <span class="node-sub">C Compiled Language</span>
+            <!-- Card 1: GAFF C Compiler -->
+            <div class="collapsible-card" data-cat="c" data-search="gaff c compiler ast node malloc structs memory">
+              <button class="collapsible-header">
+                <div class="collapsible-left">
+                  <span class="snippet-lang-badge c-badge">C (GAFF)</span>
+                  <span class="collapsible-title">GAFF — C Compiler AST Node Allocation</span>
                 </div>
-
-                <!-- Project Node 2: Tress (Python AST Interpreter) -->
-                <div class="graph-node project-node py-node" data-node="tress" style="top: 15%; left: 75%;">
-                  <span class="node-badge">PROJECT</span>
-                  <span class="node-title">Tress</span>
-                  <span class="node-sub">AST Scripting Language</span>
+                <div class="collapsible-right">
+                  <span class="complexity-tag">C Language</span>
+                  <span class="expand-icon">▾</span>
                 </div>
+              </button>
 
-                <!-- Project Node 3: Snippet API (FastAPI) -->
-                <div class="graph-node project-node py-node" data-node="snippet-api" style="top: 68%; left: 18%;">
-                  <span class="node-badge">PROJECT</span>
-                  <span class="node-title">Snippet API</span>
-                  <span class="node-sub">FastAPI + SQLAlchemy</span>
-                </div>
-
-                <!-- Project Node 4: Vault API (Security) -->
-                <div class="graph-node project-node sec-node" data-node="vault-api" style="top: 68%; left: 78%;">
-                  <span class="node-badge">PROJECT</span>
-                  <span class="node-title">Vault API</span>
-                  <span class="node-sub">JWT + Encryption</span>
-                </div>
-
-                <!-- Central Shared Technology Nodes -->
-                <div class="graph-node tech-node" data-node="tech-c" style="top: 38%; left: 22%;">
-                  <span class="node-icon">⚡</span> C Language
-                </div>
-
-                <div class="graph-node tech-node" data-node="tech-ast" style="top: 38%; left: 48%;">
-                  <span class="node-icon">🌳</span> AST & Lexer
-                </div>
-
-                <div class="graph-node tech-node" data-node="tech-py" style="top: 40%; left: 76%;">
-                  <span class="node-icon">🐍</span> Python
-                </div>
-
-                <div class="graph-node tech-node" data-node="tech-db" style="top: 72%; left: 48%;">
-                  <span class="node-icon">🗄️</span> PostgreSQL & SQL
-                </div>
-              </div>
-            </div>
-            <p class="graph-hint">💡 Hover or click any project node to highlight its connected architecture network and code snippet.</p>
-          </div>
-
-          <!-- View 2: Collapsible Code Index (Hidden by default) -->
-          <div id="index-viewport" class="index-viewport" hidden>
-            <div id="snippet-accordion" class="snippet-accordion">
-
-              <!-- Collapsible Snippet 1: GAFF C Compiler -->
-              <div class="collapsible-card" data-project="gaff" data-search="gaff c compiler ast node malloc structs">
-                <button class="collapsible-header">
-                  <div class="collapsible-left">
-                    <span class="snippet-lang-badge c-badge">C (GAFF)</span>
-                    <span class="collapsible-title">GAFF — C Compiler AST Node Allocation</span>
-                  </div>
-                  <div class="collapsible-right">
-                    <span class="complexity-tag">C Language</span>
-                    <span class="expand-icon">▶ Expand</span>
-                  </div>
-                </button>
-
-                <div class="collapsible-drawer" hidden>
-                  <p class="snippet-desc">GAFF compiler pipeline low-level memory allocation for Abstract Syntax Tree (AST) node generation.</p>
-                  <div class="snippet-code-box">
-                    <button class="snippet-copy-btn" data-target="code-snippet-1">📋 Copy Code</button>
-                    <pre><code id="code-snippet-1"><span class="k">typedef struct</span> <span class="t">ASTNode</span> {
+              <div class="collapsible-drawer" hidden>
+                <p class="snippet-desc">GAFF compiler pipeline low-level memory allocation for Abstract Syntax Tree (AST) node generation.</p>
+                <div class="snippet-code-box">
+                  <button class="snippet-copy-btn" data-target="code-snippet-1">📋 Copy Code</button>
+                  <pre><code id="code-snippet-1"><span class="k">typedef struct</span> <span class="t">ASTNode</span> {
     <span class="t">NodeType</span> type;
     <span class="t">char</span>* val;
     <span class="k">struct</span> <span class="t">ASTNode</span>* left;
@@ -744,28 +692,28 @@
     node-&gt;right = NULL;
     <span class="k">return</span> node;
 }</code></pre>
-                  </div>
                 </div>
               </div>
+            </div>
 
-              <!-- Collapsible Snippet 2: Tress AST Interpreter -->
-              <div class="collapsible-card" data-project="tress" data-search="tress python ast static type checker interpreter">
-                <button class="collapsible-header">
-                  <div class="collapsible-left">
-                    <span class="snippet-lang-badge py-badge">PYTHON</span>
-                    <span class="collapsible-title">Tress — Static Type Checker & AST Evaluator</span>
-                  </div>
-                  <div class="collapsible-right">
-                    <span class="complexity-tag">Python Interpreter</span>
-                    <span class="expand-icon">▶ Expand</span>
-                  </div>
-                </button>
+            <!-- Card 2: Tress Static Type Checker -->
+            <div class="collapsible-card" data-cat="python" data-search="tress python ast static type checker interpreter">
+              <button class="collapsible-header">
+                <div class="collapsible-left">
+                  <span class="snippet-lang-badge py-badge">PYTHON</span>
+                  <span class="collapsible-title">Tress — Static Type Checker & AST Evaluator</span>
+                </div>
+                <div class="collapsible-right">
+                  <span class="complexity-tag">Python Interpreter</span>
+                  <span class="expand-icon">▾</span>
+                </div>
+              </button>
 
-                <div class="collapsible-drawer" hidden>
-                  <p class="snippet-desc">Tress static type checking rule validating initialization compatibility against declared variable types.</p>
-                  <div class="snippet-code-box">
-                    <button class="snippet-copy-btn" data-target="code-snippet-2">📋 Copy Code</button>
-                    <pre><code id="code-snippet-2"><span class="k">class</span> <span class="t">TypeChecker</span>:
+              <div class="collapsible-drawer" hidden>
+                <p class="snippet-desc">Tress static type checking rule validating initialization compatibility against declared variable types.</p>
+                <div class="snippet-code-box">
+                  <button class="snippet-copy-btn" data-target="code-snippet-2">📋 Copy Code</button>
+                  <pre><code id="code-snippet-2"><span class="k">class</span> <span class="t">TypeChecker</span>:
     <span class="k">def</span> <span class="f">visit_InitNode</span>(<span class="k">self</span>, node, env):
         expected_type = type_from_string(node.var_type)
         value_type = <span class="k">self</span>.visit(node.value, env)
@@ -775,28 +723,28 @@
         
         env.declare(node.ident, expected_type)
         <span class="k">return</span> expected_type</code></pre>
-                  </div>
                 </div>
               </div>
+            </div>
 
-              <!-- Collapsible Snippet 3: Vault API Security -->
-              <div class="collapsible-card" data-project="vault-api" data-search="vault api jwt auth argon2 password security fastapi">
-                <button class="collapsible-header">
-                  <div class="collapsible-left">
-                    <span class="snippet-lang-badge sec-badge">SECURITY</span>
-                    <span class="collapsible-title">Vault API — JWT Token Verification & Argon2</span>
-                  </div>
-                  <div class="collapsible-right">
-                    <span class="complexity-tag">FastAPI + JWT</span>
-                    <span class="expand-icon">▶ Expand</span>
-                  </div>
-                </button>
+            <!-- Card 3: Vault API Security -->
+            <div class="collapsible-card" data-cat="sec python" data-search="vault api jwt auth argon2 password security fastapi">
+              <button class="collapsible-header">
+                <div class="collapsible-left">
+                  <span class="snippet-lang-badge sec-badge">SECURITY</span>
+                  <span class="collapsible-title">Vault API — JWT Bearer Token & Argon2 Verification</span>
+                </div>
+                <div class="collapsible-right">
+                  <span class="complexity-tag">FastAPI + JWT</span>
+                  <span class="expand-icon">▾</span>
+                </div>
+              </button>
 
-                <div class="collapsible-drawer" hidden>
-                  <p class="snippet-desc">Vault API authentication pipeline verifying JWT bearer tokens and validating password hashes with Argon2id.</p>
-                  <div class="snippet-code-box">
-                    <button class="snippet-copy-btn" data-target="code-snippet-3">📋 Copy Code</button>
-                    <pre><code id="code-snippet-3"><span class="k">from</span> fastapi <span class="k">import</span> Depends, HTTPException, status
+              <div class="collapsible-drawer" hidden>
+                <p class="snippet-desc">Vault API authentication pipeline verifying JWT bearer tokens and validating password hashes with Argon2id.</p>
+                <div class="snippet-code-box">
+                  <button class="snippet-copy-btn" data-target="code-snippet-3">📋 Copy Code</button>
+                  <pre><code id="code-snippet-3"><span class="k">from</span> fastapi <span class="k">import</span> Depends, HTTPException, status
 <span class="k">import</span> jwt, time
 
 SECRET_KEY = <span class="s">"your_jwt_secret_key"</span>
@@ -809,28 +757,28 @@ SECRET_KEY = <span class="s">"your_jwt_secret_key"</span>
         <span class="k">return</span> payload
     <span class="k">except</span> jwt.PyJWTError:
         <span class="k">raise</span> HTTPException(status_code=<span class="m">401</span>, detail=<span class="s">"Invalid Auth Token"</span>)</code></pre>
-                  </div>
                 </div>
               </div>
+            </div>
 
-              <!-- Collapsible Snippet 4: Snippet API Database -->
-              <div class="collapsible-card" data-project="snippet-api" data-search="snippet api postgresql sqlalchemy b-tree index sql">
-                <button class="collapsible-header">
-                  <div class="collapsible-left">
-                    <span class="snippet-lang-badge sql-badge">SQL / DB</span>
-                    <span class="collapsible-title">Snippet API — Partial B-Tree Index Optimization</span>
-                  </div>
-                  <div class="collapsible-right">
-                    <span class="complexity-tag">PostgreSQL</span>
-                    <span class="expand-icon">▶ Expand</span>
-                  </div>
-                </button>
+            <!-- Card 4: Snippet API Database -->
+            <div class="collapsible-card" data-cat="sql" data-search="snippet api postgresql sqlalchemy b-tree index sql">
+              <button class="collapsible-header">
+                <div class="collapsible-left">
+                  <span class="snippet-lang-badge sql-badge">SQL / DB</span>
+                  <span class="collapsible-title">Snippet API — Partial B-Tree Index Optimization</span>
+                </div>
+                <div class="collapsible-right">
+                  <span class="complexity-tag">PostgreSQL</span>
+                  <span class="expand-icon">▾</span>
+                </div>
+              </button>
 
-                <div class="collapsible-drawer" hidden>
-                  <p class="snippet-desc">PostgreSQL partial index strategy speeding up active snippet queries with sub-5ms latency.</p>
-                  <div class="snippet-code-box">
-                    <button class="snippet-copy-btn" data-target="code-snippet-4">📋 Copy Code</button>
-                    <pre><code id="code-snippet-4"><span class="c">-- Create Partial B-Tree Index for active snippets</span>
+              <div class="collapsible-drawer" hidden>
+                <p class="snippet-desc">PostgreSQL partial index strategy speeding up active snippet queries with sub-5ms latency.</p>
+                <div class="snippet-code-box">
+                  <button class="snippet-copy-btn" data-target="code-snippet-4">📋 Copy Code</button>
+                  <pre><code id="code-snippet-4"><span class="c">-- Create Partial B-Tree Index for active snippets</span>
 <span class="k">CREATE INDEX</span> idx_active_snippets 
 <span class="k">ON</span> snippets (user_id, created_at <span class="k">DESC</span>) 
 <span class="k">WHERE</span> is_public = <span class="k">TRUE</span>;
@@ -840,13 +788,81 @@ SECRET_KEY = <span class="s">"your_jwt_secret_key"</span>
 <span class="k">SELECT</span> snippet_id, title, code 
 <span class="k">FROM</span> snippets 
 <span class="k">WHERE</span> user_id = <span class="m">402</span> <span class="k">AND</span> is_public = <span class="k">TRUE</span>;</code></pre>
-                  </div>
                 </div>
               </div>
-
             </div>
-          </div>
 
+            <!-- Card 5: Python Async Worker Queue -->
+            <div class="collapsible-card" data-cat="python" data-search="python async worker queue producer consumer asyncio">
+              <button class="collapsible-header">
+                <div class="collapsible-left">
+                  <span class="snippet-lang-badge py-badge">PYTHON</span>
+                  <span class="collapsible-title">Async Worker Queue & Task Concurrency</span>
+                </div>
+                <div class="collapsible-right">
+                  <span class="complexity-tag">asyncio</span>
+                  <span class="expand-icon">▾</span>
+                </div>
+              </button>
+
+              <div class="collapsible-drawer" hidden>
+                <p class="snippet-desc">Non-blocking producer-consumer worker queue with TaskGroup and graceful shutdown handling.</p>
+                <div class="snippet-code-box">
+                  <button class="snippet-copy-btn" data-target="code-snippet-5">📋 Copy Code</button>
+                  <pre><code id="code-snippet-5"><span class="k">import</span> asyncio
+
+<span class="k">async def</span> <span class="f">worker</span>(name, queue):
+    <span class="k">while True</span>:
+        item = <span class="k">await</span> queue.get()
+        <span class="k">if</span> item <span class="k">is None</span>: <span class="k">break</span>
+        print(<span class="s">f"[{name}] Processed task: {item}"</span>)
+        queue.task_done()
+
+<span class="k">async def</span> <span class="f">main</span>():
+    q = asyncio.Queue()
+    workers = [asyncio.create_task(worker(<span class="s">f"w{i}"</span>, q)) <span class="k">for</span> i <span class="k">in</span> range(<span class="m">2</span>)]
+    <span class="k">for</span> item <span class="k">in</span> range(<span class="m">5</span>): <span class="k">await</span> q.put(item)
+    <span class="k">await</span> q.join()</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 6: Rust Safe Borrowing -->
+            <div class="collapsible-card" data-cat="rust" data-search="rust result option borrow ownership match error">
+              <button class="collapsible-header">
+                <div class="collapsible-left">
+                  <span class="snippet-lang-badge rs-badge">RUST</span>
+                  <span class="collapsible-title">Rust — Safe Borrowing & Custom Result Matching</span>
+                </div>
+                <div class="collapsible-right">
+                  <span class="complexity-tag">Rust Base</span>
+                  <span class="expand-icon">▾</span>
+                </div>
+              </button>
+
+              <div class="collapsible-drawer" hidden>
+                <p class="snippet-desc">Beginner-friendly Rust pattern demonstrating immutable borrowing <code>&amp;T</code> and <code>Result&lt;T, E&gt;</code> error handling.</p>
+                <div class="snippet-code-box">
+                  <button class="snippet-copy-btn" data-target="code-snippet-6">📋 Copy Code</button>
+                  <pre><code id="code-snippet-6"><span class="k">fn</span> <span class="f">parse_config</span>(val: <span class="t">&amp;str</span>) -&gt; <span class="t">Result</span>&lt;<span class="t">i32</span>, <span class="t">&amp;str</span>&gt; {
+    <span class="k">if</span> val.is_empty() {
+        <span class="k">return</span> <span class="t">Err</span>(<span class="s">"Config value empty"</span>);
+    }
+    val.parse::&lt;<span class="t">i32</span>&gt;().map_err(|_| <span class="s">"Parse error"</span>)
+}
+
+<span class="k">fn</span> <span class="f">main</span>() {
+    <span class="k">let</span> input = <span class="t">String</span>::from(<span class="s">"42"</span>);
+    <span class="k">match</span> parse_config(&amp;input) {
+        <span class="t">Ok</span>(num) =&gt; println!(<span class="s">"Value: {}"</span>, num),
+        <span class="t">Err</span>(err) =&gt; eprintln!(<span class="s">"Error: {}"</span>, err),
+    }
+}</code></pre>
+                </div>
+              </div>
+            </div>
+
+          </div>
         </div>
       </section>
 
@@ -991,7 +1007,7 @@ disp("pi is:", pi)</textarea>
   </main>
 
   <script src="tress.js"></script>
-  <script src="main.js?v=9"></script>
+  <script src="main.js?v=10"></script>
 </body>
 
 </html>
