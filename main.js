@@ -203,54 +203,82 @@
 })();
 
 
-// ── INTERACTIVE CODE INDEX & SNIPPET LIBRARY ──
+// ── PROJECT KNOWLEDGE GRAPH & COLLAPSIBLE CODE INDEX ──
 (function () {
   const tabs = document.querySelectorAll('.lib-tab');
+  const graphView = document.getElementById('graph-viewport');
+  const indexView = document.getElementById('index-viewport');
   const searchInput = document.getElementById('lib-search-input');
-  const cards = document.querySelectorAll('.snippet-card');
+  const svgCanvas = document.getElementById('graph-svg-canvas');
+  const graphNodes = document.querySelectorAll('.graph-node');
+  const collapsibleCards = document.querySelectorAll('.collapsible-card');
   const copyBtns = document.querySelectorAll('.snippet-copy-btn');
 
-  if (cards.length === 0) return;
+  if (!graphView || !indexView) return;
 
-  let activeCategory = 'all';
-
-  // Category Tab Handler
+  // View Switcher (Graph vs Index)
   tabs.forEach(tab => {
     tab.addEventListener('click', () => {
       tabs.forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
-      activeCategory = tab.dataset.cat;
-      filterSnippets();
+
+      const view = tab.dataset.view;
+      if (view === 'graph') {
+        graphView.hidden = false;
+        indexView.hidden = true;
+        renderGraphLines();
+      } else {
+        graphView.hidden = true;
+        indexView.hidden = false;
+      }
     });
   });
 
-  // Search Input Handler
-  if (searchInput) {
-    searchInput.addEventListener('input', filterSnippets);
-  }
+  // Collapsible Accordion Toggle Handler
+  collapsibleCards.forEach(card => {
+    const header = card.querySelector('.collapsible-header');
+    const drawer = card.querySelector('.collapsible-drawer');
+    const icon = card.querySelector('.expand-icon');
 
-  function filterSnippets() {
-    const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+    if (!header || !drawer) return;
 
-    cards.forEach(card => {
-      const cardCat = card.dataset.cat || '';
-      const cardSearch = card.dataset.search ? card.dataset.search.toLowerCase() : '';
-      const cardText = card.textContent.toLowerCase();
+    header.addEventListener('click', () => {
+      const isOpen = card.classList.contains('open');
 
-      const matchesCat = (activeCategory === 'all' || cardCat.includes(activeCategory));
-      const matchesSearch = (!query || cardSearch.includes(query) || cardText.includes(query));
-
-      if (matchesCat && matchesSearch) {
-        card.style.display = 'flex';
+      if (isOpen) {
+        card.classList.remove('open');
+        drawer.hidden = true;
+        if (icon) icon.textContent = '▶ Expand';
       } else {
-        card.style.display = 'none';
+        card.classList.add('open');
+        drawer.hidden = false;
+        if (icon) icon.textContent = '▼ Collapse';
       }
+    });
+  });
+
+  // Search Input Handler across Index Cards
+  if (searchInput) {
+    searchInput.addEventListener('input', () => {
+      const query = searchInput.value.toLowerCase().trim();
+
+      collapsibleCards.forEach(card => {
+        const searchKeywords = card.dataset.search ? card.dataset.search.toLowerCase() : '';
+        const cardText = card.textContent.toLowerCase();
+
+        if (!query || searchKeywords.includes(query) || cardText.includes(query)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
     });
   }
 
   // Copy Code Button Handler
   copyBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
       const targetId = btn.dataset.target;
       const codeEl = document.getElementById(targetId);
       if (!codeEl) return;
@@ -259,18 +287,97 @@
       navigator.clipboard.writeText(codeText).then(() => {
         const originalText = btn.textContent;
         btn.textContent = '✓ Copied!';
-        btn.style.borderColor = 'var(--accent-color)';
-        btn.style.color = 'var(--accent-color)';
         setTimeout(() => {
           btn.textContent = originalText;
-          btn.style.borderColor = '';
-          btn.style.color = '';
         }, 1800);
-      }).catch(err => {
-        console.error('Failed to copy code: ', err);
       });
     });
   });
+
+  // Knowledge Graph Connecting Lines Engine
+  const EDGES = [
+    { from: 'gafff', to: 'tech-c' },
+    { from: 'gafff', to: 'tech-ast' },
+    { from: 'tress', to: 'tech-ast' },
+    { from: 'tress', to: 'tech-py' },
+    { from: 'snippet-api', to: 'tech-py' },
+    { from: 'snippet-api', to: 'tech-db' },
+    { from: 'vault-api', to: 'tech-py' },
+    { from: 'vault-api', to: 'tech-db' }
+  ];
+
+  function renderGraphLines() {
+    if (!svgCanvas || graphView.hidden) return;
+    svgCanvas.innerHTML = '';
+
+    const containerRect = svgCanvas.parentElement.getBoundingClientRect();
+
+    EDGES.forEach(edge => {
+      const fromEl = document.querySelector(`[data-node="${edge.from}"]`);
+      const toEl = document.querySelector(`[data-node="${edge.to}"]`);
+
+      if (!fromEl || !toEl) return;
+
+      const r1 = fromEl.getBoundingClientRect();
+      const r2 = toEl.getBoundingClientRect();
+
+      const x1 = r1.left + r1.width / 2 - containerRect.left;
+      const y1 = r1.top + r1.height / 2 - containerRect.top;
+      const x2 = r2.left + r2.width / 2 - containerRect.left;
+      const y2 = r2.top + r2.height / 2 - containerRect.top;
+
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.setAttribute('x1', x1);
+      line.setAttribute('y1', y1);
+      line.setAttribute('x2', x2);
+      line.setAttribute('y2', y2);
+      line.setAttribute('class', 'graph-line');
+      line.dataset.from = edge.from;
+      line.dataset.to = edge.to;
+
+      svgCanvas.appendChild(line);
+    });
+  }
+
+  // Highlight Connected Nodes on Hover / Click
+  graphNodes.forEach(node => {
+    const nodeKey = node.dataset.node;
+
+    node.addEventListener('mouseenter', () => highlightNetwork(nodeKey));
+    node.addEventListener('mouseleave', () => resetNetwork());
+    node.addEventListener('click', () => {
+      // Switch to index view and expand snippet if matching project!
+      const matchingCard = document.querySelector(`.collapsible-card[data-project="${nodeKey}"]`);
+      if (matchingCard) {
+        const indexTab = document.querySelector('.lib-tab[data-view="index"]');
+        if (indexTab) indexTab.click();
+
+        matchingCard.classList.add('open');
+        const drawer = matchingCard.querySelector('.collapsible-drawer');
+        const icon = matchingCard.querySelector('.expand-icon');
+        if (drawer) drawer.hidden = false;
+        if (icon) icon.textContent = '▼ Collapse';
+        matchingCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
+  });
+
+  function highlightNetwork(key) {
+    const lines = svgCanvas.querySelectorAll('.graph-line');
+    lines.forEach(l => {
+      if (l.dataset.from === key || l.dataset.to === key) {
+        l.classList.add('active');
+      }
+    });
+  }
+
+  function resetNetwork() {
+    const lines = svgCanvas.querySelectorAll('.graph-line');
+    lines.forEach(l => l.classList.remove('active'));
+  }
+
+  window.addEventListener('resize', renderGraphLines);
+  setTimeout(renderGraphLines, 300);
 })();
 
 
