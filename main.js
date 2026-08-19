@@ -203,430 +203,104 @@
 })();
 
 
-// ── 60FPS ALGORITHM & PATHFINDING VISUALIZER ──
+// ── INTERACTIVE WEB TERMINAL CLI (ben-shell v2.6) ──
 (function () {
-  const modeBtns = document.querySelectorAll('.algo-mode-btn');
-  const sortViewport = document.getElementById('sort-viewport');
-  const pathViewport = document.getElementById('path-viewport');
-  const algoSelect = document.getElementById('algo-select');
-  const speedSlider = document.getElementById('algo-speed');
-  const speedVal = document.getElementById('speed-val');
-  const runBtn = document.getElementById('algo-run-btn');
-  const resetBtn = document.getElementById('algo-reset-btn');
-  const barsContainer = document.getElementById('sort-bars-container');
-  const pathGridEl = document.getElementById('path-grid');
+  const cliScreen = document.getElementById('cli-screen');
+  const cliInput = document.getElementById('cli-input');
+  const chips = document.querySelectorAll('.cli-chip');
 
-  const statComparisons = document.getElementById('stat-comparisons');
-  const statSwaps = document.getElementById('stat-swaps');
-  const statTime = document.getElementById('stat-time');
-  const statComplexity = document.getElementById('stat-complexity');
+  if (!cliScreen || !cliInput) return;
 
-  if (!sortViewport || !pathViewport || !runBtn) return;
+  const COMMANDS = {
+    help: `Available Commands:
+  help            - Display this list of terminal commands
+  skills          - Output technical skills table (Languages, DBs, Systems)
+  projects        - List featured projects & GitHub repositories
+  cat resume.txt  - Render resume summary & technical background
+  whoami          - Output developer profile bio
+  status          - Query live system telemetry (Domain, SSL, Uptime)
+  theme           - Toggle site theme (Dark / Light)
+  clear           - Clear terminal buffer screen`,
 
-  let activeMode = 'sort'; // 'sort' | 'path'
-  let isRunning = false;
-  let arraySize = 35;
-  let array = [];
-  let barElements = [];
-  let sortCancelFlag = false;
+    skills: `Technical Skills & Stack Summary:
+  [Languages]     Python, Rust (Beginner), C#, JavaScript (ES6+), SQL
+  [Databases]     PostgreSQL, Redis (In-Memory Caching), SQLite
+  [Backend/Dev]   REST APIs, Microservices, Async I/O, Docker, Git
+  [Frontend]      HTML5, CSS3 (Vanilla), Next.js, AST Interpreters`,
 
-  let comparisons = 0;
-  let swaps = 0;
-  let startTime = 0;
+    projects: `Featured Projects:
+  1. Bennnto-bennnto.github.io (Custom Domain: bennnnto.me)
+     └── Personal engineering portfolio & interactive Tress AST playground.
+  2. Tress Scripting Language
+     └── Statically-typed client-side AST lexer, parser, type checker, & evaluator.
+  3. System Architecture Visualizer
+     └── Microservices packet routing & Redis caching telemetry engine.`,
 
-  // Pathfinding Grid state
-  const GRID_ROWS = 10;
-  const GRID_COLS = 20;
-  let gridState = []; // 0: empty, 1: wall, 2: start, 3: target, 4: visited, 5: path
-  let startPos = { r: 2, c: 3 };
-  let targetPos = { r: 7, c: 16 };
-  let isMouseDown = false;
+    'cat resume.txt': `Resume & Developer Profile (Ben - Software Engineer):
+  ├── Specialization: Backend Systems, Rust/Python Tooling, Custom AST Parsers
+  ├── Architecture:   Microservices, Caching Layering, High-Performance I/O
+  ├── Custom Domain:  bennnnto.me (Configured with GitHub Pages A/CNAME Records)
+  └── Contact:        ben@bennnnto.me`,
 
-  // 1. Mode Switch Handler
-  modeBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      if (isRunning) return;
-      modeBtns.forEach(b => {
-        b.classList.remove('active');
-        b.setAttribute('aria-selected', 'false');
-      });
-      btn.classList.add('active');
-      btn.setAttribute('aria-selected', 'true');
-      activeMode = btn.dataset.mode;
+    whoami: `ben — Software Engineer & Open Source Developer. Focused on Python, Rust, Database Indexing, and clean web architecture.`,
 
-      if (activeMode === 'sort') {
-        sortViewport.hidden = false;
-        pathViewport.hidden = true;
-        updateAlgoDropdown('sort');
-      } else {
-        sortViewport.hidden = true;
-        pathViewport.hidden = false;
-        updateAlgoDropdown('path');
-      }
+    status: `System Status Telemetry [ben-shell v2.6]:
+  ├── Domain Resolution:  bennnnto.me -> [185.199.108.153 OK]
+  ├── SSL Certificate:    Active (HTTPS TLS v1.3)
+  ├── Host Environment:   GitHub Pages CDN
+  └── Terminal Status:    Operational (0 Errors)`,
+
+    sudo: `[Permission Denied: User 'guest' is not in the sudoers file. This incident will be reported.]`
+  };
+
+  // Command Execution Handler
+  function executeCommand(cmdStr) {
+    const rawCmd = cmdStr.trim();
+    if (!rawCmd) return;
+
+    // Append Prompt Line
+    appendLine('cmd-prompt', `ben@bennnnto.me:~$ ${rawCmd}`);
+
+    const lowerCmd = rawCmd.toLowerCase();
+
+    if (lowerCmd === 'clear') {
+      cliScreen.innerHTML = '';
+    } else if (lowerCmd === 'theme') {
+      const themeBtn = document.getElementById('theme-toggle');
+      if (themeBtn) themeBtn.click();
+      appendLine('success-tag', '[Theme] Site theme toggled successfully.');
+    } else if (COMMANDS[lowerCmd]) {
+      appendLine('output-text', COMMANDS[lowerCmd]);
+    } else {
+      appendLine('error-tag', `command not found: ${rawCmd}. Type 'help' for available commands.`);
+    }
+
+    cliScreen.scrollTop = cliScreen.scrollHeight;
+  }
+
+  function appendLine(className, text) {
+    const line = document.createElement('div');
+    line.className = `cli-line ${className}`;
+    line.textContent = text;
+    cliScreen.appendChild(line);
+  }
+
+  // Input Enter Key Listener
+  cliInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      const val = cliInput.value;
+      cliInput.value = '';
+      executeCommand(val);
+    }
+  });
+
+  // Quick Command Chips Listener
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      const cmd = chip.dataset.cmd;
+      if (cmd) executeCommand(cmd);
     });
   });
-
-  function updateAlgoDropdown(mode) {
-    if (mode === 'sort') {
-      algoSelect.innerHTML = `
-        <option value="quicksort">QuickSort — O(N log N)</option>
-        <option value="mergesort">MergeSort — O(N log N)</option>
-        <option value="bubblesort">BubbleSort — O(N²)</option>
-      `;
-      statComplexity.textContent = 'O(N log N)';
-    } else {
-      algoSelect.innerHTML = `
-        <option value="dijkstra">Dijkstra's Algorithm</option>
-        <option value="astar">A* Search Algorithm</option>
-      `;
-      statComplexity.textContent = 'O(V + E log V)';
-    }
-  }
-
-  // Speed Slider Handler
-  speedSlider.addEventListener('input', () => {
-    speedVal.textContent = `${speedSlider.value}x`;
-  });
-
-  // ── MODE 1: ARRAY SORTING ──
-  function generateRandomArray() {
-    array = [];
-    barElements = [];
-    barsContainer.innerHTML = '';
-    comparisons = 0;
-    swaps = 0;
-    updateStats(0);
-
-    for (let i = 0; i < arraySize; i++) {
-      const val = Math.floor(Math.random() * 85) + 15;
-      array.push(val);
-
-      const bar = document.createElement('div');
-      bar.className = 'sort-bar';
-      bar.style.height = `${val}%`;
-      barsContainer.appendChild(bar);
-      barElements.push(bar);
-    }
-  }
-
-  function getDelay() {
-    const speed = parseInt(speedSlider.value, 10);
-    return Math.max(10, 220 - speed * 20);
-  }
-
-  function updateStats(elapsed) {
-    statComparisons.textContent = comparisons;
-    statSwaps.textContent = swaps;
-    statTime.textContent = `${elapsed}ms`;
-  }
-
-  async function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
-  // BubbleSort
-  async function runBubbleSort() {
-    const n = array.length;
-    for (let i = 0; i < n; i++) {
-      for (let j = 0; j < n - i - 1; j++) {
-        if (sortCancelFlag) return;
-
-        barElements[j].classList.add('active');
-        barElements[j + 1].classList.add('active');
-        comparisons++;
-        updateStats(Math.round(performance.now() - startTime));
-        await sleep(getDelay());
-
-        if (array[j] > array[j + 1]) {
-          // Swap
-          swaps++;
-          const temp = array[j];
-          array[j] = array[j + 1];
-          array[j + 1] = temp;
-
-          barElements[j].style.height = `${array[j]}%`;
-          barElements[j + 1].style.height = `${array[j + 1]}%`;
-          barElements[j].classList.add('swap');
-          barElements[j + 1].classList.add('swap');
-          await sleep(getDelay());
-        }
-
-        barElements[j].className = 'sort-bar';
-        barElements[j + 1].className = 'sort-bar';
-      }
-      barElements[n - i - 1].classList.add('sorted');
-    }
-  }
-
-  // QuickSort
-  async function runQuickSort(low, high) {
-    if (low < high) {
-      const pi = await partition(low, high);
-      if (sortCancelFlag) return;
-      await runQuickSort(low, pi - 1);
-      await runQuickSort(pi + 1, high);
-    } else if (low >= 0 && low < array.length) {
-      barElements[low].classList.add('sorted');
-    }
-  }
-
-  async function partition(low, high) {
-    const pivot = array[high];
-    barElements[high].classList.add('swap');
-    let i = low - 1;
-
-    for (let j = low; j < high; j++) {
-      if (sortCancelFlag) return high;
-      barElements[j].classList.add('active');
-      comparisons++;
-      updateStats(Math.round(performance.now() - startTime));
-      await sleep(getDelay());
-
-      if (array[j] < pivot) {
-        i++;
-        swaps++;
-        const temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
-
-        barElements[i].style.height = `${array[i]}%`;
-        barElements[j].style.height = `${array[j]}%`;
-      }
-      barElements[j].classList.remove('active');
-    }
-
-    swaps++;
-    const temp = array[i + 1];
-    array[i + 1] = array[high];
-    array[high] = temp;
-
-    barElements[i + 1].style.height = `${array[i + 1]}%`;
-    barElements[high].style.height = `${array[high]}%`;
-    barElements[high].classList.remove('swap');
-    barElements[i + 1].classList.add('sorted');
-
-    return i + 1;
-  }
-
-  // MergeSort
-  async function runMergeSort(l, r) {
-    if (l >= r || sortCancelFlag) return;
-    const m = l + Math.floor((r - l) / 2);
-    await runMergeSort(l, m);
-    await runMergeSort(m + 1, r);
-    await merge(l, m, r);
-  }
-
-  async function merge(l, m, r) {
-    const n1 = m - l + 1;
-    const n2 = r - m;
-    const L = [];
-    const R = [];
-
-    for (let i = 0; i < n1; i++) L.push(array[l + i]);
-    for (let j = 0; j < n2; j++) R.push(array[m + 1 + j]);
-
-    let i = 0, j = 0, k = l;
-    while (i < n1 && j < n2) {
-      if (sortCancelFlag) return;
-      comparisons++;
-      updateStats(Math.round(performance.now() - startTime));
-      barElements[k].classList.add('active');
-      await sleep(getDelay());
-
-      if (L[i] <= R[j]) {
-        array[k] = L[i];
-        i++;
-      } else {
-        array[k] = R[j];
-        j++;
-      }
-      swaps++;
-      barElements[k].style.height = `${array[k]}%`;
-      barElements[k].className = 'sort-bar sorted';
-      k++;
-    }
-
-    while (i < n1) {
-      if (sortCancelFlag) return;
-      array[k] = L[i];
-      barElements[k].style.height = `${array[k]}%`;
-      barElements[k].className = 'sort-bar sorted';
-      i++; k++;
-      await sleep(getDelay() / 2);
-    }
-
-    while (j < n2) {
-      if (sortCancelFlag) return;
-      array[k] = R[j];
-      barElements[k].style.height = `${array[k]}%`;
-      barElements[k].className = 'sort-bar sorted';
-      j++; k++;
-      await sleep(getDelay() / 2);
-    }
-  }
-
-  // ── MODE 2: 2D PATHFINDING GRID ──
-  function initGrid() {
-    gridState = Array.from({ length: GRID_ROWS }, () => Array(GRID_COLS).fill(0));
-    gridState[startPos.r][startPos.c] = 2; // Start
-    gridState[targetPos.r][targetPos.c] = 3; // Target
-    renderGrid();
-  }
-
-  function renderGrid() {
-    pathGridEl.innerHTML = '';
-    for (let r = 0; r < GRID_ROWS; r++) {
-      for (let c = 0; c < GRID_COLS; c++) {
-        const cell = document.createElement('div');
-        cell.className = 'path-cell';
-        const type = gridState[r][c];
-
-        if (type === 1) cell.classList.add('wall');
-        else if (type === 2) cell.classList.add('start');
-        else if (type === 3) cell.classList.add('target');
-        else if (type === 4) cell.classList.add('visited');
-        else if (type === 5) cell.classList.add('path');
-
-        cell.dataset.r = r;
-        cell.dataset.c = c;
-
-        cell.addEventListener('mousedown', () => {
-          if (isRunning || type === 2 || type === 3) return;
-          isMouseDown = true;
-          toggleWall(r, c);
-        });
-
-        cell.addEventListener('mouseenter', () => {
-          if (isMouseDown && !isRunning && type !== 2 && type !== 3) {
-            toggleWall(r, c);
-          }
-        });
-
-        pathGridEl.appendChild(cell);
-      }
-    }
-  }
-
-  window.addEventListener('mouseup', () => { isMouseDown = false; });
-
-  function toggleWall(r, c) {
-    if (gridState[r][c] === 1) {
-      gridState[r][c] = 0;
-    } else if (gridState[r][c] === 0) {
-      gridState[r][c] = 1;
-    }
-    renderGrid();
-  }
-
-  async function runPathfinding() {
-    // Clear previous visited/path
-    for (let r = 0; r < GRID_ROWS; r++) {
-      for (let c = 0; c < GRID_COLS; c++) {
-        if (gridState[r][c] === 4 || gridState[r][c] === 5) {
-          gridState[r][c] = 0;
-        }
-      }
-    }
-    renderGrid();
-
-    const queue = [{ r: startPos.r, c: startPos.c, path: [] }];
-    const visited = new Set();
-    visited.add(`${startPos.r},${startPos.c}`);
-
-    const dr = [-1, 1, 0, 0];
-    const dc = [0, 0, -1, 1];
-    let found = false;
-
-    while (queue.length > 0) {
-      if (sortCancelFlag) return;
-      const { r, c, path } = queue.shift();
-
-      if (r === targetPos.r && c === targetPos.c) {
-        // Draw path
-        found = true;
-        for (const step of path) {
-          if (gridState[step.r][step.c] === 0 || gridState[step.r][step.c] === 4) {
-            gridState[step.r][step.c] = 5;
-            renderGrid();
-            await sleep(40);
-          }
-        }
-        break;
-      }
-
-      if (gridState[r][c] === 0) {
-        gridState[r][c] = 4; // visited
-        renderGrid();
-        await sleep(Math.max(15, 120 - parseInt(speedSlider.value, 10) * 10));
-      }
-
-      for (let i = 0; i < 4; i++) {
-        const nr = r + dr[i];
-        const nc = c + dc[i];
-        const key = `${nr},${nc}`;
-
-        if (nr >= 0 && nr < GRID_ROWS && nc >= 0 && nc < GRID_COLS) {
-          if (gridState[nr][nc] !== 1 && !visited.has(key)) {
-            visited.add(key);
-            queue.push({ r: nr, c: nc, path: [...path, { r: nr, c: nc }] });
-          }
-        }
-      }
-    }
-  }
-
-  // ── RUN & RESET BUTTON HANDLERS ──
-  runBtn.addEventListener('click', async () => {
-    if (isRunning) return;
-    isRunning = true;
-    sortCancelFlag = false;
-    runBtn.disabled = true;
-    resetBtn.disabled = true;
-    runBtn.innerHTML = '<span>⏳</span> RUNNING...';
-
-    startTime = performance.now();
-
-    if (activeMode === 'sort') {
-      const algo = algoSelect.value;
-      if (algo === 'bubblesort') {
-        statComplexity.textContent = 'O(N²)';
-        await runBubbleSort();
-      } else if (algo === 'quicksort') {
-        statComplexity.textContent = 'O(N log N)';
-        await runQuickSort(0, array.length - 1);
-        barElements.forEach(b => b.className = 'sort-bar sorted');
-      } else if (algo === 'mergesort') {
-        statComplexity.textContent = 'O(N log N)';
-        await runMergeSort(0, array.length - 1);
-      }
-    } else {
-      await runPathfinding();
-    }
-
-    runBtn.disabled = false;
-    resetBtn.disabled = false;
-    runBtn.innerHTML = '<span>▶</span> RUN VISUALIZER';
-    isRunning = false;
-  });
-
-  resetBtn.addEventListener('click', () => {
-    sortCancelFlag = true;
-    isRunning = false;
-    runBtn.disabled = false;
-    resetBtn.disabled = false;
-    runBtn.innerHTML = '<span>▶</span> RUN VISUALIZER';
-
-    if (activeMode === 'sort') {
-      generateRandomArray();
-    } else {
-      initGrid();
-    }
-  });
-
-  // Initial load
-  generateRandomArray();
-  initGrid();
 })();
 
 

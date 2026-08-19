@@ -20,7 +20,7 @@
     href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
     rel="stylesheet" />
 
-  <link rel="stylesheet" href="style.css?v=7" />
+  <link rel="stylesheet" href="style.css?v=8" />
 </head>
 
 <body>
@@ -41,7 +41,7 @@
         <a href="#info" class="nav-link">Info</a>
         <a href="#resume" class="nav-link">Resume</a>
         <a href="#projects" class="nav-link">Projects</a>
-        <a href="#algorithms" class="nav-link">Algorithms</a>
+        <a href="#terminal" class="nav-link">Terminal</a>
         <a href="#playground" class="nav-link">Playground</a>
         <a href="#contact" class="nav-link">Contact</a>
       </nav>
@@ -617,82 +617,46 @@
         </div>
       </section>
 
-      <!-- ALGORITHMS & PATHFINDING VISUALIZER SECTION -->
-      <section id="algorithms" class="portfolio-section">
-        <h2 class="section-title">Algorithm Visualizer</h2>
-        <p class="algo-intro">
-          60fps interactive algorithm visualizer. Compare array sorting algorithms (QuickSort, MergeSort, BubbleSort) and 2D grid pathfinding (Dijkstra's & A* Search) with real-time complexity analytics.
+      <!-- WEB TERMINAL CLI SECTION -->
+      <section id="terminal" class="portfolio-section">
+        <h2 class="section-title">Developer Terminal</h2>
+        <p class="terminal-intro">
+          Interactive UNIX shell (<code>ben-shell v2.6</code>). Type or tap quick commands to query skills, experience, project repositories, and system telemetry.
         </p>
 
-        <div class="algo-box">
-          <!-- Top Mode Selector & Controls Bar -->
-          <div class="algo-header-bar">
-            <div class="algo-mode-group" role="tablist">
-              <button class="algo-mode-btn active" data-mode="sort" role="tab" aria-selected="true">
-                📊 Array Sorting
-              </button>
-              <button class="algo-mode-btn" data-mode="path" role="tab" aria-selected="false">
-                🗺️ 2D Pathfinding
-              </button>
+        <div class="terminal-box">
+          <!-- Window Header Bar -->
+          <div class="terminal-top-bar">
+            <div class="window-controls">
+              <span class="dot red"></span>
+              <span class="dot yellow"></span>
+              <span class="dot green"></span>
             </div>
-
-            <div class="algo-controls-group">
-              <div class="algo-control-item" id="algo-picker-wrapper">
-                <label for="algo-select" class="algo-label">Algorithm</label>
-                <select id="algo-select" class="algo-select">
-                  <option value="quicksort">QuickSort — O(N log N)</option>
-                  <option value="mergesort">MergeSort — O(N log N)</option>
-                  <option value="bubblesort">BubbleSort — O(N²)</option>
-                </select>
-              </div>
-
-              <div class="algo-control-item" id="speed-picker-wrapper">
-                <label for="algo-speed" class="algo-label">Speed: <span id="speed-val">5x</span></label>
-                <input type="range" id="algo-speed" min="1" max="10" value="5" class="algo-slider" />
-              </div>
-            </div>
+            <span class="window-title">ben@bennnnto-me: ~ (zsh)</span>
           </div>
 
-          <!-- Mode 1: Sorting Canvas / Bars Container -->
-          <div id="sort-viewport" class="algo-viewport">
-            <div id="sort-bars-container" class="sort-bars-container">
-              <!-- Dynamically populated vertical bars -->
-            </div>
-
-            <!-- Telemetry Stats Footer -->
-            <div class="algo-stats-bar">
-              <div class="stat-item"><span class="stat-label">Comparisons:</span> <span id="stat-comparisons" class="stat-value">0</span></div>
-              <div class="stat-item"><span class="stat-label">Swaps:</span> <span id="stat-swaps" class="stat-value">0</span></div>
-              <div class="stat-item"><span class="stat-label">Elapsed:</span> <span id="stat-time" class="stat-value">0ms</span></div>
-              <div class="stat-item"><span class="stat-label">Complexity:</span> <span id="stat-complexity" class="stat-badge">O(N log N)</span></div>
-            </div>
+          <!-- Quick Command Chips for Mobile & Fast Tapping -->
+          <div class="terminal-quick-chips">
+            <span class="quick-chip-label">Quick Commands:</span>
+            <button class="cli-chip" data-cmd="help">help</button>
+            <button class="cli-chip" data-cmd="skills">skills</button>
+            <button class="cli-chip" data-cmd="projects">projects</button>
+            <button class="cli-chip" data-cmd="cat resume.txt">cat resume.txt</button>
+            <button class="cli-chip" data-cmd="status">status</button>
+            <button class="cli-chip" data-cmd="clear">clear</button>
           </div>
 
-          <!-- Mode 2: 2D Pathfinding Grid Container (Hidden by default) -->
-          <div id="path-viewport" class="algo-viewport" hidden>
-            <div class="path-grid-header">
-              <span class="path-guide-item"><span class="grid-cell-icon start">🟢</span> Start</span>
-              <span class="path-guide-item"><span class="grid-cell-icon target">🎯</span> Target</span>
-              <span class="path-guide-item"><span class="grid-cell-icon wall">🧱</span> Wall (Click/Drag to Draw)</span>
-              <span class="path-guide-item"><span class="grid-cell-icon visited">🌊</span> Wave</span>
-              <span class="path-guide-item"><span class="grid-cell-icon path">✨</span> Path</span>
-            </div>
-
-            <div id="path-grid" class="path-grid">
-              <!-- 20x10 Grid populated via JS -->
-            </div>
+          <!-- Terminal Screen Output Buffer -->
+          <div id="cli-screen" class="cli-screen-viewport">
+            <div class="cli-line welcome">ben-shell v2.6.0 (x86_64-apple-darwin22)</div>
+            <div class="cli-line welcome">Type <span class="cmd-highlight">'help'</span> for a list of available commands.</div>
           </div>
 
-          <!-- Action Buttons Footer Bar -->
-          <div class="algo-actions-bar">
-            <button id="algo-run-btn" class="algo-primary-button">
-              <span>▶</span> RUN VISUALIZER
-            </button>
-            <button id="algo-reset-btn" class="algo-secondary-button">
-              <span>🔀</span> SHUFFLE / RESET
-            </button>
+          <!-- Interactive Command Input Line -->
+          <div class="cli-input-row">
+            <span class="cli-prompt">ben@bennnnto.me:~$</span>
+            <input type="text" id="cli-input" class="cli-input-field" placeholder="Type a command (e.g. 'help', 'skills', 'projects')..." autocomplete="off" spellcheck="false" />
           </div>
-
         </div>
       </section>
 
@@ -837,7 +801,7 @@ disp("pi is:", pi)</textarea>
   </main>
 
   <script src="tress.js"></script>
-  <script src="main.js?v=5"></script>
+  <script src="main.js?v=6"></script>
 </body>
 
 </html>
