@@ -1032,13 +1032,20 @@ input, textarea, button, select {
 
 .tress-docs-btn {
   font-family: var(--font-mono);
-  font-size: 0.72rem;
-  padding: 0.3rem 0.6rem;
-  background-color: var(--bg-tertiary);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
   border: 1px solid var(--border-color-muted);
-  color: var(--text-secondary);
-  border-radius: 4px;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  line-height: 1;
   cursor: pointer;
+  background-color: var(--bg-tertiary);
+  color: var(--text-secondary);
   transition: all var(--transition);
 }
 
@@ -1270,9 +1277,9 @@ input, textarea, button, select {
   background-color: var(--bg-secondary);
   border-right: 1px solid var(--border-color-muted);
   color: var(--text-muted);
-  font-family: var(--font-mono);
-  font-size: 0.95rem;
-  line-height: 1.5;
+  font-family: var(--font-mono), monospace !important;
+  font-size: 0.85rem;
+  line-height: 1.6;
   user-select: none;
   text-align: right;
   min-width: 2.5rem;
@@ -1283,9 +1290,9 @@ input, textarea, button, select {
   border: none;
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  font-family: var(--font-mono);
-  font-size: 0.95rem;
-  line-height: 1.5;
+  font-family: var(--font-mono), monospace !important;
+  font-size: 0.85rem;
+  line-height: 1.6;
   padding: 1.5rem;
   resize: vertical;
   outline: none;
@@ -1296,7 +1303,7 @@ input, textarea, button, select {
   background-color: var(--text-primary);
   color: var(--bg-primary);
   font-family: var(--font-mono);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 600;
   padding: 1.2rem;
   text-align: center;
@@ -1323,9 +1330,50 @@ input, textarea, button, select {
   transition: background-color var(--transition);
 }
 
+.terminal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 1.2rem;
+  background-color: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid var(--border-color);
+  font-family: var(--font-mono);
+}
+
+.terminal-title {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.terminal-copy-btn {
+  background: transparent;
+  border: 1px solid var(--border-color-muted);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.55rem;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.terminal-copy-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--border-color);
+  background-color: var(--bg-tertiary);
+}
+
 #playground .terminal-output-viewport {
   max-height: 350px;
-  font-size: 0.88rem;
+  font-size: 0.85rem;
+  font-family: var(--font-mono), monospace !important;
+  line-height: 1.6;
 }
 
 /* ── RESPONSIVE DESIGN (MEDIA QUERIES) ── */

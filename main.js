@@ -701,11 +701,11 @@ disp("Score:", score)`
       if (isHidden) {
         docsDrawer.removeAttribute('hidden');
         docsToggle.classList.add('active');
-        docsToggle.textContent = '✕ Close Reference';
+        docsToggle.textContent = '✕ Close Ref';
       } else {
         docsDrawer.setAttribute('hidden', '');
         docsToggle.classList.remove('active');
-        docsToggle.textContent = '📋 Quick Reference';
+        docsToggle.textContent = '📋 Quick Ref';
       }
     });
   }
