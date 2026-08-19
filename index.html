@@ -403,6 +403,22 @@
             </div>
           </article>
 
+          <!-- Project: GAFFF -->
+          <article class="project-card featured">
+            <div class="project-header">
+              <h3 class="project-name">GAFFF</h3>
+              <span class="badge featured-badge">Featured</span>
+            </div>
+            <p class="project-desc">A statically-typed compiled programming language implemented in C. Features a custom compiler pipeline, lexer, abstract syntax tree (AST) parser, and native C code generation.</p>
+            <div class="project-meta">
+              <span class="project-stack">C · Compiler · Lexer · AST · Code Gen</span>
+              <a href="https://github.com/Bennnto/GAFFF" class="project-link" target="_blank" rel="noopener"
+                aria-label="View GAFFF Compiler on GitHub">
+                GitHub <span>↗</span>
+              </a>
+            </div>
+          </article>
+
           <!-- Project: Snippet API -->
           <article class="project-card featured">
             <div class="project-header">
@@ -631,6 +647,7 @@
               <button class="lib-tab active" data-cat="all">All Snippets</button>
               <button class="lib-tab" data-cat="python">🐍 Python</button>
               <button class="lib-tab" data-cat="rust">🦀 Rust</button>
+              <button class="lib-tab" data-cat="c">⚡ C Compiler</button>
               <button class="lib-tab" data-cat="sql">🗄️ SQL</button>
             </div>
 
@@ -758,6 +775,38 @@ hash_str = ph.hash(<span class="s">"super_secret_pass"</span>)
     print(<span class="s">"Authentication Successful"</span>)
 <span class="k">except</span> Exception:
     print(<span class="s">"Invalid Password"</span>)</code></pre>
+              </div>
+            </div>
+
+            <!-- Snippet Card 5: GAFFF C Compiler AST Node Allocation -->
+            <div class="snippet-card" data-cat="c" data-search="c gafff compiler ast lexer memory allocation struct malloc">
+              <div class="snippet-header">
+                <div class="snippet-title-group">
+                  <span class="snippet-lang-badge py" style="background-color:rgba(168,85,247,0.18);color:#A855F7;">C (GAFFF)</span>
+                  <h3 class="snippet-title">GAFFF AST Node Allocation</h3>
+                </div>
+                <div class="snippet-actions">
+                  <span class="complexity-tag">Low-Level C</span>
+                  <button class="snippet-copy-btn" data-target="code-snippet-5">📋 Copy</button>
+                </div>
+              </div>
+              <p class="snippet-desc">GAFFF C Compiler pipeline memory allocation for Abstract Syntax Tree (AST) node creation.</p>
+              <div class="snippet-code-box">
+                <pre><code id="code-snippet-5"><span class="k">typedef struct</span> <span class="t">ASTNode</span> {
+    <span class="t">NodeType</span> type;
+    <span class="t">char</span>* val;
+    <span class="k">struct</span> <span class="t">ASTNode</span>* left;
+    <span class="k">struct</span> <span class="t">ASTNode</span>* right;
+} <span class="t">ASTNode</span>;
+
+<span class="t">ASTNode</span>* <span class="f">create_ast_node</span>(<span class="t">NodeType</span> t, <span class="k">const char</span>* val) {
+    <span class="t">ASTNode</span>* node = (<span class="t">ASTNode</span>*)<span class="f">malloc</span>(<span class="k">sizeof</span>(<span class="t">ASTNode</span>));
+    node-&gt;type = t;
+    node-&gt;val = <span class="f">strdup</span>(val);
+    node-&gt;left = NULL;
+    node-&gt;right = NULL;
+    <span class="k">return</span> node;
+}</code></pre>
               </div>
             </div>
 
