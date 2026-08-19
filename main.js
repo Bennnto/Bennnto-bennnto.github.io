@@ -203,209 +203,430 @@
 })();
 
 
-// ── SYSTEM ARCHITECTURE VISUALIZER ──
+// ── 60FPS ALGORITHM & PATHFINDING VISUALIZER ──
 (function () {
-  const scenarioBtns = document.querySelectorAll('.arch-scenario-btn');
-  const triggerBtn = document.getElementById('arch-trigger-btn');
-  const statusBadge = document.getElementById('arch-packet-status');
-  const logStream = document.getElementById('arch-log-stream');
-  const payloadViewer = document.getElementById('arch-payload-viewer');
+  const modeBtns = document.querySelectorAll('.algo-mode-btn');
+  const sortViewport = document.getElementById('sort-viewport');
+  const pathViewport = document.getElementById('path-viewport');
+  const algoSelect = document.getElementById('algo-select');
+  const speedSlider = document.getElementById('algo-speed');
+  const speedVal = document.getElementById('speed-val');
+  const runBtn = document.getElementById('algo-run-btn');
+  const resetBtn = document.getElementById('algo-reset-btn');
+  const barsContainer = document.getElementById('sort-bars-container');
+  const pathGridEl = document.getElementById('path-grid');
 
-  if (scenarioBtns.length === 0 || !triggerBtn) return;
+  const statComparisons = document.getElementById('stat-comparisons');
+  const statSwaps = document.getElementById('stat-swaps');
+  const statTime = document.getElementById('stat-time');
+  const statComplexity = document.getElementById('stat-complexity');
 
-  let activeScenario = 'cache-hit';
-  let isSimulating = false;
+  if (!sortViewport || !pathViewport || !runBtn) return;
 
-  const scenariosData = {
-    'cache-hit': {
-      method: 'GET',
-      path: '/api/v1/users/active',
-      desc: 'GET request with Redis cache hit (4ms total latency)',
-      nodes: ['client', 'gateway', 'cache'],
-      steps: [
-        { node: 'client', status: 'Sending GET /api/v1/users/active', delay: 300 },
-        { node: 'gateway', status: 'JWT Verified & Rate Limit Pass', delay: 400 },
-        { node: 'cache', status: 'Cache Hit (Key: users:active)', delay: 400 }
-      ],
-      resultStatus: '200 OK (Cache Hit)',
-      resultClass: 'success',
-      payload: {
-        status: 200,
-        cache: 'HIT',
-        ttl: 298,
-        latency_ms: 4,
-        data: [
-          { id: 101, username: 'vissarut_p', role: 'admin' },
-          { id: 102, username: 'dev_ben', role: 'engineer' }
-        ]
-      }
-    },
-    'cache-miss': {
-      method: 'GET',
-      path: '/api/v1/analytics/daily',
-      desc: 'GET request with Cache Miss -> App Server -> Postgres DB -> Cache Populate',
-      nodes: ['client', 'gateway', 'cache', 'server', 'db'],
-      steps: [
-        { node: 'client', status: 'Sending GET /api/v1/analytics/daily', delay: 300 },
-        { node: 'gateway', status: 'JWT Auth OK -> Proxy to Cache', delay: 350 },
-        { node: 'cache', status: 'Cache Miss (Key: analytics:daily)', delay: 350 },
-        { node: 'server', status: 'Forward Query to App Server', delay: 400 },
-        { node: 'db', status: 'Execute Index Scan on PostgreSQL', delay: 500 },
-        { node: 'server', status: 'Write Payload Back to Redis Cache', delay: 300 }
-      ],
-      resultStatus: '200 OK (Cache Miss)',
-      resultClass: 'success',
-      payload: {
-        status: 200,
-        cache: 'MISS',
-        latency_ms: 45,
-        db_query_ms: 38,
-        data: {
-          total_requests: 14820,
-          p95_latency: '12ms',
-          uptime: '99.98%'
-        }
-      }
-    },
-    'db-write': {
-      method: 'POST',
-      path: '/api/v1/orders/new',
-      desc: 'POST request -> Write DB Transaction -> Invalidate Stale Cache',
-      nodes: ['client', 'gateway', 'server', 'db', 'cache'],
-      steps: [
-        { node: 'client', status: 'Sending POST /api/v1/orders/new', delay: 300 },
-        { node: 'gateway', status: 'Rate Limit OK -> Pass to App Server', delay: 400 },
-        { node: 'server', status: 'Validate Payload -> Begin DB Tx', delay: 400 },
-        { node: 'db', status: 'INSERT into PostgreSQL orders table', delay: 600 },
-        { node: 'cache', status: 'Evict Stale Cache (DEL orders:*)', delay: 400 }
-      ],
-      resultStatus: '201 Created',
-      resultClass: 'success',
-      payload: {
-        status: 201,
-        message: 'Order created successfully',
-        order_id: 'ord_984210',
-        cache_invalidated: true,
-        latency_ms: 68
-      }
-    },
-    'rate-limit': {
-      method: 'GET',
-      path: '/api/v1/sensitive/data',
-      desc: 'Exceeded Token Bucket Rate Limit at API Gateway',
-      nodes: ['client', 'gateway'],
-      steps: [
-        { node: 'client', status: 'Sending Burst GET Requests...', delay: 300 },
-        { node: 'gateway', status: 'Token Bucket Empty! Rate Limit Exceeded', delay: 500 }
-      ],
-      resultStatus: '429 Too Many Requests',
-      resultClass: 'error',
-      payload: {
-        status: 429,
-        error: 'Too Many Requests',
-        message: 'Rate limit exceeded: Max 100 req/min',
-        retry_after_sec: 42
-      }
-    }
-  };
+  let activeMode = 'sort'; // 'sort' | 'path'
+  let isRunning = false;
+  let arraySize = 35;
+  let array = [];
+  let barElements = [];
+  let sortCancelFlag = false;
 
-  // Scenario Selector Handler
-  scenarioBtns.forEach(btn => {
+  let comparisons = 0;
+  let swaps = 0;
+  let startTime = 0;
+
+  // Pathfinding Grid state
+  const GRID_ROWS = 10;
+  const GRID_COLS = 20;
+  let gridState = []; // 0: empty, 1: wall, 2: start, 3: target, 4: visited, 5: path
+  let startPos = { r: 2, c: 3 };
+  let targetPos = { r: 7, c: 16 };
+  let isMouseDown = false;
+
+  // 1. Mode Switch Handler
+  modeBtns.forEach(btn => {
     btn.addEventListener('click', () => {
-      if (isSimulating) return;
-      scenarioBtns.forEach(b => b.classList.remove('active'));
+      if (isRunning) return;
+      modeBtns.forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-selected', 'false');
+      });
       btn.classList.add('active');
-      activeScenario = btn.dataset.scenario;
-      appendLog('info', `[Scenario Selected] ${scenariosData[activeScenario].desc}`);
-    });
-  });
+      btn.setAttribute('aria-selected', 'true');
+      activeMode = btn.dataset.mode;
 
-  // Simulation Trigger Handler
-  triggerBtn.addEventListener('click', async () => {
-    if (isSimulating) return;
-    isSimulating = true;
-    triggerBtn.disabled = true;
-    triggerBtn.innerHTML = '<span>⏳</span> ROUTING PACKET...';
-
-    const scenario = scenariosData[activeScenario];
-    statusBadge.textContent = 'Status: Routing...';
-    statusBadge.className = 'status-code idle';
-    payloadViewer.textContent = '// Simulating packet flow through architecture...';
-
-    clearAllNodeStates();
-    appendLog('info', `--- Starting Scenario: ${scenario.method} ${scenario.path} ---`);
-
-    for (let i = 0; i < scenario.steps.length; i++) {
-      const step = scenario.steps[i];
-      const nodeEl = document.getElementById(`node-${step.node}`);
-      const badgeEl = nodeEl.querySelector('.node-status-badge');
-
-      // Highlight active node
-      setNodeState(nodeEl, badgeEl, 'processing', 'Processing');
-      appendLog('step', `[${getNodeLabel(step.node)}] ${step.status}`);
-
-      await sleep(step.delay);
-
-      if (i < scenario.steps.length - 1) {
-        setNodeState(nodeEl, badgeEl, 'success', 'Done');
+      if (activeMode === 'sort') {
+        sortViewport.hidden = false;
+        pathViewport.hidden = true;
+        updateAlgoDropdown('sort');
       } else {
-        const finalClass = scenario.resultClass === 'error' ? 'error' : 'success';
-        setNodeState(nodeEl, badgeEl, finalClass, finalClass.toUpperCase());
+        sortViewport.hidden = true;
+        pathViewport.hidden = false;
+        updateAlgoDropdown('path');
       }
-    }
-
-    statusBadge.textContent = `Status: ${scenario.resultStatus}`;
-    statusBadge.className = `status-code ${scenario.resultClass}`;
-    payloadViewer.textContent = JSON.stringify(scenario.payload, null, 2);
-    appendLog(scenario.resultClass === 'error' ? 'error' : 'success', `[Complete] ${scenario.resultStatus}`);
-
-    triggerBtn.disabled = false;
-    triggerBtn.innerHTML = '<span>▶</span> SIMULATE REQUEST PACKET';
-    isSimulating = false;
+    });
   });
 
-  function clearAllNodeStates() {
-    document.querySelectorAll('.arch-node-card').forEach(card => {
-      card.classList.remove('active', 'active-success', 'active-error');
-      const badge = card.querySelector('.node-status-badge');
-      badge.textContent = 'Idle';
-      badge.className = 'node-status-badge';
-    });
+  function updateAlgoDropdown(mode) {
+    if (mode === 'sort') {
+      algoSelect.innerHTML = `
+        <option value="quicksort">QuickSort — O(N log N)</option>
+        <option value="mergesort">MergeSort — O(N log N)</option>
+        <option value="bubblesort">BubbleSort — O(N²)</option>
+      `;
+      statComplexity.textContent = 'O(N log N)';
+    } else {
+      algoSelect.innerHTML = `
+        <option value="dijkstra">Dijkstra's Algorithm</option>
+        <option value="astar">A* Search Algorithm</option>
+      `;
+      statComplexity.textContent = 'O(V + E log V)';
+    }
   }
 
-  function setNodeState(cardEl, badgeEl, stateClass, labelText) {
-    cardEl.classList.remove('active', 'active-success', 'active-error');
-    if (stateClass === 'processing') cardEl.classList.add('active');
-    else if (stateClass === 'success') cardEl.classList.add('active-success');
-    else if (stateClass === 'error') cardEl.classList.add('active-error');
+  // Speed Slider Handler
+  speedSlider.addEventListener('input', () => {
+    speedVal.textContent = `${speedSlider.value}x`;
+  });
 
-    badgeEl.textContent = labelText;
-    badgeEl.className = `node-status-badge ${stateClass}`;
+  // ── MODE 1: ARRAY SORTING ──
+  function generateRandomArray() {
+    array = [];
+    barElements = [];
+    barsContainer.innerHTML = '';
+    comparisons = 0;
+    swaps = 0;
+    updateStats(0);
+
+    for (let i = 0; i < arraySize; i++) {
+      const val = Math.floor(Math.random() * 85) + 15;
+      array.push(val);
+
+      const bar = document.createElement('div');
+      bar.className = 'sort-bar';
+      bar.style.height = `${val}%`;
+      barsContainer.appendChild(bar);
+      barElements.push(bar);
+    }
   }
 
-  function getNodeLabel(nodeId) {
-    const labels = {
-      client: 'Client App',
-      gateway: 'API Gateway',
-      cache: 'Redis Cache',
-      server: 'App Server',
-      db: 'PostgreSQL DB'
-    };
-    return labels[nodeId] || nodeId;
+  function getDelay() {
+    const speed = parseInt(speedSlider.value, 10);
+    return Math.max(10, 220 - speed * 20);
   }
 
-  function appendLog(type, text) {
-    const line = document.createElement('div');
-    line.className = `log-line ${type}`;
-    const timestamp = new Date().toISOString().split('T')[1].slice(0, 8);
-    line.textContent = `[${timestamp}] ${text}`;
-    logStream.appendChild(line);
-    logStream.scrollTop = logStream.scrollHeight;
+  function updateStats(elapsed) {
+    statComparisons.textContent = comparisons;
+    statSwaps.textContent = swaps;
+    statTime.textContent = `${elapsed}ms`;
   }
 
-  function sleep(ms) {
+  async function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
+
+  // BubbleSort
+  async function runBubbleSort() {
+    const n = array.length;
+    for (let i = 0; i < n; i++) {
+      for (let j = 0; j < n - i - 1; j++) {
+        if (sortCancelFlag) return;
+
+        barElements[j].classList.add('active');
+        barElements[j + 1].classList.add('active');
+        comparisons++;
+        updateStats(Math.round(performance.now() - startTime));
+        await sleep(getDelay());
+
+        if (array[j] > array[j + 1]) {
+          // Swap
+          swaps++;
+          const temp = array[j];
+          array[j] = array[j + 1];
+          array[j + 1] = temp;
+
+          barElements[j].style.height = `${array[j]}%`;
+          barElements[j + 1].style.height = `${array[j + 1]}%`;
+          barElements[j].classList.add('swap');
+          barElements[j + 1].classList.add('swap');
+          await sleep(getDelay());
+        }
+
+        barElements[j].className = 'sort-bar';
+        barElements[j + 1].className = 'sort-bar';
+      }
+      barElements[n - i - 1].classList.add('sorted');
+    }
+  }
+
+  // QuickSort
+  async function runQuickSort(low, high) {
+    if (low < high) {
+      const pi = await partition(low, high);
+      if (sortCancelFlag) return;
+      await runQuickSort(low, pi - 1);
+      await runQuickSort(pi + 1, high);
+    } else if (low >= 0 && low < array.length) {
+      barElements[low].classList.add('sorted');
+    }
+  }
+
+  async function partition(low, high) {
+    const pivot = array[high];
+    barElements[high].classList.add('swap');
+    let i = low - 1;
+
+    for (let j = low; j < high; j++) {
+      if (sortCancelFlag) return high;
+      barElements[j].classList.add('active');
+      comparisons++;
+      updateStats(Math.round(performance.now() - startTime));
+      await sleep(getDelay());
+
+      if (array[j] < pivot) {
+        i++;
+        swaps++;
+        const temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+
+        barElements[i].style.height = `${array[i]}%`;
+        barElements[j].style.height = `${array[j]}%`;
+      }
+      barElements[j].classList.remove('active');
+    }
+
+    swaps++;
+    const temp = array[i + 1];
+    array[i + 1] = array[high];
+    array[high] = temp;
+
+    barElements[i + 1].style.height = `${array[i + 1]}%`;
+    barElements[high].style.height = `${array[high]}%`;
+    barElements[high].classList.remove('swap');
+    barElements[i + 1].classList.add('sorted');
+
+    return i + 1;
+  }
+
+  // MergeSort
+  async function runMergeSort(l, r) {
+    if (l >= r || sortCancelFlag) return;
+    const m = l + Math.floor((r - l) / 2);
+    await runMergeSort(l, m);
+    await runMergeSort(m + 1, r);
+    await merge(l, m, r);
+  }
+
+  async function merge(l, m, r) {
+    const n1 = m - l + 1;
+    const n2 = r - m;
+    const L = [];
+    const R = [];
+
+    for (let i = 0; i < n1; i++) L.push(array[l + i]);
+    for (let j = 0; j < n2; j++) R.push(array[m + 1 + j]);
+
+    let i = 0, j = 0, k = l;
+    while (i < n1 && j < n2) {
+      if (sortCancelFlag) return;
+      comparisons++;
+      updateStats(Math.round(performance.now() - startTime));
+      barElements[k].classList.add('active');
+      await sleep(getDelay());
+
+      if (L[i] <= R[j]) {
+        array[k] = L[i];
+        i++;
+      } else {
+        array[k] = R[j];
+        j++;
+      }
+      swaps++;
+      barElements[k].style.height = `${array[k]}%`;
+      barElements[k].className = 'sort-bar sorted';
+      k++;
+    }
+
+    while (i < n1) {
+      if (sortCancelFlag) return;
+      array[k] = L[i];
+      barElements[k].style.height = `${array[k]}%`;
+      barElements[k].className = 'sort-bar sorted';
+      i++; k++;
+      await sleep(getDelay() / 2);
+    }
+
+    while (j < n2) {
+      if (sortCancelFlag) return;
+      array[k] = R[j];
+      barElements[k].style.height = `${array[k]}%`;
+      barElements[k].className = 'sort-bar sorted';
+      j++; k++;
+      await sleep(getDelay() / 2);
+    }
+  }
+
+  // ── MODE 2: 2D PATHFINDING GRID ──
+  function initGrid() {
+    gridState = Array.from({ length: GRID_ROWS }, () => Array(GRID_COLS).fill(0));
+    gridState[startPos.r][startPos.c] = 2; // Start
+    gridState[targetPos.r][targetPos.c] = 3; // Target
+    renderGrid();
+  }
+
+  function renderGrid() {
+    pathGridEl.innerHTML = '';
+    for (let r = 0; r < GRID_ROWS; r++) {
+      for (let c = 0; c < GRID_COLS; c++) {
+        const cell = document.createElement('div');
+        cell.className = 'path-cell';
+        const type = gridState[r][c];
+
+        if (type === 1) cell.classList.add('wall');
+        else if (type === 2) cell.classList.add('start');
+        else if (type === 3) cell.classList.add('target');
+        else if (type === 4) cell.classList.add('visited');
+        else if (type === 5) cell.classList.add('path');
+
+        cell.dataset.r = r;
+        cell.dataset.c = c;
+
+        cell.addEventListener('mousedown', () => {
+          if (isRunning || type === 2 || type === 3) return;
+          isMouseDown = true;
+          toggleWall(r, c);
+        });
+
+        cell.addEventListener('mouseenter', () => {
+          if (isMouseDown && !isRunning && type !== 2 && type !== 3) {
+            toggleWall(r, c);
+          }
+        });
+
+        pathGridEl.appendChild(cell);
+      }
+    }
+  }
+
+  window.addEventListener('mouseup', () => { isMouseDown = false; });
+
+  function toggleWall(r, c) {
+    if (gridState[r][c] === 1) {
+      gridState[r][c] = 0;
+    } else if (gridState[r][c] === 0) {
+      gridState[r][c] = 1;
+    }
+    renderGrid();
+  }
+
+  async function runPathfinding() {
+    // Clear previous visited/path
+    for (let r = 0; r < GRID_ROWS; r++) {
+      for (let c = 0; c < GRID_COLS; c++) {
+        if (gridState[r][c] === 4 || gridState[r][c] === 5) {
+          gridState[r][c] = 0;
+        }
+      }
+    }
+    renderGrid();
+
+    const queue = [{ r: startPos.r, c: startPos.c, path: [] }];
+    const visited = new Set();
+    visited.add(`${startPos.r},${startPos.c}`);
+
+    const dr = [-1, 1, 0, 0];
+    const dc = [0, 0, -1, 1];
+    let found = false;
+
+    while (queue.length > 0) {
+      if (sortCancelFlag) return;
+      const { r, c, path } = queue.shift();
+
+      if (r === targetPos.r && c === targetPos.c) {
+        // Draw path
+        found = true;
+        for (const step of path) {
+          if (gridState[step.r][step.c] === 0 || gridState[step.r][step.c] === 4) {
+            gridState[step.r][step.c] = 5;
+            renderGrid();
+            await sleep(40);
+          }
+        }
+        break;
+      }
+
+      if (gridState[r][c] === 0) {
+        gridState[r][c] = 4; // visited
+        renderGrid();
+        await sleep(Math.max(15, 120 - parseInt(speedSlider.value, 10) * 10));
+      }
+
+      for (let i = 0; i < 4; i++) {
+        const nr = r + dr[i];
+        const nc = c + dc[i];
+        const key = `${nr},${nc}`;
+
+        if (nr >= 0 && nr < GRID_ROWS && nc >= 0 && nc < GRID_COLS) {
+          if (gridState[nr][nc] !== 1 && !visited.has(key)) {
+            visited.add(key);
+            queue.push({ r: nr, c: nc, path: [...path, { r: nr, c: nc }] });
+          }
+        }
+      }
+    }
+  }
+
+  // ── RUN & RESET BUTTON HANDLERS ──
+  runBtn.addEventListener('click', async () => {
+    if (isRunning) return;
+    isRunning = true;
+    sortCancelFlag = false;
+    runBtn.disabled = true;
+    resetBtn.disabled = true;
+    runBtn.innerHTML = '<span>⏳</span> RUNNING...';
+
+    startTime = performance.now();
+
+    if (activeMode === 'sort') {
+      const algo = algoSelect.value;
+      if (algo === 'bubblesort') {
+        statComplexity.textContent = 'O(N²)';
+        await runBubbleSort();
+      } else if (algo === 'quicksort') {
+        statComplexity.textContent = 'O(N log N)';
+        await runQuickSort(0, array.length - 1);
+        barElements.forEach(b => b.className = 'sort-bar sorted');
+      } else if (algo === 'mergesort') {
+        statComplexity.textContent = 'O(N log N)';
+        await runMergeSort(0, array.length - 1);
+      }
+    } else {
+      await runPathfinding();
+    }
+
+    runBtn.disabled = false;
+    resetBtn.disabled = false;
+    runBtn.innerHTML = '<span>▶</span> RUN VISUALIZER';
+    isRunning = false;
+  });
+
+  resetBtn.addEventListener('click', () => {
+    sortCancelFlag = true;
+    isRunning = false;
+    runBtn.disabled = false;
+    resetBtn.disabled = false;
+    runBtn.innerHTML = '<span>▶</span> RUN VISUALIZER';
+
+    if (activeMode === 'sort') {
+      generateRandomArray();
+    } else {
+      initGrid();
+    }
+  });
+
+  // Initial load
+  generateRandomArray();
+  initGrid();
 })();
 
 

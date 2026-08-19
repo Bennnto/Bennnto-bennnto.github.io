@@ -20,7 +20,7 @@
     href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
     rel="stylesheet" />
 
-  <link rel="stylesheet" href="style.css?v=4" />
+  <link rel="stylesheet" href="style.css?v=5" />
 </head>
 
 <body>
@@ -41,7 +41,7 @@
         <a href="#info" class="nav-link">Info</a>
         <a href="#resume" class="nav-link">Resume</a>
         <a href="#projects" class="nav-link">Projects</a>
-        <a href="#architecture" class="nav-link">Architecture</a>
+        <a href="#algorithms" class="nav-link">Algorithms</a>
         <a href="#playground" class="nav-link">Playground</a>
         <a href="#contact" class="nav-link">Contact</a>
       </nav>
@@ -617,111 +617,80 @@
         </div>
       </section>
 
-      <!-- SYSTEM ARCHITECTURE VISUALIZER SECTION -->
-      <section id="architecture" class="portfolio-section">
-        <h2 class="section-title">System Architecture</h2>
-        <p class="arch-intro">
-          Interactive microservices architecture visualizer. Trigger real-time request scenarios to observe packet routing, API Gateway rate limiting, Redis caching layers, and database transactions.
+      <!-- ALGORITHMS & PATHFINDING VISUALIZER SECTION -->
+      <section id="algorithms" class="portfolio-section">
+        <h2 class="section-title">Algorithm Visualizer</h2>
+        <p class="algo-intro">
+          60fps interactive algorithm visualizer. Compare array sorting algorithms (QuickSort, MergeSort, BubbleSort) and 2D grid pathfinding (Dijkstra's & A* Search) with real-time complexity analytics.
         </p>
 
-        <div class="arch-container">
-          <!-- Scenario Trigger Controls -->
-          <div class="arch-controls-bar">
-            <span class="arch-controls-label">Scenarios:</span>
-            <div class="arch-scenarios-group">
-              <button class="arch-scenario-btn active" data-scenario="cache-hit">
-                <span class="scenario-badge get">GET</span> Cache Hit (4ms)
+        <div class="algo-box">
+          <!-- Top Mode Selector & Controls Bar -->
+          <div class="algo-header-bar">
+            <div class="algo-mode-group" role="tablist">
+              <button class="algo-mode-btn active" data-mode="sort" role="tab" aria-selected="true">
+                📊 Array Sorting
               </button>
-              <button class="arch-scenario-btn" data-scenario="cache-miss">
-                <span class="scenario-badge get">GET</span> Cache Miss (45ms)
+              <button class="algo-mode-btn" data-mode="path" role="tab" aria-selected="false">
+                🗺️ 2D Pathfinding
               </button>
-              <button class="arch-scenario-btn" data-scenario="db-write">
-                <span class="scenario-badge post">POST</span> Write & Evict (68ms)
-              </button>
-              <button class="arch-scenario-btn" data-scenario="rate-limit">
-                <span class="scenario-badge err">429</span> Rate Limited (1ms)
-              </button>
+            </div>
+
+            <div class="algo-controls-group">
+              <div class="algo-control-item" id="algo-picker-wrapper">
+                <label for="algo-select" class="algo-label">Algorithm</label>
+                <select id="algo-select" class="algo-select">
+                  <option value="quicksort">QuickSort — O(N log N)</option>
+                  <option value="mergesort">MergeSort — O(N log N)</option>
+                  <option value="bubblesort">BubbleSort — O(N²)</option>
+                </select>
+              </div>
+
+              <div class="algo-control-item" id="speed-picker-wrapper">
+                <label for="algo-speed" class="algo-label">Speed: <span id="speed-val">5x</span></label>
+                <input type="range" id="algo-speed" min="1" max="10" value="5" class="algo-slider" />
+              </div>
             </div>
           </div>
 
-          <!-- Architecture Nodes Grid -->
-          <div class="arch-diagram-grid">
-            <!-- Node 1: Client -->
-            <div class="arch-node-card" id="node-client">
-              <div class="arch-node-header">
-                <span class="node-icon">💻</span>
-                <span class="node-name">Client App</span>
-              </div>
-              <p class="node-tech">Web / Mobile Client</p>
-              <div class="node-status-badge">Idle</div>
+          <!-- Mode 1: Sorting Canvas / Bars Container -->
+          <div id="sort-viewport" class="algo-viewport">
+            <div id="sort-bars-container" class="sort-bars-container">
+              <!-- Dynamically populated vertical bars -->
             </div>
 
-            <!-- Node 2: API Gateway -->
-            <div class="arch-node-card" id="node-gateway">
-              <div class="arch-node-header">
-                <span class="node-icon">🛡️</span>
-                <span class="node-name">API Gateway</span>
-              </div>
-              <p class="node-tech">JWT Auth & Rate Limiter</p>
-              <div class="node-status-badge">Idle</div>
-            </div>
-
-            <!-- Node 3: Redis Cache -->
-            <div class="arch-node-card" id="node-cache">
-              <div class="arch-node-header">
-                <span class="node-icon">⚡</span>
-                <span class="node-name">Redis Cache</span>
-              </div>
-              <p class="node-tech">In-Memory Key-Value Store</p>
-              <div class="node-status-badge">Idle</div>
-            </div>
-
-            <!-- Node 4: Application Server -->
-            <div class="arch-node-card" id="node-server">
-              <div class="arch-node-header">
-                <span class="node-icon">⚙️</span>
-                <span class="node-name">App Server</span>
-              </div>
-              <p class="node-tech">Rust / Python Service</p>
-              <div class="node-status-badge">Idle</div>
-            </div>
-
-            <!-- Node 5: Database -->
-            <div class="arch-node-card" id="node-db">
-              <div class="arch-node-header">
-                <span class="node-icon">🗄️</span>
-                <span class="node-name">PostgreSQL</span>
-              </div>
-              <p class="node-tech">Relational Storage</p>
-              <div class="node-status-badge">Idle</div>
+            <!-- Telemetry Stats Footer -->
+            <div class="algo-stats-bar">
+              <div class="stat-item"><span class="stat-label">Comparisons:</span> <span id="stat-comparisons" class="stat-value">0</span></div>
+              <div class="stat-item"><span class="stat-label">Swaps:</span> <span id="stat-swaps" class="stat-value">0</span></div>
+              <div class="stat-item"><span class="stat-label">Elapsed:</span> <span id="stat-time" class="stat-value">0ms</span></div>
+              <div class="stat-item"><span class="stat-label">Complexity:</span> <span id="stat-complexity" class="stat-badge">O(N log N)</span></div>
             </div>
           </div>
 
-          <!-- Action Button -->
-          <div class="arch-action-bar">
-            <button id="arch-trigger-btn" class="arch-trigger-button">
-              <span>▶</span> SIMULATE REQUEST PACKET
+          <!-- Mode 2: 2D Pathfinding Grid Container (Hidden by default) -->
+          <div id="path-viewport" class="algo-viewport" hidden>
+            <div class="path-grid-header">
+              <span class="path-guide-item"><span class="grid-cell-icon start">🟢</span> Start</span>
+              <span class="path-guide-item"><span class="grid-cell-icon target">🎯</span> Target</span>
+              <span class="path-guide-item"><span class="grid-cell-icon wall">🧱</span> Wall (Click/Drag to Draw)</span>
+              <span class="path-guide-item"><span class="grid-cell-icon visited">🌊</span> Wave</span>
+              <span class="path-guide-item"><span class="grid-cell-icon path">✨</span> Path</span>
+            </div>
+
+            <div id="path-grid" class="path-grid">
+              <!-- 20x10 Grid populated via JS -->
+            </div>
+          </div>
+
+          <!-- Action Buttons Footer Bar -->
+          <div class="algo-actions-bar">
+            <button id="algo-run-btn" class="algo-primary-button">
+              <span>▶</span> RUN VISUALIZER
             </button>
-          </div>
-
-          <!-- Packet Inspector & Log Console -->
-          <div class="arch-inspector-block">
-            <div class="inspector-header">
-              <span class="inspector-title">PACKET & TELEMETRY INSPECTOR</span>
-              <span id="arch-packet-status" class="status-code idle">Status: Ready</span>
-            </div>
-            <div class="inspector-body">
-              <div class="inspector-col logs-col">
-                <div class="inspector-sub-title">System Log Stream</div>
-                <div id="arch-log-stream" class="log-stream-viewport">
-                  <div class="log-line info">[System] Architecture Visualizer initialized. Select a scenario and click Simulate Request Packet.</div>
-                </div>
-              </div>
-              <div class="inspector-col payload-col">
-                <div class="inspector-sub-title">Payload Inspector</div>
-                <pre id="arch-payload-viewer" class="payload-viewport">// Response payload and HTTP headers will render here in real-time...</pre>
-              </div>
-            </div>
+            <button id="algo-reset-btn" class="algo-secondary-button">
+              <span>🔀</span> SHUFFLE / RESET
+            </button>
           </div>
 
         </div>
@@ -868,7 +837,7 @@ disp("pi is:", pi)</textarea>
   </main>
 
   <script src="tress.js"></script>
-  <script src="main.js?v=3"></script>
+  <script src="main.js?v=4"></script>
 </body>
 
 </html>
