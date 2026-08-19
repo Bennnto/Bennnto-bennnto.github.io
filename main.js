@@ -296,8 +296,8 @@
 
   // Knowledge Graph Connecting Lines Engine
   const EDGES = [
-    { from: 'gafff', to: 'tech-c' },
-    { from: 'gafff', to: 'tech-ast' },
+    { from: 'gaff', to: 'tech-c' },
+    { from: 'gaff', to: 'tech-ast' },
     { from: 'tress', to: 'tech-ast' },
     { from: 'tress', to: 'tech-py' },
     { from: 'snippet-api', to: 'tech-py' },
