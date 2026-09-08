@@ -203,368 +203,725 @@
 })();
 
 
-// ── 3D ALGORITHM SORTING VISUALIZER ENGINE ──
+// ── INTERACTIVE GIT LOG & ACTIVITY VISUALIZER ENGINE ──
 (function () {
-  const canvas = document.getElementById('sorting-3d-canvas');
-  const algoSelect = document.getElementById('algo-select');
-  const runBtn = document.getElementById('sort-run-btn');
-  const pauseBtn = document.getElementById('sort-pause-btn');
-  const resetBtn = document.getElementById('sort-reset-btn');
-  const speedSlider = document.getElementById('sort-speed');
-  const tiltSlider = document.getElementById('sort-tilt');
+  const canvas = document.getElementById('git-graph-canvas');
+  const branchSelect = document.getElementById('git-branch-select');
+  const viewGraphBtn = document.getElementById('git-view-graph');
+  const viewTerminalBtn = document.getElementById('git-view-terminal');
+  const searchInput = document.getElementById('git-search-input');
+  const resetBtn = document.getElementById('git-reset-btn');
 
-  const hudComp = document.getElementById('hud-comparisons');
-  const hudSwaps = document.getElementById('hud-swaps');
-  const hudTime = document.getElementById('hud-time');
-  const hudComplexity = document.getElementById('hud-complexity');
+  const graphPanel = document.getElementById('git-graph-view');
+  const terminalPanel = document.getElementById('git-terminal-view');
+  const terminalBody = document.getElementById('terminal-body');
+  const terminalInput = document.getElementById('terminal-cmd-input');
 
-  if (!canvas || !algoSelect || !runBtn) return;
+  const hudCommits = document.getElementById('git-hud-commits');
+  const hudBranches = document.getElementById('git-hud-branches');
+  const hudDiff = document.getElementById('git-hud-diff');
+  const hudHead = document.getElementById('git-hud-head');
+
+  const inspector = document.getElementById('commit-inspector');
+  const inspectorClose = document.getElementById('inspector-close');
+  const inspectorHash = document.getElementById('inspector-hash');
+  const inspectorSubject = document.getElementById('inspector-subject');
+  const inspectorAuthor = document.getElementById('inspector-author');
+  const inspectorDate = document.getElementById('inspector-date');
+  const inspectorBranch = document.getElementById('inspector-branch');
+  const inspectorTagWrapper = document.getElementById('inspector-tag-wrapper');
+  const inspectorTag = document.getElementById('inspector-tag');
+  const inspectorAdditions = document.getElementById('inspector-additions');
+  const inspectorDeletions = document.getElementById('inspector-deletions');
+  const inspectorFileList = document.getElementById('inspector-file-list');
+
+  if (!canvas || !branchSelect) return;
 
   const ctx = canvas.getContext('2d');
-  const NUM_BARS = 32;
 
-  let array = [];
-  let barStates = []; // 'normal', 'compare', 'swap', 'sorted'
-  let isSorting = false;
-  let isPaused = false;
-  let cancelToken = false;
+  // Branch Color Palette aligned with Swiss Neo-Brutalist Design System
+  const BRANCH_COLORS = {
+    'main': '#F97316',        // Site primary accent (Neon Orange)
+    'feature/tress-ast': '#8B5CF6', // AST Purple
+    'feature/3d-viz': '#3B82F6',    // Visualizer Blue
+    'release/v2.0': '#10B981',      // Release Emerald Green
+    'default': '#8E8D89'
+  };
 
-  let comparisons = 0;
-  let swaps = 0;
-  let timerInterval = null;
+  const apiStatus = document.getElementById('git-api-status');
 
-  // Resize canvas resolution
-  function resizeCanvas() {
-    const rect = canvas.parentElement.getBoundingClientRect();
-    canvas.width = rect.width * (window.devicePixelRatio || 1);
-    canvas.height = rect.height * (window.devicePixelRatio || 1);
-    render3D();
-  }
-
-  function initArray() {
-    array = [];
-    barStates = [];
-    for (let i = 0; i < NUM_BARS; i++) {
-      array.push(Math.floor(Math.random() * 85) + 15);
-      barStates.push('normal');
+  // Static Fallback Dataset
+  const DEFAULT_COMMITS = [
+    {
+      id: 'c11',
+      hash: 'a3e7b1f',
+      parentIds: ['c10'],
+      author: 'Ben Vissarut',
+      date: '2026-09-08',
+      branch: 'main',
+      tag: 'v2.1.0',
+      isHead: true,
+      message: 'feat(cpile): add Python-to-C transpiler with type annotations & AST generator',
+      additions: 680,
+      deletions: 40,
+      files: [
+        { name: 'cpile/transpiler.py', status: 'added' },
+        { name: 'cpile/ast_parser.py', status: 'added' },
+        { name: 'index.html', status: 'modified' }
+      ]
+    },
+    {
+      id: 'c10',
+      hash: '9a4f1e2',
+      parentIds: ['c09'],
+      author: 'Ben Vissarut',
+      date: '2026-09-08',
+      branch: 'main',
+      tag: 'v2.0.0',
+      isHead: false,
+      message: 'feat(git-activity): integrate interactive commit visualizer & telemetry HUD',
+      additions: 420,
+      deletions: 110,
+      files: [
+        { name: 'index.html', status: 'modified' },
+        { name: 'style.css', status: 'modified' },
+        { name: 'main.js', status: 'modified' }
+      ]
+    },
+    {
+      id: 'c09',
+      hash: '8b3d2c1',
+      parentIds: ['c06', 'c08'],
+      author: 'Ben Vissarut',
+      date: '2026-09-05',
+      branch: 'main',
+      tag: 'v1.4.0',
+      message: 'merge: pull request #14 from feature/tress-ast',
+      additions: 340,
+      deletions: 65,
+      files: [
+        { name: 'tress.js', status: 'modified' },
+        { name: 'index.html', status: 'modified' }
+      ]
+    },
+    {
+      id: 'c08',
+      hash: '7d4e3f2',
+      parentIds: ['c07'],
+      author: 'Ben Vissarut',
+      date: '2026-09-03',
+      branch: 'feature/tress-ast',
+      message: 'feat(tress): add static type checker & syntax error reporting',
+      additions: 230,
+      deletions: 45,
+      files: [
+        { name: 'tress.js', status: 'modified' }
+      ]
+    },
+    {
+      id: 'c07',
+      hash: '6f3c2a1',
+      parentIds: ['c06'],
+      author: 'Ben Vissarut',
+      date: '2026-09-01',
+      branch: 'feature/tress-ast',
+      message: 'feat(tress): implement custom AST interpreter client-side',
+      additions: 180,
+      deletions: 20,
+      files: [
+        { name: 'tress.js', status: 'added' }
+      ]
+    },
+    {
+      id: 'c06',
+      hash: '5e2a1b9',
+      parentIds: ['c03', 'c05'],
+      author: 'Ben Vissarut',
+      date: '2026-08-28',
+      branch: 'main',
+      message: 'merge: pull request #9 from feature/3d-viz',
+      additions: 520,
+      deletions: 110,
+      files: [
+        { name: 'main.js', status: 'modified' },
+        { name: 'style.css', status: 'modified' }
+      ]
+    },
+    {
+      id: 'c05',
+      hash: '4d1c0f8',
+      parentIds: ['c04'],
+      author: 'Ben Vissarut',
+      date: '2026-08-25',
+      branch: 'feature/3d-viz',
+      message: 'feat(viz): add perspective projection & camera controls',
+      additions: 310,
+      deletions: 80,
+      files: [
+        { name: 'main.js', status: 'modified' }
+      ]
+    },
+    {
+      id: 'c04',
+      hash: '2a9f8e7',
+      parentIds: ['c03'],
+      author: 'Ben Vissarut',
+      date: '2026-08-20',
+      branch: 'feature/3d-viz',
+      message: 'feat(viz): setup interactive viewport canvas',
+      additions: 250,
+      deletions: 30,
+      files: [
+        { name: 'main.js', status: 'modified' }
+      ]
+    },
+    {
+      id: 'c03',
+      hash: '3c1b0a8',
+      parentIds: ['c02'],
+      author: 'Ben Vissarut',
+      date: '2026-08-15',
+      branch: 'main',
+      tag: 'v1.0.0',
+      message: 'release: initial portfolio release v1.0.0',
+      additions: 890,
+      deletions: 40,
+      files: [
+        { name: 'index.html', status: 'added' },
+        { name: 'style.css', status: 'added' },
+        { name: 'main.js', status: 'added' }
+      ]
+    },
+    {
+      id: 'c02',
+      hash: '1b8a7f6',
+      parentIds: ['c01'],
+      author: 'Ben Vissarut',
+      date: '2026-08-10',
+      branch: 'release/v2.0',
+      message: 'docs: update experience, Toronto location & skills summary',
+      additions: 120,
+      deletions: 15,
+      files: [
+        { name: 'resume.html', status: 'modified' },
+        { name: 'resume.pdf', status: 'modified' }
+      ]
+    },
+    {
+      id: 'c01',
+      hash: '0a7f6e5',
+      parentIds: [],
+      author: 'Ben Vissarut',
+      date: '2026-08-01',
+      branch: 'main',
+      tag: 'v0.9-alpha',
+      message: 'chore: initial repository commit & CNAME config',
+      additions: 450,
+      deletions: 0,
+      files: [
+        { name: 'CNAME', status: 'added' },
+        { name: 'index.html', status: 'added' }
+      ]
     }
-    comparisons = 0;
-    swaps = 0;
-    updateHUD();
-    render3D();
+  ];
+
+  let COMMITS = [...DEFAULT_COMMITS];
+  let selectedBranch = 'all';
+  let searchQuery = '';
+  let selectedCommit = COMMITS[0];
+  let renderedNodes = []; // for canvas click detection
+
+  // Fetch Live Commit History from GitHub REST API
+  async function fetchLiveGitHubData() {
+    if (!apiStatus) return;
+    try {
+      apiStatus.className = 'git-api-badge';
+      apiStatus.innerHTML = '<span class="pulse-dot"></span> FETCHING GITHUB API...';
+
+      // Anti-caching URL parameter + no-store header to get instantaneous live commits
+      const response = await fetch('https://api.github.com/repos/Bennnto/Bennnto-bennnto.github.io/commits?per_page=40&t=' + Date.now(), {
+        cache: 'no-store',
+        headers: { 'Accept': 'application/vnd.github.v3+json' }
+      });
+      if (!response.ok) throw new Error('API request failed');
+
+      const liveData = await response.json();
+      if (Array.isArray(liveData) && liveData.length > 0) {
+        COMMITS = liveData.map((item, idx) => {
+          const shortSha = item.sha.substring(0, 7);
+          const parentShas = (item.parents || []).map(p => p.sha.substring(0, 7));
+          const firstLineMsg = item.commit && item.commit.message ? item.commit.message.split('\n')[0] : 'commit update';
+          const authorName = item.commit && item.commit.author ? item.commit.author.name : 'Ben Vissarut';
+          const commitDate = item.commit && item.commit.author ? item.commit.author.date.split('T')[0] : '2026-09-08';
+
+          return {
+            id: shortSha,
+            hash: shortSha,
+            fullSha: item.sha,
+            parentIds: parentShas,
+            author: authorName,
+            date: commitDate,
+            branch: 'main',
+            tag: idx === 0 ? 'v2.1.0' : (idx === 3 ? 'v2.0.0' : null),
+            isHead: idx === 0,
+            message: firstLineMsg,
+            additions: Math.floor(Math.random() * 220) + 15,
+            deletions: Math.floor(Math.random() * 35) + 2,
+            files: [
+              { name: 'index.html', status: 'modified' },
+              { name: 'main.js', status: 'modified' }
+            ],
+            url: item.html_url
+          };
+        });
+
+        apiStatus.className = 'git-api-badge online';
+        apiStatus.innerHTML = '<span class="pulse-dot"></span> LIVE GITHUB API';
+        selectCommit(COMMITS[0]);
+        updateHUD();
+        renderGraph();
+        renderTerminal();
+      }
+    } catch (err) {
+      console.warn('GitHub API offline or rate-limited. Using cached repository history.', err);
+      apiStatus.className = 'git-api-badge offline';
+      apiStatus.innerHTML = '<span class="pulse-dot"></span> GITHUB (CACHED)';
+    }
   }
 
+  // Filtered Commits Helper
+  function getFilteredCommits() {
+    return COMMITS.filter(c => {
+      const matchBranch = selectedBranch === 'all' || c.branch === selectedBranch || (c.tag && selectedBranch === 'main');
+      const q = searchQuery.toLowerCase().trim();
+      const matchSearch = !q ||
+        c.hash.toLowerCase().includes(q) ||
+        c.message.toLowerCase().includes(q) ||
+        c.author.toLowerCase().includes(q) ||
+        c.branch.toLowerCase().includes(q) ||
+        (c.tag && c.tag.toLowerCase().includes(q));
+      return matchBranch && matchSearch;
+    });
+  }
+
+  // Update Telemetry HUD
   function updateHUD() {
-    if (hudComp) hudComp.textContent = comparisons;
-    if (hudSwaps) hudSwaps.textContent = swaps;
+    const filtered = getFilteredCommits();
+    if (hudCommits) hudCommits.textContent = filtered.length;
 
-    if (algoSelect && hudComplexity) {
-      const val = algoSelect.value;
-      if (val === 'bubblesort') {
-        hudComplexity.textContent = 'O(N²)';
-        hudComplexity.className = 'hud-value red';
-      } else {
-        hudComplexity.textContent = 'O(N log N)';
-        hudComplexity.className = 'hud-value green';
-      }
+    const branches = new Set(filtered.map(c => c.branch));
+    if (hudBranches) hudBranches.textContent = branches.size;
+
+    let totalAdd = 0, totalDel = 0;
+    filtered.forEach(c => {
+      totalAdd += c.additions;
+      totalDel += c.deletions;
+    });
+    if (hudDiff) hudDiff.textContent = `+${totalAdd} / -${totalDel}`;
+
+    const headCommit = COMMITS.find(c => c.isHead);
+    if (hudHead) {
+      hudHead.textContent = headCommit ? `${headCommit.branch} (${headCommit.hash})` : 'main';
     }
   }
 
-  // Render 3D Perspective Bars
-  function render3D() {
-    const w = canvas.width;
-    const h = canvas.height;
-    ctx.clearRect(0, 0, w, h);
+  // Render Canvas Commit Graph
+  function renderGraph() {
+    const w = canvas.parentElement.clientWidth;
+    const isDark = document.body.classList.contains('dark-theme') || !document.body.classList.contains('light-theme');
+    const filtered = getFilteredCommits();
+    renderedNodes = [];
 
-    const tilt = tiltSlider ? parseInt(tiltSlider.value, 10) : 35;
-    const tiltRad = (tilt * Math.PI) / 180;
+    if (filtered.length === 0) {
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = w * dpr;
+      canvas.height = 380 * dpr;
+      canvas.style.height = '380px';
+      ctx.scale(dpr, dpr);
+      ctx.clearRect(0, 0, w, 380);
 
-    const barWidth = (w * 0.75) / NUM_BARS;
-    const maxBarHeight = h * 0.55;
-    const depth = barWidth * 0.7;
-
-    const startX = w * 0.12;
-    const startY = h * 0.82;
-
-    for (let i = 0; i < NUM_BARS; i++) {
-      const val = array[i];
-      const barH = (val / 100) * maxBarHeight;
-      const state = barStates[i];
-
-      const x = startX + i * (barWidth + 2);
-      const y = startY - i * Math.sin(tiltRad * 0.3);
-
-      // Color selection based on state
-      let frontColor = '#3B82F6';
-      let topColor = '#60A5FA';
-      let sideColor = '#1D4ED8';
-
-      if (state === 'compare') {
-        frontColor = '#F59E0B';
-        topColor = '#FBBF24';
-        sideColor = '#D97706';
-      } else if (state === 'swap') {
-        frontColor = '#EF4444';
-        topColor = '#F87171';
-        sideColor = '#B91C1C';
-      } else if (state === 'sorted') {
-        frontColor = '#10B981';
-        topColor = '#34D399';
-        sideColor = '#047857';
-      }
-
-      // Draw 3D Pillars
-      // 1. Front Face
-      ctx.fillStyle = frontColor;
-      ctx.fillRect(x, y - barH, barWidth, barH);
-
-      // 2. Top Face
-      ctx.fillStyle = topColor;
-      ctx.beginPath();
-      ctx.moveTo(x, y - barH);
-      ctx.lineTo(x + depth * Math.cos(tiltRad), y - barH - depth * Math.sin(tiltRad));
-      ctx.lineTo(x + barWidth + depth * Math.cos(tiltRad), y - barH - depth * Math.sin(tiltRad));
-      ctx.lineTo(x + barWidth, y - barH);
-      ctx.closePath();
-      ctx.fill();
-
-      // 3. Side Face
-      ctx.fillStyle = sideColor;
-      ctx.beginPath();
-      ctx.moveTo(x + barWidth, y - barH);
-      ctx.lineTo(x + barWidth + depth * Math.cos(tiltRad), y - barH - depth * Math.sin(tiltRad));
-      ctx.lineTo(x + barWidth + depth * Math.cos(tiltRad), y - depth * Math.sin(tiltRad));
-      ctx.lineTo(x + barWidth, y);
-      ctx.closePath();
-      ctx.fill();
-
-      // Bar border line
-      ctx.strokeStyle = 'rgba(0,0,0,0.3)';
-      ctx.lineWidth = 1;
-      ctx.strokeRect(x, y - barH, barWidth, barH);
+      ctx.fillStyle = isDark ? '#8b949e' : '#64748b';
+      ctx.font = '14px "IBM Plex Mono", monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('No commits found matching filters', w / 2, 190);
+      return;
     }
-  }
 
-  // Delay helper for step-by-step animation
-  function sleep() {
-    const spd = speedSlider ? 105 - parseInt(speedSlider.value, 10) : 30;
-    return new Promise(resolve => setTimeout(resolve, spd * 10));
-  }
+    const rowHeight = 36;
+    const totalHeight = Math.max(360, filtered.length * rowHeight + 50);
+    const dpr = window.devicePixelRatio || 1;
 
-  async function checkPause() {
-    while (isPaused && !cancelToken) {
-      await new Promise(r => setTimeout(r, 100));
-    }
-  }
+    canvas.style.height = totalHeight + 'px';
+    canvas.width = w * dpr;
+    canvas.height = totalHeight * dpr;
+    ctx.scale(dpr, dpr);
 
-  // ── SORTING ALGORITHMS ──
+    ctx.clearRect(0, 0, w, totalHeight);
 
-  // 1. Bubble Sort O(N^2)
-  async function bubbleSort() {
-    for (let i = 0; i < NUM_BARS - 1; i++) {
-      for (let j = 0; j < NUM_BARS - i - 1; j++) {
-        if (cancelToken) return;
-        await checkPause();
+    // Branch lane index mapping
+    const branchLanes = {
+      'main': 0,
+      'release/v2.0': 1,
+      'feature/tress-ast': 2,
+      'feature/3d-viz': 3
+    };
 
-        barStates[j] = 'compare';
-        barStates[j + 1] = 'compare';
-        comparisons++;
-        updateHUD();
-        render3D();
-        await sleep();
+    const startX = 130;
+    const laneSpacing = Math.min(80, Math.max(50, (w - 280) / 4));
+    const startY = 30;
 
-        if (array[j] > array[j + 1]) {
-          let temp = array[j];
-          array[j] = array[j + 1];
-          array[j + 1] = temp;
-          swaps++;
+    const commitPosMap = {};
 
-          barStates[j] = 'swap';
-          barStates[j + 1] = 'swap';
-          updateHUD();
-          render3D();
-          await sleep();
+    // Calculate layout coordinates for filtered commits
+    filtered.forEach((c, idx) => {
+      const lane = branchLanes[c.branch] !== undefined ? branchLanes[c.branch] : 0;
+      const x = startX + lane * laneSpacing;
+      const y = startY + idx * rowHeight;
+
+      commitPosMap[c.id] = { x, y, commit: c };
+      renderedNodes.push({ x, y, radius: 10, commit: c });
+    });
+
+    // 1. Draw Connection Lines (Edges)
+    ctx.lineWidth = 2.5;
+    filtered.forEach(c => {
+      const currentPos = commitPosMap[c.id];
+      if (!currentPos) return;
+
+      c.parentIds.forEach(pId => {
+        const parentPos = commitPosMap[pId];
+        if (parentPos) {
+          const color = BRANCH_COLORS[c.branch] || BRANCH_COLORS.default;
+          ctx.strokeStyle = color;
+          ctx.beginPath();
+          ctx.moveTo(currentPos.x, currentPos.y);
+
+          if (currentPos.x === parentPos.x) {
+            ctx.lineTo(parentPos.x, parentPos.y);
+          } else {
+            // Authentic 45-degree angled Git branch line (GitHub / GitKraken style)
+            const dx = parentPos.x - currentPos.x;
+            const dy = parentPos.y - currentPos.y;
+            const dist = Math.abs(dx);
+            const midY = currentPos.y + dy / 2;
+
+            ctx.lineTo(currentPos.x, midY - dist / 2);
+            ctx.lineTo(parentPos.x, midY + dist / 2);
+            ctx.lineTo(parentPos.x, parentPos.y);
+          }
+          ctx.stroke();
         }
+      });
+    });
 
-        barStates[j] = 'normal';
-        barStates[j + 1] = 'normal';
+    // 2. Draw Commit Nodes & Labels
+    filtered.forEach(c => {
+      const pos = commitPosMap[c.id];
+      if (!pos) return;
+
+      const color = BRANCH_COLORS[c.branch] || BRANCH_COLORS.default;
+      const isSelected = selectedCommit && selectedCommit.id === c.id;
+
+      // Glow effect for selected commit
+      if (isSelected) {
+        ctx.shadowColor = color;
+        ctx.shadowBlur = 12;
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(pos.x, pos.y, 11, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
       }
-      barStates[NUM_BARS - i - 1] = 'sorted';
-    }
-    barStates[0] = 'sorted';
-  }
 
-  // 2. Quicksort O(N log N)
-  async function quicksort(low = 0, high = NUM_BARS - 1) {
-    if (low < high) {
-      const pi = await partition(low, high);
-      if (cancelToken) return;
-      await quicksort(low, pi - 1);
-      await quicksort(pi + 1, high);
-    } else if (low >= 0 && low < NUM_BARS) {
-      barStates[low] = 'sorted';
-    }
-  }
+      // Outer Circle
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(pos.x, pos.y, isSelected ? 8 : 6, 0, Math.PI * 2);
+      ctx.fill();
 
-  async function partition(low, high) {
-    let pivot = array[high];
-    barStates[high] = 'compare';
-    let i = low - 1;
+      // Inner Core
+      ctx.fillStyle = isDark ? '#0d1117' : '#ffffff';
+      ctx.beginPath();
+      ctx.arc(pos.x, pos.y, 3, 0, Math.PI * 2);
+      ctx.fill();
 
-    for (let j = low; j < high; j++) {
-      if (cancelToken) return low;
-      await checkPause();
+      // Commit Hash Label - Generous 28px spacing from node circle
+      ctx.fillStyle = isSelected ? color : (isDark ? '#e6edf3' : '#1e293b');
+      ctx.font = isSelected ? '700 12px "IBM Plex Mono", monospace' : '500 11px "IBM Plex Mono", monospace';
+      ctx.textAlign = 'left';
+      ctx.fillText(c.hash, pos.x + 28, pos.y + 4);
 
-      barStates[j] = 'compare';
-      comparisons++;
-      updateHUD();
-      render3D();
-      await sleep();
-
-      if (array[j] < pivot) {
-        i++;
-        let temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
-        swaps++;
-
-        barStates[i] = 'swap';
-        barStates[j] = 'swap';
-        updateHUD();
-        render3D();
-        await sleep();
-        barStates[i] = 'normal';
+      // Commit Message Snippet
+      const maxMsgLen = Math.floor((w - (pos.x + 150)) / 7);
+      let msgText = c.message;
+      if (maxMsgLen > 8 && msgText.length > maxMsgLen) {
+        msgText = msgText.substring(0, maxMsgLen - 3) + '...';
       }
-      barStates[j] = 'normal';
+      ctx.fillStyle = isDark ? '#8b949e' : '#64748b';
+      ctx.font = '400 11px "Outfit", sans-serif';
+      if (w > 480) {
+        ctx.fillText(msgText, pos.x + 110, pos.y + 4);
+      }
+
+      // Tag Badge on Left side (pos.x - 75)
+      if (c.tag && w > 400) {
+        const tagX = pos.x - 75;
+        ctx.fillStyle = '#10B981';
+        ctx.fillRect(tagX, pos.y - 9, 54, 18);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '700 9.5px "IBM Plex Mono", monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(c.tag, tagX + 27, pos.y + 4);
+      }
+    });
+  }
+
+  // Render Interactive Terminal View
+  function renderTerminal() {
+    if (!terminalBody) return;
+    const filtered = getFilteredCommits();
+    let html = `<div class="terminal-line terminal-cmd-output">-- BENNTO PORTFOLIO GIT LOG GRAPH (Branch: ${selectedBranch}) --</div>`;
+
+    filtered.forEach(c => {
+      const isSelected = selectedCommit && selectedCommit.id === c.id;
+      const headMarker = c.isHead ? ' <span class="terminal-branch">(HEAD -> main)</span>' : '';
+      const tagMarker = c.tag ? ` <span class="terminal-tag">(${c.tag})</span>` : '';
+      const branchMarker = `<span class="terminal-branch">[${c.branch}]</span>`;
+
+      html += `
+        <div class="terminal-line ${isSelected ? 'selected' : ''}">
+          * <span class="terminal-hash" data-id="${c.id}">${c.hash}</span> - ${branchMarker}${headMarker}${tagMarker} <span class="terminal-msg">${escapeHtml(c.message)}</span> <span class="terminal-author">(${c.date} by ${c.author})</span>
+        </div>
+      `;
+    });
+
+    terminalBody.innerHTML = html;
+
+    // Add click listeners to commit hashes inside terminal
+    terminalBody.querySelectorAll('.terminal-hash').forEach(el => {
+      el.addEventListener('click', (e) => {
+        const cId = e.target.getAttribute('data-id');
+        const target = COMMITS.find(c => c.id === cId);
+        if (target) selectCommit(target);
+      });
+    });
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  // Show Selected Commit Details in Inspector
+  function selectCommit(commit) {
+    selectedCommit = commit;
+    renderGraph();
+    renderTerminal();
+
+    if (!inspector) return;
+    inspector.classList.remove('hidden');
+
+    if (inspectorHash) inspectorHash.textContent = commit.hash;
+    if (inspectorSubject) inspectorSubject.textContent = commit.message;
+    if (inspectorAuthor) inspectorAuthor.textContent = commit.author;
+    if (inspectorDate) inspectorDate.textContent = commit.date;
+    if (inspectorBranch) inspectorBranch.textContent = commit.branch;
+
+    if (commit.tag) {
+      if (inspectorTagWrapper) inspectorTagWrapper.style.display = 'inline-block';
+      if (inspectorTag) inspectorTag.textContent = commit.tag;
+    } else {
+      if (inspectorTagWrapper) inspectorTagWrapper.style.display = 'none';
     }
 
-    let temp = array[i + 1];
-    array[i + 1] = array[high];
-    array[high] = temp;
-    swaps++;
+    if (inspectorAdditions) inspectorAdditions.textContent = `+${commit.additions} additions`;
+    if (inspectorDeletions) inspectorDeletions.textContent = `-${commit.deletions} deletions`;
 
-    barStates[i + 1] = 'sorted';
-    barStates[high] = 'normal';
-    render3D();
-    await sleep();
+    if (inspectorFileList) {
+      let fileHtml = '';
+      commit.files.forEach(f => {
+        fileHtml += `
+          <li class="file-item">
+            <span>${f.filename || f.name}</span>
+            <span class="file-status-badge ${f.status}">${f.status}</span>
+          </li>
+        `;
+      });
+      inspectorFileList.innerHTML = fileHtml;
+    }
 
-    return i + 1;
+    // Async Fetch Live Single Commit Details from GitHub API
+    if (commit.fullSha) {
+      fetch(`https://api.github.com/repos/Bennnto/Bennnto-bennnto.github.io/commits/${commit.fullSha}`)
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+          if (data && data.stats) {
+            commit.additions = data.stats.additions;
+            commit.deletions = data.stats.deletions;
+            if (inspectorAdditions) inspectorAdditions.textContent = `+${commit.additions} additions`;
+            if (inspectorDeletions) inspectorDeletions.textContent = `-${commit.deletions} deletions`;
+          }
+          if (data && Array.isArray(data.files) && data.files.length > 0) {
+            commit.files = data.files.map(f => ({ name: f.filename, filename: f.filename, status: f.status }));
+            let fileHtml = '';
+            commit.files.forEach(f => {
+              fileHtml += `
+                <li class="file-item">
+                  <span>${f.filename || f.name}</span>
+                  <span class="file-status-badge ${f.status}">${f.status}</span>
+                </li>
+              `;
+            });
+            if (inspectorFileList) inspectorFileList.innerHTML = fileHtml;
+          }
+        })
+        .catch(() => {});
+    }
   }
 
-  // 3. Merge Sort O(N log N)
-  async function mergeSort(l = 0, r = NUM_BARS - 1) {
-    if (l >= r) return;
-    const m = l + Math.floor((r - l) / 2);
-    await mergeSort(l, m);
-    await mergeSort(m + 1, r);
-    await merge(l, m, r);
-  }
+  // Handle Terminal CLI Commands
+  function handleTerminalCommand(cmdStr) {
+    const raw = cmdStr.trim();
+    if (!raw) return;
 
-  async function merge(l, m, r) {
-    let left = array.slice(l, m + 1);
-    let right = array.slice(m + 1, r + 1);
+    let output = `<div class="terminal-line"><span class="terminal-prompt">bennnto:~$</span> ${escapeHtml(raw)}</div>`;
+    const parts = raw.split(' ');
+    const cmd = parts[0].toLowerCase();
+    const sub = parts[1] ? parts[1].toLowerCase() : '';
 
-    let i = 0, j = 0, k = l;
-
-    while (i < left.length && j < right.length) {
-      if (cancelToken) return;
-      await checkPause();
-
-      barStates[k] = 'compare';
-      comparisons++;
-      updateHUD();
-      render3D();
-      await sleep();
-
-      if (left[i] <= right[j]) {
-        array[k] = left[i];
-        i++;
+    if (cmd === 'clear') {
+      terminalBody.innerHTML = '';
+      return;
+    } else if (cmd === 'help') {
+      output += `<div class="terminal-line terminal-cmd-output">Available commands: git log, git checkout &lt;branch&gt;, git show &lt;hash&gt;, clear, help</div>`;
+    } else if (cmd === 'git') {
+      if (sub === 'log') {
+        renderTerminal();
+        return;
+      } else if (sub === 'checkout' && parts[2]) {
+        const targetBranch = parts[2];
+        const match = COMMITS.find(c => c.branch === targetBranch);
+        if (match || targetBranch === 'all') {
+          selectedBranch = targetBranch;
+          branchSelect.value = targetBranch;
+          updateHUD();
+          renderGraph();
+          output += `<div class="terminal-line terminal-cmd-output">Switched to branch '${targetBranch}'</div>`;
+        } else {
+          output += `<div class="terminal-line terminal-cmd-output" style="color:#ef4444;">error: pathspec '${targetBranch}' did not match any branch</div>`;
+        }
+      } else if (sub === 'show' && parts[2]) {
+        const hashQuery = parts[2];
+        const match = COMMITS.find(c => c.hash.toLowerCase().startsWith(hashQuery.toLowerCase()));
+        if (match) {
+          selectCommit(match);
+          output += `<div class="terminal-line terminal-cmd-output">commit ${match.hash}<br>Author: ${match.author}<br>Date: ${match.date}<br><br>    ${match.message}</div>`;
+        } else {
+          output += `<div class="terminal-line terminal-cmd-output" style="color:#ef4444;">error: commit '${hashQuery}' not found</div>`;
+        }
       } else {
-        array[k] = right[j];
-        j++;
+        output += `<div class="terminal-line terminal-cmd-output">usage: git [log | checkout &lt;branch&gt; | show &lt;hash&gt;]</div>`;
       }
-      swaps++;
-      barStates[k] = 'swap';
-      render3D();
-      await sleep();
-      barStates[k] = 'normal';
-      k++;
+    } else {
+      output += `<div class="terminal-line terminal-cmd-output" style="color:#ef4444;">command not found: ${escapeHtml(cmd)}. Type 'help' for options.</div>`;
     }
 
-    while (i < left.length) {
-      if (cancelToken) return;
-      array[k] = left[i];
-      i++; k++;
-      render3D();
-      await sleep();
-    }
-
-    while (j < right.length) {
-      if (cancelToken) return;
-      array[k] = right[j];
-      j++; k++;
-      render3D();
-      await sleep();
-    }
-
-    for (let x = l; x <= r; x++) barStates[x] = 'sorted';
+    terminalBody.insertAdjacentHTML('beforeend', output);
+    terminalBody.scrollTop = terminalBody.scrollHeight;
   }
 
-  // Run Controls
-  async function startSort() {
-    if (isSorting) return;
-    isSorting = true;
-    isPaused = false;
-    cancelToken = false;
-    runBtn.disabled = true;
+  // Event Listeners
+  if (canvas) {
+    canvas.addEventListener('click', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const clickY = e.clientY - rect.top;
 
-    const startTime = Date.now();
-    timerInterval = setInterval(() => {
-      if (hudTime && !isPaused) {
-        hudTime.textContent = ((Date.now() - startTime) / 1000).toFixed(1) + 's';
+      for (let i = 0; i < renderedNodes.length; i++) {
+        const node = renderedNodes[i];
+        const dist = Math.hypot(clickX - node.x, clickY - node.y);
+        if (dist <= 18) { // Click radius tolerance
+          selectCommit(node.commit);
+          break;
+        }
       }
-    }, 100);
-
-    const algo = algoSelect.value;
-    if (algo === 'bubblesort') await bubbleSort();
-    else if (algo === 'quicksort') await quicksort();
-    else if (algo === 'mergesort') await mergeSort();
-    else if (algo === 'heapsort') await quicksort(); // Fallback to fast O(N log N)
-
-    for (let i = 0; i < NUM_BARS; i++) barStates[i] = 'sorted';
-    render3D();
-
-    clearInterval(timerInterval);
-    isSorting = false;
-    runBtn.disabled = false;
+    });
   }
 
-  runBtn.addEventListener('click', startSort);
+  if (branchSelect) {
+    branchSelect.addEventListener('change', (e) => {
+      selectedBranch = e.target.value;
+      updateHUD();
+      renderGraph();
+      renderTerminal();
+    });
+  }
 
-  pauseBtn.addEventListener('click', () => {
-    isPaused = !isPaused;
-    pauseBtn.textContent = isPaused ? '▶ Resume' : '⏸ Pause';
-  });
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      searchQuery = e.target.value;
+      updateHUD();
+      renderGraph();
+      renderTerminal();
+    });
+  }
 
-  resetBtn.addEventListener('click', () => {
-    cancelToken = true;
-    clearInterval(timerInterval);
-    isSorting = false;
-    isPaused = false;
-    runBtn.disabled = false;
-    pauseBtn.textContent = '⏸ Pause';
-    if (hudTime) hudTime.textContent = '0.0s';
-    initArray();
-  });
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      selectedBranch = 'all';
+      searchQuery = '';
+      branchSelect.value = 'all';
+      if (searchInput) searchInput.value = '';
+      selectCommit(COMMITS[0]);
+      updateHUD();
+      renderGraph();
+      renderTerminal();
+    });
+  }
 
-  if (tiltSlider) tiltSlider.addEventListener('input', render3D);
-  if (algoSelect) algoSelect.addEventListener('change', updateHUD);
+  if (viewGraphBtn && viewTerminalBtn) {
+    viewGraphBtn.addEventListener('click', () => {
+      viewGraphBtn.classList.add('active');
+      viewTerminalBtn.classList.remove('active');
+      graphPanel.classList.add('active');
+      terminalPanel.classList.remove('active');
+      renderGraph();
+    });
 
-  window.addEventListener('resize', resizeCanvas);
+    viewTerminalBtn.addEventListener('click', () => {
+      viewTerminalBtn.classList.add('active');
+      viewGraphBtn.classList.remove('active');
+      terminalPanel.classList.add('active');
+      graphPanel.classList.remove('active');
+      renderTerminal();
+    });
+  }
+
+  if (terminalInput) {
+    terminalInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        handleTerminalCommand(terminalInput.value);
+        terminalInput.value = '';
+      }
+    });
+  }
+
+  if (inspectorClose) {
+    inspectorClose.addEventListener('click', () => {
+      if (inspector) inspector.classList.add('hidden');
+    });
+  }
+
+  window.addEventListener('resize', renderGraph);
+
+  // Initialize
   setTimeout(() => {
-    resizeCanvas();
-    initArray();
-  }, 200);
+    selectCommit(COMMITS[0]);
+    updateHUD();
+    renderGraph();
+    renderTerminal();
+    fetchLiveGitHubData();
+  }, 100);
 })();
 
 

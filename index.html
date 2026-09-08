@@ -41,7 +41,7 @@
         <a href="#info" class="nav-link">Info</a>
         <a href="#resume" class="nav-link">Resume</a>
         <a href="#projects" class="nav-link">Projects</a>
-        <a href="#sorting-visualizer" class="nav-link">Algorithm 3D</a>
+        <a href="#git-activity" class="nav-link">Git Activity</a>
         <a href="#playground" class="nav-link">Playground</a>
         <a href="#contact" class="nav-link">Contact</a>
       </nav>
@@ -386,6 +386,22 @@
 
         <div class="projects-list">
 
+          <!-- Project: CPile -->
+          <article class="project-card featured">
+            <div class="project-header">
+              <h3 class="project-name">CPile</h3>
+              <span class="badge featured-badge">Featured</span>
+            </div>
+            <p class="project-desc">A Python-to-C transpiler and compiler toolchain. Converts type-annotated Python source code into clean, readable C code and compiles it for high-performance execution.</p>
+            <div class="project-meta">
+              <span class="project-stack">Python · C · Transpiler · AST · Type Safety</span>
+              <a href="https://github.com/Bennnto/CPile" class="project-link" target="_blank" rel="noopener"
+                aria-label="View CPile on GitHub">
+                GitHub <span>↗</span>
+              </a>
+            </div>
+          </article>
+
           <!-- Project: Tress -->
           <article class="project-card featured">
             <div class="project-header">
@@ -633,69 +649,137 @@
         </div>
       </section>
 
-      <!-- 3D ALGORITHM SORTING VISUALIZER SECTION -->
-      <section id="sorting-visualizer" class="portfolio-section">
-        <h2 class="section-title">3D Sorting Visualizer</h2>
+      <!-- INTERACTIVE GIT LOG & ACTIVITY VISUALIZER SECTION -->
+      <section id="git-activity" class="portfolio-section">
+        <h2 class="section-title">Git Log & Activity</h2>
         <p class="library-intro">
-          Real-time interactive 3D perspective visualization of fundamental sorting algorithms, array mutations, and asymptotic time complexity (<strong>O(N log N)</strong> vs <strong>O(N²)</strong>).
+          Interactive commit graph and repository timeline visualizing development branches, commit histories, code diffs, and real-time activity metrics.
         </p>
 
-        <div class="sorting-container">
+        <div class="git-container">
           <!-- Control Toolbar -->
-          <div class="sorting-toolbar">
-            <div class="sorting-controls-left">
-              <select id="algo-select" class="sorting-select" aria-label="Select Sorting Algorithm">
-                <option value="quicksort">⚡ Quicksort — O(N log N)</option>
-                <option value="mergesort">🏎️ Merge Sort — O(N log N)</option>
-                <option value="heapsort">🔨 Heap Sort — O(N log N)</option>
-                <option value="bubblesort">🫧 Bubble Sort — O(N²)</option>
+          <div class="git-toolbar">
+            <div class="git-controls-left">
+              <label for="git-branch-select" class="sr-only">Select Branch</label>
+              <select id="git-branch-select" class="git-select" aria-label="Filter by Branch">
+                <option value="all">🌿 All Branches</option>
+                <option value="main">🔹 main (Production)</option>
+                <option value="feature/tress-ast">⚙️ feature/tress-ast</option>
+                <option value="feature/3d-viz">🎨 feature/3d-viz</option>
+                <option value="release/v2.0">🚀 release/v2.0</option>
               </select>
 
-              <button id="sort-run-btn" class="sorting-btn primary-btn">▶ Sort</button>
-              <button id="sort-pause-btn" class="sorting-btn">⏸ Pause</button>
-              <button id="sort-reset-btn" class="sorting-btn">🎲 Shuffle</button>
+              <div class="git-view-toggle" role="group" aria-label="View Mode">
+                <button id="git-view-graph" class="git-btn active" title="Visual Branch Graph">
+                  <span class="btn-icon">🌳</span> Graph
+                </button>
+                <button id="git-view-terminal" class="git-btn" title="Interactive Terminal Log">
+                  <span class="btn-icon">💻</span> Terminal
+                </button>
+              </div>
             </div>
 
-            <div class="sorting-controls-right">
-              <div class="slider-group">
-                <label for="sort-speed">Speed</label>
-                <input type="range" id="sort-speed" min="5" max="100" value="30" class="sorting-slider" />
+            <div class="git-controls-right">
+              <span id="git-api-status" class="git-api-badge"><span class="pulse-dot"></span> CONNECTING...</span>
+              <div class="git-search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="git-search-input" class="git-input" placeholder="Search commits, authors, hashes..." />
               </div>
-
-              <div class="slider-group">
-                <label for="sort-tilt">3D Angle</label>
-                <input type="range" id="sort-tilt" min="15" max="65" value="35" class="sorting-slider" />
-              </div>
+              <button id="git-reset-btn" class="git-btn" title="Reset Filters">Reset</button>
             </div>
           </div>
 
-          <!-- 3D Canvas Viewport -->
-          <div class="sorting-canvas-wrapper">
-            <canvas id="sorting-3d-canvas" class="sorting-3d-canvas"></canvas>
+          <!-- Main Viewport: Canvas Graph vs Interactive Terminal -->
+          <div class="git-viewport-wrapper">
+            <!-- Decorative corner crosshairs & technical labels -->
+            <div class="crosshair tl">+</div>
+            <div class="crosshair tr">+</div>
+            <div class="crosshair bl">+</div>
+            <div class="crosshair br">+</div>
+
+            <span class="grid-meta tl">SYSTEM_ACTIVE // LIVE</span>
+            <span class="grid-meta tr">LAT: 43.6532° N / LON: 79.3832° W</span>
+            <span class="grid-meta bl">COMMIT_GRAPH // 2026</span>
+            <span class="grid-meta br">BENNTO_GIT_V2.1</span>
+
+            <!-- Visual Graph View -->
+            <div id="git-graph-view" class="git-view-panel active">
+              <canvas id="git-graph-canvas" class="git-canvas"></canvas>
+            </div>
+
+            <!-- Terminal View -->
+            <div id="git-terminal-view" class="git-view-panel">
+              <div class="terminal-header">
+                <span class="terminal-dot red"></span>
+                <span class="terminal-dot yellow"></span>
+                <span class="terminal-dot green"></span>
+                <span class="terminal-title">ben@macbook-pro: ~/bennnto.github.io (git log)</span>
+              </div>
+              <div id="terminal-body" class="terminal-body">
+                <!-- Populated dynamically via JS -->
+              </div>
+              <div class="terminal-input-row">
+                <span class="terminal-prompt">bennnto:~$</span>
+                <input type="text" id="terminal-cmd-input" class="terminal-input" placeholder="Try 'git log', 'git checkout <branch>', or 'help'..." />
+              </div>
+            </div>
           </div>
 
           <!-- Telemetry HUD -->
-          <div class="sorting-hud">
+          <div class="git-hud">
             <div class="hud-card">
-              <span class="hud-label">Comparisons</span>
-              <span id="hud-comparisons" class="hud-value blue">0</span>
+              <span class="hud-label">Total Commits</span>
+              <span id="git-hud-commits" class="hud-value blue">0</span>
             </div>
 
             <div class="hud-card">
-              <span class="hud-label">Array Swaps</span>
-              <span id="hud-swaps" class="hud-value red">0</span>
+              <span class="hud-label">Active Branches</span>
+              <span id="git-hud-branches" class="hud-value green">0</span>
             </div>
 
             <div class="hud-card">
-              <span class="hud-label">Time Elapsed</span>
-              <span id="hud-time" class="hud-value">0.0s</span>
+              <span class="hud-label">Net Code Mutations</span>
+              <span id="git-hud-diff" class="hud-value purple">+0 / -0</span>
             </div>
 
             <div class="hud-card">
-              <span class="hud-label">Complexity</span>
-              <span id="hud-complexity" class="hud-value green">O(N log N)</span>
+              <span class="hud-label">Current HEAD</span>
+              <span id="git-hud-head" class="hud-value mono">main</span>
             </div>
           </div>
+
+          <!-- Selected Commit Detail Inspector Modal / Panel -->
+          <div id="commit-inspector" class="commit-inspector hidden">
+            <div class="inspector-header">
+              <div class="inspector-title-group">
+                <span class="inspector-badge" id="inspector-hash">#000000</span>
+                <h3 class="inspector-subject" id="inspector-subject">Select a commit node to inspect details</h3>
+              </div>
+              <button id="inspector-close" class="inspector-close-btn" aria-label="Close Inspector">✕</button>
+            </div>
+
+            <div class="inspector-body">
+              <div class="inspector-meta-row">
+                <span class="meta-item"><strong>Author:</strong> <span id="inspector-author">-</span></span>
+                <span class="meta-item"><strong>Date:</strong> <span id="inspector-date">-</span></span>
+                <span class="meta-item"><strong>Branch:</strong> <span id="inspector-branch" class="branch-tag">-</span></span>
+                <span class="meta-item" id="inspector-tag-wrapper" style="display:none;"><strong>Tag:</strong> <span id="inspector-tag" class="release-tag">-</span></span>
+              </div>
+
+              <div class="inspector-stats-row">
+                <span class="stat-added" id="inspector-additions">+0 additions</span>
+                <span class="stat-deleted" id="inspector-deletions">-0 deletions</span>
+              </div>
+
+              <div class="inspector-files">
+                <span class="files-title">Modified Files:</span>
+                <ul id="inspector-file-list" class="file-list">
+                  <!-- Populated via JS -->
+                </ul>
+              </div>
+            </div>
+          </div>
+
         </div>
       </section>
 

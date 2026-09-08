@@ -768,34 +768,34 @@ input, textarea, button, select {
   border-color: var(--accent-color);
 }
 
-/* ── 3D ALGORITHM SORTING VISUALIZER SECTION ── */
-.sorting-container {
+/* ── INTERACTIVE GIT LOG & ACTIVITY VISUALIZER SECTION ── */
+.git-container {
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
   margin-bottom: 2rem;
 }
 
-.sorting-toolbar {
+.git-toolbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
   flex-wrap: wrap;
-  padding: 1rem;
+  padding: 0.9rem 1rem;
   background-color: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: 6px;
 }
 
-.sorting-controls-left, .sorting-controls-right {
+.git-controls-left, .git-controls-right {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.75rem;
   flex-wrap: wrap;
 }
 
-.sorting-select {
+.git-select, .git-input {
   background-color: var(--bg-tertiary);
   border: 1px solid var(--border-color-muted);
   color: var(--text-primary);
@@ -805,69 +805,219 @@ input, textarea, button, select {
   padding: 0.45rem 0.8rem;
   border-radius: 4px;
   outline: none;
-  cursor: pointer;
 }
 
-.sorting-btn {
+.git-select:focus, .git-input:focus {
+  border-color: var(--accent-color);
+}
+
+.git-view-toggle {
+  display: flex;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color-muted);
+  border-radius: 4px;
+  padding: 2px;
+}
+
+.git-btn {
   font-family: var(--font-mono);
   font-size: 0.75rem;
   font-weight: 600;
-  padding: 0.45rem 0.85rem;
-  background-color: var(--bg-tertiary);
-  border: 1px solid var(--border-color-muted);
+  padding: 0.4rem 0.75rem;
+  background: transparent;
+  border: none;
   color: var(--text-secondary);
-  border-radius: 4px;
+  border-radius: 3px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
   transition: all var(--transition);
 }
 
-.sorting-btn:hover {
-  border-color: var(--accent-color);
+.git-btn:hover {
   color: var(--accent-color);
 }
 
-.sorting-btn.primary-btn {
+.git-btn.active {
   background-color: var(--accent-color);
   color: #ffffff;
-  border-color: var(--accent-color);
 }
 
-.sorting-btn.primary-btn:hover {
-  background-color: var(--accent-hover);
-}
-
-.slider-group {
+.git-api-badge {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color-muted);
+  color: var(--text-secondary);
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
+  gap: 0.4rem;
+}
+
+.git-api-badge.online {
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #10B981;
+}
+
+.git-api-badge.offline {
+  border-color: rgba(245, 158, 11, 0.4);
+  color: #F59E0B;
+}
+
+.pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: currentColor;
+  animation: pulseGlow 2s infinite ease-in-out;
+}
+
+@keyframes pulseGlow {
+  0% { opacity: 0.4; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.1); }
+  100% { opacity: 0.4; transform: scale(0.9); }
+}
+
+.git-search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.git-search-box .search-icon {
+  position: absolute;
+  left: 0.6rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
+  pointer-events: none;
 }
 
-.sorting-slider {
-  accent-color: var(--accent-color);
-  width: 90px;
-  cursor: pointer;
+.git-search-box .git-input {
+  padding-left: 1.8rem;
+  width: 210px;
 }
 
-.sorting-canvas-wrapper {
+.git-viewport-wrapper {
   position: relative;
   width: 100%;
   height: 380px;
   background-color: var(--bg-secondary);
   border: 1px solid var(--border-color);
-  border-radius: 6px;
+  padding: 1.8rem 0.5rem 0.5rem 0.5rem;
   overflow: hidden;
+  transition: border-color var(--transition), background-color var(--transition);
 }
 
-.sorting-3d-canvas {
+.git-view-panel {
+  display: none;
   width: 100%;
   height: 100%;
+}
+
+.git-view-panel.active {
   display: block;
 }
 
-.sorting-hud {
+#git-graph-view.active {
+  display: block;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.git-canvas {
+  width: 100%;
+  display: block;
+  cursor: pointer;
+}
+
+/* Terminal View Styling */
+#git-terminal-view {
+  background-color: #0d1117;
+  color: #c9d1d9;
+  font-family: var(--font-mono);
+  display: flex;
+  flex-direction: column;
+}
+
+.terminal-header {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 0.9rem;
+  background-color: #161b22;
+  border-bottom: 1px solid #30363d;
+}
+
+.terminal-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.terminal-dot.red { background-color: #ff5f56; }
+.terminal-dot.yellow { background-color: #ffbd2e; }
+.terminal-dot.green { background-color: #27c93f; }
+
+.terminal-title {
+  font-size: 0.72rem;
+  color: #8b949e;
+  margin-left: 0.4rem;
+}
+
+.terminal-body {
+  flex: 1;
+  padding: 0.9rem 1rem;
+  overflow-y: auto;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: #e6edf3;
+}
+
+.terminal-line {
+  margin-bottom: 0.3rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.terminal-hash { color: #f2cc60; font-weight: 600; cursor: pointer; }
+.terminal-hash:hover { text-decoration: underline; }
+.terminal-branch { color: #58a6ff; font-weight: 600; }
+.terminal-tag { color: #7ee787; font-weight: 600; }
+.terminal-author { color: #8b949e; }
+.terminal-msg { color: #c9d1d9; }
+.terminal-cmd-output { color: #8b949e; font-style: italic; }
+
+.terminal-input-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.9rem;
+  background-color: #161b22;
+  border-top: 1px solid #30363d;
+}
+
+.terminal-prompt {
+  color: #7ee787;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.terminal-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #58a6ff;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+
+/* Telemetry HUD */
+.git-hud {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
   gap: 1rem;
@@ -898,9 +1048,157 @@ input, textarea, button, select {
   color: var(--text-primary);
 }
 
-.hud-value.blue { color: #60A5FA; }
-.hud-value.red { color: #EF4444; }
+.hud-value.blue { color: #3B82F6; }
 .hud-value.green { color: #10B981; }
+.hud-value.purple { color: #8B5CF6; }
+.hud-value.mono { font-size: 0.9rem; color: var(--accent-color); }
+
+/* Inspector Drawer / Card */
+.commit-inspector {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 1.2rem;
+  margin-top: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.commit-inspector.hidden {
+  display: none;
+}
+
+.inspector-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  border-bottom: 1px solid var(--border-color-muted);
+  padding-bottom: 0.8rem;
+  margin-bottom: 0.8rem;
+}
+
+.inspector-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.inspector-badge {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color-muted);
+  color: var(--accent-color);
+  padding: 0.25rem 0.55rem;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.inspector-subject {
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.inspector-close-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+}
+
+.inspector-close-btn:hover {
+  color: var(--text-primary);
+  background-color: var(--bg-tertiary);
+}
+
+.inspector-meta-row {
+  display: flex;
+  gap: 1.2rem;
+  flex-wrap: wrap;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.8rem;
+}
+
+.branch-tag {
+  background-color: rgba(59, 130, 246, 0.15);
+  color: #3B82F6;
+  padding: 0.15rem 0.4rem;
+  border-radius: 3px;
+  font-weight: 600;
+}
+
+.release-tag {
+  background-color: rgba(16, 185, 129, 0.15);
+  color: #10B981;
+  padding: 0.15rem 0.4rem;
+  border-radius: 3px;
+  font-weight: 600;
+}
+
+.inspector-stats-row {
+  display: flex;
+  gap: 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.stat-added { color: #10B981; }
+.stat-deleted { color: #EF4444; }
+
+.inspector-files .files-title {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.file-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  background-color: var(--bg-tertiary);
+  padding: 0.4rem 0.75rem;
+  border-radius: 4px;
+  border: 1px solid var(--border-color-muted);
+}
+
+.file-status-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.15rem 0.35rem;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+
+.file-status-badge.modified { background-color: rgba(245, 158, 11, 0.2); color: #F59E0B; }
+.file-status-badge.added { background-color: rgba(16, 185, 129, 0.2); color: #10B981; }
+.file-status-badge.deleted { background-color: rgba(239, 68, 68, 0.2); color: #EF4444; }
 
 .terminal-body {
   padding: 1.2rem;
