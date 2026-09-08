@@ -239,215 +239,59 @@
 
   const ctx = canvas.getContext('2d');
 
-  // Branch Color Palette aligned with Swiss Neo-Brutalist Design System
+  // Branch & Repository Color Palette
   const BRANCH_COLORS = {
-    'main': '#F97316',        // Site primary accent (Neon Orange)
-    'feature/tress-ast': '#8B5CF6', // AST Purple
-    'feature/3d-viz': '#3B82F6',    // Visualizer Blue
-    'release/v2.0': '#10B981',      // Release Emerald Green
+    'Bennnto-bennnto.github.io': '#F97316', // Neon Orange (Site Primary)
+    'CPile': '#8B5CF6',                     // Transpiler Purple
+    'Tress': '#3B82F6',                     // AST Interpreter Blue
+    'GAFF': '#10B981',                      // C Compiler Emerald Green
+    'main': '#F97316',
     'default': '#8E8D89'
   };
 
-  const apiStatus = document.getElementById('git-api-status');
-
-  // Static Fallback Dataset
-  const DEFAULT_COMMITS = [
-    {
-      id: 'c11',
-      hash: 'a3e7b1f',
-      parentIds: ['c10'],
-      author: 'Ben Vissarut',
-      date: '2026-09-08',
-      branch: 'main',
-      tag: 'v2.1.0',
-      isHead: true,
-      message: 'feat(cpile): add Python-to-C transpiler with type annotations & AST generator',
-      additions: 680,
-      deletions: 40,
-      files: [
-        { name: 'cpile/transpiler.py', status: 'added' },
-        { name: 'cpile/ast_parser.py', status: 'added' },
-        { name: 'index.html', status: 'modified' }
-      ]
-    },
-    {
-      id: 'c10',
-      hash: '9a4f1e2',
-      parentIds: ['c09'],
-      author: 'Ben Vissarut',
-      date: '2026-09-08',
-      branch: 'main',
-      tag: 'v2.0.0',
-      isHead: false,
-      message: 'feat(git-activity): integrate interactive commit visualizer & telemetry HUD',
-      additions: 420,
-      deletions: 110,
-      files: [
-        { name: 'index.html', status: 'modified' },
-        { name: 'style.css', status: 'modified' },
-        { name: 'main.js', status: 'modified' }
-      ]
-    },
-    {
-      id: 'c09',
-      hash: '8b3d2c1',
-      parentIds: ['c06', 'c08'],
-      author: 'Ben Vissarut',
-      date: '2026-09-05',
-      branch: 'main',
-      tag: 'v1.4.0',
-      message: 'merge: pull request #14 from feature/tress-ast',
-      additions: 340,
-      deletions: 65,
-      files: [
-        { name: 'tress.js', status: 'modified' },
-        { name: 'index.html', status: 'modified' }
-      ]
-    },
-    {
-      id: 'c08',
-      hash: '7d4e3f2',
-      parentIds: ['c07'],
-      author: 'Ben Vissarut',
-      date: '2026-09-03',
-      branch: 'feature/tress-ast',
-      message: 'feat(tress): add static type checker & syntax error reporting',
-      additions: 230,
-      deletions: 45,
-      files: [
-        { name: 'tress.js', status: 'modified' }
-      ]
-    },
-    {
-      id: 'c07',
-      hash: '6f3c2a1',
-      parentIds: ['c06'],
-      author: 'Ben Vissarut',
-      date: '2026-09-01',
-      branch: 'feature/tress-ast',
-      message: 'feat(tress): implement custom AST interpreter client-side',
-      additions: 180,
-      deletions: 20,
-      files: [
-        { name: 'tress.js', status: 'added' }
-      ]
-    },
-    {
-      id: 'c06',
-      hash: '5e2a1b9',
-      parentIds: ['c03', 'c05'],
-      author: 'Ben Vissarut',
-      date: '2026-08-28',
-      branch: 'main',
-      message: 'merge: pull request #9 from feature/3d-viz',
-      additions: 520,
-      deletions: 110,
-      files: [
-        { name: 'main.js', status: 'modified' },
-        { name: 'style.css', status: 'modified' }
-      ]
-    },
-    {
-      id: 'c05',
-      hash: '4d1c0f8',
-      parentIds: ['c04'],
-      author: 'Ben Vissarut',
-      date: '2026-08-25',
-      branch: 'feature/3d-viz',
-      message: 'feat(viz): add perspective projection & camera controls',
-      additions: 310,
-      deletions: 80,
-      files: [
-        { name: 'main.js', status: 'modified' }
-      ]
-    },
-    {
-      id: 'c04',
-      hash: '2a9f8e7',
-      parentIds: ['c03'],
-      author: 'Ben Vissarut',
-      date: '2026-08-20',
-      branch: 'feature/3d-viz',
-      message: 'feat(viz): setup interactive viewport canvas',
-      additions: 250,
-      deletions: 30,
-      files: [
-        { name: 'main.js', status: 'modified' }
-      ]
-    },
-    {
-      id: 'c03',
-      hash: '3c1b0a8',
-      parentIds: ['c02'],
-      author: 'Ben Vissarut',
-      date: '2026-08-15',
-      branch: 'main',
-      tag: 'v1.0.0',
-      message: 'release: initial portfolio release v1.0.0',
-      additions: 890,
-      deletions: 40,
-      files: [
-        { name: 'index.html', status: 'added' },
-        { name: 'style.css', status: 'added' },
-        { name: 'main.js', status: 'added' }
-      ]
-    },
-    {
-      id: 'c02',
-      hash: '1b8a7f6',
-      parentIds: ['c01'],
-      author: 'Ben Vissarut',
-      date: '2026-08-10',
-      branch: 'release/v2.0',
-      message: 'docs: update experience, Toronto location & skills summary',
-      additions: 120,
-      deletions: 15,
-      files: [
-        { name: 'resume.html', status: 'modified' },
-        { name: 'resume.pdf', status: 'modified' }
-      ]
-    },
-    {
-      id: 'c01',
-      hash: '0a7f6e5',
-      parentIds: [],
-      author: 'Ben Vissarut',
-      date: '2026-08-01',
-      branch: 'main',
-      tag: 'v0.9-alpha',
-      message: 'chore: initial repository commit & CNAME config',
-      additions: 450,
-      deletions: 0,
-      files: [
-        { name: 'CNAME', status: 'added' },
-        { name: 'index.html', status: 'added' }
-      ]
-    }
+  const REPO_CONFIGS = [
+    { repo: 'Bennnto-bennnto.github.io', lane: 0 },
+    { repo: 'CPile', lane: 1 },
+    { repo: 'Tress', lane: 2 },
+    { repo: 'GAFF', lane: 3 }
   ];
 
-  let COMMITS = [...DEFAULT_COMMITS];
+  const apiStatus = document.getElementById('git-api-status');
+  let COMMITS = [];
   let selectedBranch = 'all';
   let searchQuery = '';
-  let selectedCommit = COMMITS[0];
+  let selectedCommit = null;
   let renderedNodes = []; // for canvas click detection
 
-  // Fetch Live Commit History from GitHub REST API
+  // Fetch Genuine Live Commit History across all Bennnto GitHub Repositories
   async function fetchLiveGitHubData() {
     if (!apiStatus) return;
     try {
       apiStatus.className = 'git-api-badge';
-      apiStatus.innerHTML = '<span class="pulse-dot"></span> FETCHING GITHUB API...';
+      apiStatus.innerHTML = '<span class="pulse-dot"></span> CONNECTING TO GITHUB API...';
 
-      // Anti-caching URL parameter + no-store header to get instantaneous live commits
-      const response = await fetch('https://api.github.com/repos/Bennnto/Bennnto-bennnto.github.io/commits?per_page=40&t=' + Date.now(), {
-        cache: 'no-store',
-        headers: { 'Accept': 'application/vnd.github.v3+json' }
-      });
-      if (!response.ok) throw new Error('API request failed');
+      const fetchPromises = REPO_CONFIGS.map(r =>
+        fetch(`https://api.github.com/repos/Bennnto/${r.repo}/commits?per_page=12&t=${Date.now()}`, {
+          cache: 'no-store',
+          headers: { 'Accept': 'application/vnd.github.v3+json' }
+        })
+        .then(res => res.ok ? res.json() : [])
+        .then(list => (Array.isArray(list) ? list : []).map(item => ({ item, repo: r.repo })))
+        .catch(() => [])
+      );
 
-      const liveData = await response.json();
-      if (Array.isArray(liveData) && liveData.length > 0) {
-        COMMITS = liveData.map((item, idx) => {
+      const results = await Promise.all(fetchPromises);
+      const allFetched = [].concat(...results);
+
+      if (allFetched.length > 0) {
+        // Sort all commits chronologically (newest first)
+        allFetched.sort((a, b) => {
+          const dateA = new Date(a.item.commit?.author?.date || 0);
+          const dateB = new Date(b.item.commit?.author?.date || 0);
+          return dateB - dateA;
+        });
+
+        COMMITS = allFetched.map(({ item, repo }, idx) => {
           const shortSha = item.sha.substring(0, 7);
           const parentShas = (item.parents || []).map(p => p.sha.substring(0, 7));
           const firstLineMsg = item.commit && item.commit.message ? item.commit.message.split('\n')[0] : 'commit update';
@@ -458,19 +302,16 @@
             id: shortSha,
             hash: shortSha,
             fullSha: item.sha,
+            repoName: repo,
             parentIds: parentShas,
             author: authorName,
             date: commitDate,
-            branch: 'main',
-            tag: idx === 0 ? 'v2.1.0' : (idx === 3 ? 'v2.0.0' : null),
+            branch: repo,
             isHead: idx === 0,
             message: firstLineMsg,
-            additions: Math.floor(Math.random() * 220) + 15,
-            deletions: Math.floor(Math.random() * 35) + 2,
-            files: [
-              { name: 'index.html', status: 'modified' },
-              { name: 'main.js', status: 'modified' }
-            ],
+            additions: item.stats ? item.stats.additions : 0,
+            deletions: item.stats ? item.stats.deletions : 0,
+            files: item.files ? item.files.map(f => ({ name: f.filename, status: f.status })) : [],
             url: item.html_url
           };
         });
@@ -481,25 +322,27 @@
         updateHUD();
         renderGraph();
         renderTerminal();
+      } else {
+        throw new Error('No commits fetched');
       }
     } catch (err) {
-      console.warn('GitHub API offline or rate-limited. Using cached repository history.', err);
+      console.warn('GitHub API offline or rate-limited:', err);
       apiStatus.className = 'git-api-badge offline';
-      apiStatus.innerHTML = '<span class="pulse-dot"></span> GITHUB (CACHED)';
+      apiStatus.innerHTML = '<span class="pulse-dot"></span> GITHUB API (CONNECTING)';
     }
   }
 
   // Filtered Commits Helper
   function getFilteredCommits() {
     return COMMITS.filter(c => {
-      const matchBranch = selectedBranch === 'all' || c.branch === selectedBranch || (c.tag && selectedBranch === 'main');
+      const matchBranch = selectedBranch === 'all' || c.branch === selectedBranch || c.repoName === selectedBranch;
       const q = searchQuery.toLowerCase().trim();
       const matchSearch = !q ||
         c.hash.toLowerCase().includes(q) ||
         c.message.toLowerCase().includes(q) ||
         c.author.toLowerCase().includes(q) ||
         c.branch.toLowerCase().includes(q) ||
-        (c.tag && c.tag.toLowerCase().includes(q));
+        (c.repoName && c.repoName.toLowerCase().includes(q));
       return matchBranch && matchSearch;
     });
   }
@@ -558,12 +401,12 @@
 
     ctx.clearRect(0, 0, w, totalHeight);
 
-    // Branch lane index mapping
+    // Branch & Repository lane index mapping
     const branchLanes = {
-      'main': 0,
-      'release/v2.0': 1,
-      'feature/tress-ast': 2,
-      'feature/3d-viz': 3
+      'Bennnto-bennnto.github.io': 0,
+      'CPile': 1,
+      'Tress': 2,
+      'GAFF': 3
     };
 
     const startX = 130;
@@ -574,7 +417,8 @@
 
     // Calculate layout coordinates for filtered commits
     filtered.forEach((c, idx) => {
-      const lane = branchLanes[c.branch] !== undefined ? branchLanes[c.branch] : 0;
+      const laneKey = c.repoName || c.branch;
+      const lane = branchLanes[laneKey] !== undefined ? branchLanes[laneKey] : 0;
       const x = startX + lane * laneSpacing;
       const y = startY + idx * rowHeight;
 
@@ -591,7 +435,8 @@
       c.parentIds.forEach(pId => {
         const parentPos = commitPosMap[pId];
         if (parentPos) {
-          const color = BRANCH_COLORS[c.branch] || BRANCH_COLORS.default;
+          const colorKey = c.repoName || c.branch;
+          const color = BRANCH_COLORS[colorKey] || BRANCH_COLORS.default;
           ctx.strokeStyle = color;
           ctx.beginPath();
           ctx.moveTo(currentPos.x, currentPos.y);
@@ -619,7 +464,8 @@
       const pos = commitPosMap[c.id];
       if (!pos) return;
 
-      const color = BRANCH_COLORS[c.branch] || BRANCH_COLORS.default;
+      const colorKey = c.repoName || c.branch;
+      const color = BRANCH_COLORS[colorKey] || BRANCH_COLORS.default;
       const isSelected = selectedCommit && selectedCommit.id === c.id;
 
       // Glow effect for selected commit
@@ -663,16 +509,17 @@
         ctx.fillText(msgText, pos.x + 110, pos.y + 4);
       }
 
-      // Tag Badge on Left side (pos.x - 75)
-      if (c.tag && w > 400) {
+      // Repo/Branch Badge on Left side
+      const displayTag = c.repoName ? (c.repoName === 'Bennnto-bennnto.github.io' ? 'bennnto' : c.repoName) : c.branch;
+      if (displayTag && w > 400) {
         const tagX = pos.x - 75;
-        ctx.fillStyle = '#10B981';
-        ctx.fillRect(tagX, pos.y - 9, 54, 18);
+        ctx.fillStyle = color;
+        ctx.fillRect(tagX, pos.y - 9, 58, 18);
 
         ctx.fillStyle = '#ffffff';
-        ctx.font = '700 9.5px "IBM Plex Mono", monospace';
+        ctx.font = '700 9px "IBM Plex Mono", monospace';
         ctx.textAlign = 'center';
-        ctx.fillText(c.tag, tagX + 27, pos.y + 4);
+        ctx.fillText(displayTag.substring(0, 8), tagX + 29, pos.y + 4);
       }
     });
   }
