@@ -529,16 +529,20 @@ body.standalone-game {
   background: var(--bg-secondary);
   border: 2px solid var(--border-color);
   box-shadow: var(--shadow-brutal);
-  padding: 14px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .conveyor-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .conveyor-title {
@@ -566,7 +570,7 @@ body.standalone-game {
 .rack-layout {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   width: 100%;
   box-sizing: border-box;
 }
@@ -574,7 +578,7 @@ body.standalone-game {
 .active-hand-slots {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  gap: 8px;
+  gap: clamp(4px, 1.2vw, 8px);
   width: 100%;
   box-sizing: border-box;
 }
@@ -582,7 +586,7 @@ body.standalone-game {
 .hand-slot {
   width: 100%;
   aspect-ratio: 1 / 1;
-  max-width: 54px;
+  max-width: 52px;
   margin: 0 auto;
   background: var(--cell-empty);
   border: 1.5px dashed var(--cell-border);
@@ -602,40 +606,40 @@ body.standalone-game {
 
 .conveyor-sub-row {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   background: var(--bg-primary);
   border: 1px solid var(--border-color-muted);
-  padding: 8px 12px;
+  padding: 6px 10px;
   box-shadow: var(--shadow-brutal-sm);
   width: 100%;
   box-sizing: border-box;
-  gap: 8px;
+  gap: 6px;
 }
 
 .conveyor-divider {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: clamp(0.62rem, 1.3vw, 0.72rem);
   font-weight: 700;
   color: var(--text-muted);
   letter-spacing: 0.04em;
-  white-space: nowrap;
 }
 
 .upcoming-queue {
   display: flex;
-  gap: 6px;
+  gap: 4px;
   justify-content: flex-end;
   align-items: center;
   flex-shrink: 0;
 }
 
 .queue-slot {
-  width: 38px;
-  height: 38px;
+  width: clamp(28px, 5.5vw, 36px);
+  height: clamp(28px, 5.5vw, 36px);
   background: var(--bg-tertiary);
   border: 1px solid var(--border-color-muted);
   display: flex;
@@ -655,11 +659,13 @@ body.standalone-game {
 }
 
 .queue-slot .tile .tile-letter {
-  font-size: 0.88rem;
+  font-size: 0.85rem;
 }
 
 /* Embedded Game in Portfolio Page */
 .glyphs-embedded-wrapper {
+  container-type: inline-size;
+  container-name: glyphs-container;
   border: 1px solid var(--border-color);
   background-color: var(--bg-secondary);
   box-shadow: var(--shadow-brutal);
@@ -671,23 +677,26 @@ body.standalone-game {
 
 .glyphs-embedded-wrapper .game-container {
   max-width: 100%;
-  padding: 16px;
+  padding: 14px;
   display: grid;
   grid-template-columns: 1fr;
   gap: 20px;
   box-sizing: border-box;
 }
 
-@media (min-width: 900px) {
+/* Container Query: Only split into 2 columns when the embedded wrapper has enough real width (>= 760px) */
+@container glyphs-container (min-width: 760px) {
   .glyphs-embedded-wrapper .game-container {
-    grid-template-columns: minmax(0, 1fr) 280px;
-    gap: 20px;
+    grid-template-columns: minmax(0, 1fr) 290px;
+    gap: 24px;
+    padding: 20px;
   }
 }
 
-@media (min-width: 1200px) {
+/* Fallback Media Query for Extra Large Displays */
+@media (min-width: 1380px) {
   .glyphs-embedded-wrapper .game-container {
-    grid-template-columns: minmax(0, 1fr) 320px;
+    grid-template-columns: minmax(0, 1fr) 300px;
     gap: 24px;
   }
 }
@@ -696,7 +705,7 @@ body.standalone-game {
 .rack-controls {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  gap: 6px;
   width: 100%;
   box-sizing: border-box;
 }
@@ -704,11 +713,11 @@ body.standalone-game {
 .btn-secondary {
   width: 100%;
   font-family: var(--font-mono);
-  font-size: clamp(0.68rem, 1.4vw, 0.78rem);
-  font-weight: 600;
+  font-size: clamp(0.55rem, 1.1vw, 0.74rem);
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  padding: 9px 4px;
+  letter-spacing: 0.02em;
+  padding: 8px 3px;
   background: var(--bg-primary);
   color: var(--text-primary);
   border: 1px solid var(--border-color);
@@ -717,10 +726,13 @@ body.standalone-game {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 5px;
+  gap: 4px;
   transition: var(--transition);
+  text-align: center;
   white-space: nowrap;
   box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .btn-secondary:hover:not(:disabled) {
