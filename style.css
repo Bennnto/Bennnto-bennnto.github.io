@@ -233,18 +233,19 @@ input, textarea, button, select {
 
 /* ── LAYOUT STRUCTURE ── */
 .two-col {
-  max-width: 1440px;
+  max-width: 1640px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1.4fr 1fr;
+  grid-template-columns: minmax(460px, 1.35fr) minmax(0, 1.65fr);
   min-height: calc(100vh - 70px);
 }
 
 /* LEFT COLUMN: Sticky Hero Section */
 .left-col {
-  padding: 4rem 2rem;
+  padding: 4rem 2.8rem;
   border-right: 1px solid var(--border-color-muted);
   transition: border-color var(--transition);
+  min-width: 0;
 }
 
 .left-sticky-content {
@@ -253,13 +254,15 @@ input, textarea, button, select {
   display: flex;
   flex-direction: column;
   gap: 2.5rem;
+  width: 100%;
+  max-width: 620px;
 }
 
 .hero-text-block {
   margin-bottom: 2rem;
 }
 .hero-title {
-  font-size: clamp(3rem, 5vw, 4.8rem);
+  font-size: clamp(3.2rem, 5.2vw, 5.2rem);
   font-weight: 800;
   line-height: 0.95;
   letter-spacing: -0.05em;
@@ -268,7 +271,7 @@ input, textarea, button, select {
 }
 .hero-subtitle {
   font-family: var(--font-mono);
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -289,9 +292,11 @@ input, textarea, button, select {
 .interactive-grid-container {
   position: relative;
   width: 100%;
+  max-width: 620px;
   border: 1px solid var(--border-color);
   background-color: var(--bg-secondary);
-  padding: 2.5rem 1.2rem 1.2rem 1.2rem;
+  padding: 1.4rem;
+  box-sizing: border-box;
   transition: border-color var(--transition), background-color var(--transition);
 
   /* Theme variables for Git Levels */
@@ -325,18 +330,34 @@ input, textarea, button, select {
 .crosshair.bl { bottom: -7px; left: -3px; }
 .crosshair.br { bottom: -7px; right: -3px; }
 
-.grid-meta {
-  position: absolute;
+/* In-Flow Technical Meta Bars (Zero Collision) */
+.grid-top-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   font-family: var(--font-mono);
-  font-size: 0.6rem;
+  font-size: 0.64rem;
   color: var(--text-muted);
   letter-spacing: 0.05em;
-  pointer-events: none;
+  margin-bottom: 0.8rem;
+  white-space: nowrap;
+  gap: 12px;
 }
-.grid-meta.tl { top: 6px; left: 8px; }
-.grid-meta.tr { top: 6px; right: 8px; }
-.grid-meta.bl { bottom: 6px; left: 8px; }
-.grid-meta.br { bottom: 6px; right: 8px; }
+
+.grid-bottom-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  margin-top: 0.8rem;
+  padding-top: 0.6rem;
+  border-top: 1px dashed var(--border-color-muted);
+  white-space: nowrap;
+  gap: 12px;
+}
 
 /* The Grid cells */
 .interactive-grid {
@@ -441,6 +462,7 @@ input, textarea, button, select {
 /* RIGHT COLUMN: Scrollable content */
 .right-col {
   padding: 4rem 2rem 6rem 3rem;
+  min-width: 0;
 }
 
 .intro-block {

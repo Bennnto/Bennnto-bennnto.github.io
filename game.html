@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GLYPHS — Minimalist Word Puzzle</title>
+  <meta name="description" content="GLYPHS is a minimalist, tactile word-building puzzle game. Place letter tiles and modifier glyphs, construct words, and harvest combos." />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="GLYPHS — Minimalist Word Puzzle" />
+  <meta property="og:description" content="Tactile letter tile puzzle game with modifier glyphs, combo multipliers, and board harvesting." />
+  <meta property="og:type" content="website" />
+
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="game.css?v=16" />
+</head>
+<body>
+  <!-- Canvas for Victory & Harvest Confetti -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Top Header Navigation -->
+  <header class="game-header">
+    <div class="header-content">
+      <div class="brand-wrap">
+        <a href="index.html" class="back-link" aria-label="Return to portfolio">
+          <span>←</span> Portfolio
+        </a>
+        <h1 class="game-title">
+          <span class="glyph-dot"></span>
+          GLYPHS
+          <span class="title-tag">BETA</span>
+        </h1>
+      </div>
+
+      <div class="header-actions">
+        <button id="btn-sound" class="icon-btn" title="Toggle Sound" aria-label="Toggle Sound">🔊</button>
+        <button id="btn-help" class="icon-btn" title="How to Play" aria-label="How to Play">?</button>
+        <button id="btn-stats" class="icon-btn" title="Statistics" aria-label="Statistics">🏆</button>
+        <button id="btn-theme" class="icon-btn" title="Toggle Theme" aria-label="Toggle Theme">☀</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Game Layout -->
+  <main class="game-container">
+    <!-- Left Section: Status, Board & Tile Rack -->
+    <section class="play-area" aria-label="Game Board Area">
+      <!-- Status Counters Bar -->
+      <div class="status-bar">
+        <div class="status-card">
+          <span class="status-label">Score</span>
+          <span id="stat-score" class="status-value">0</span>
+        </div>
+        <div class="status-card">
+          <span class="status-label">Best</span>
+          <span id="stat-high" class="status-value">0</span>
+        </div>
+        <div class="status-card">
+          <span class="status-label">Combo</span>
+          <span id="stat-combo" class="status-value">1.0×</span>
+        </div>
+        <div class="status-card">
+          <span class="status-label">Tiles Left</span>
+          <span id="stat-tiles-left" class="status-value">48</span>
+        </div>
+      </div>
+
+      <!-- 7x7 Interactive Board Grid -->
+      <div class="board-wrapper">
+        <div id="board-grid" class="board-grid" role="grid" aria-label="7 by 7 letter puzzle board">
+          <!-- 49 Cells generated via JS -->
+        </div>
+
+        <!-- Floating Word Harvest Callout -->
+        <div id="harvest-banner" class="harvest-banner" role="status" aria-live="polite" style="display: none;">
+          <span id="harvest-banner-text" class="harvest-banner-text">HARVEST "WORD" (+15)</span>
+          <span class="harvest-btn-pill">COLLECT ↵</span>
+        </div>
+      </div>
+
+      <!-- Tile Conveyor & Rack -->
+      <div class="conveyor-container">
+        <div class="conveyor-header">
+          <span class="conveyor-title">
+            <span>⚡ Hand Rack</span>
+          </span>
+          <span class="conveyor-deck-count" id="conveyor-deck-display">DECK: 48</span>
+        </div>
+
+        <div class="rack-layout">
+          <!-- 6 Active Hand Slots -->
+          <div class="active-hand-slots" id="active-hand" aria-label="Active tile hand">
+            <div class="hand-slot" data-slot="0"></div>
+            <div class="hand-slot" data-slot="1"></div>
+            <div class="hand-slot" data-slot="2"></div>
+            <div class="hand-slot" data-slot="3"></div>
+            <div class="hand-slot" data-slot="4"></div>
+            <div class="hand-slot" data-slot="5"></div>
+          </div>
+
+          <!-- Upcoming Peek Sub-row -->
+          <div class="conveyor-sub-row">
+            <div class="conveyor-divider">
+              <span>← DRAWS FROM QUEUE:</span>
+            </div>
+            <div class="upcoming-queue" id="upcoming-queue" aria-label="Upcoming tiles preview" title="Next in queue">
+              <div class="queue-slot" data-queue="0"></div>
+              <div class="queue-slot" data-queue="1"></div>
+              <div class="queue-slot" data-queue="2"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Controls -->
+        <div class="rack-controls">
+          <button id="btn-recall" class="btn-secondary" title="Return placed unharvested tile to hand">
+            <span>↺</span> Recall Move
+          </button>
+          <button id="btn-shuffle" class="btn-secondary" title="Shuffle hand tiles">
+            <span>⇄</span> Shuffle Hand
+          </button>
+          <button id="btn-restart" class="btn-secondary" title="Start a fresh run">
+            <span>✦</span> New Game
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right Section: Word Log, Intel & Dictionary definitions -->
+    <aside class="intel-sidebar" aria-label="Intel and Word History">
+      <!-- Harvest History Log -->
+      <div class="intel-panel">
+        <div class="panel-header">
+          <h2 class="panel-title"><span>📜</span> Harvest Log</h2>
+          <span id="log-count" class="panel-badge">0 words</span>
+        </div>
+        <div id="word-log-list" class="word-log-list">
+          <div class="empty-log-msg">Place letters to form valid words horizontally or vertically. Valid words glow for harvesting!</div>
+        </div>
+      </div>
+
+      <!-- Word Meaning / Definition Inspector -->
+      <div class="intel-panel">
+        <div class="panel-header">
+          <h2 class="panel-title"><span>🔍</span> Lexicon Intel</h2>
+          <span class="panel-badge">Dictionary</span>
+        </div>
+        <div id="definition-card" class="definition-card">
+          <div class="def-word-title">
+            <span id="def-term">GLYPHS</span>
+            <span id="def-pos" class="def-part-of-speech">noun</span>
+          </div>
+          <p id="def-body" class="def-body">A symbolic character, tile, or letter designed to convey meaning and score points.</p>
+        </div>
+      </div>
+
+      <!-- Artifact Modifiers Quick Guide -->
+      <div class="intel-panel">
+        <div class="panel-header">
+          <h2 class="panel-title"><span>⚙</span> Tile Types</h2>
+          <span class="panel-badge">Legend</span>
+        </div>
+        <div class="artifact-mini-guide">
+          <div class="mini-guide-item">
+            <span class="mini-tile-badge" style="background: var(--tile-bg); color: var(--text-primary);">A₁</span>
+            <span><strong>Standard Tile:</strong> Basic letter with standard point value.</span>
+          </div>
+          <div class="mini-guide-item">
+            <span class="mini-tile-badge" style="background: var(--tile-compound-bg); border-color: var(--tile-compound-border); color: #B45309;">TH</span>
+            <span><strong>Digraph Tile:</strong> 2 letters in 1 cell (TH, CH, QU, ER). Extra points!</span>
+          </div>
+          <div class="mini-guide-item">
+            <span class="mini-tile-badge" style="background: #EDE9FE; border-color: var(--bonus-wild); color: var(--bonus-wild);">★</span>
+            <span><strong>Wildcard Prism:</strong> Morphable tile, counts as any letter.</span>
+          </div>
+          <div class="mini-guide-item">
+            <span class="mini-tile-badge" style="background: #DBEAFE; border-color: var(--bonus-2x); color: var(--bonus-2x);">2×</span>
+            <span><strong>Overclock:</strong> Multiplies any word across this cell by 2×.</span>
+          </div>
+          <div class="mini-guide-item">
+            <span class="mini-tile-badge" style="background: #FEE2E2; border-color: var(--bonus-bomb); color: var(--bonus-bomb);">💣</span>
+            <span><strong>Purge Bomb:</strong> Place onto any tile to blast it off the board.</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- HOW TO PLAY MODAL -->
+  <dialog id="modal-help">
+    <div class="modal-header">
+      <h3 class="modal-title">How to Play GLYPHS</h3>
+      <button class="modal-close-btn" data-close="modal-help" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="guide-step">
+        <span class="step-num">1</span>
+        <div class="step-content">
+          <h4>Place Tiles on the Board</h4>
+          <p>Drag or click a tile from your hand, then place it on any empty board cell. You can build words in any horizontal (left-to-right) or vertical (top-to-bottom) line.</p>
+        </div>
+      </div>
+      <div class="guide-step">
+        <span class="step-num">2</span>
+        <div class="step-content">
+          <h4>Watch Words Glow</h4>
+          <p>Whenever you form a valid English word (3+ letters), the word will pulse with a vibrant orange outline, displaying its calculated score.</p>
+        </div>
+      </div>
+      <div class="guide-step">
+        <span class="step-num">3</span>
+        <div class="step-content">
+          <h4>Harvest or Extend</h4>
+          <p>Tap the glowing word or the <strong>COLLECT</strong> banner to harvest it. Harvesting clears the tiles, frees up board space, and triggers a Combo multiplier! Or extend the word into a longer word for a massive length bonus!</p>
+        </div>
+      </div>
+      <div class="guide-step">
+        <span class="step-num">4</span>
+        <div class="step-content">
+          <h4>Master Modifiers</h4>
+          <p>Utilize compound digraphs (TH, CH, QU), 2× multiplier cells, Wildcard Prisms, and Purge Bombs to rack up legendary high scores before your deck runs out!</p>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-primary" data-close="modal-help">Got it, Let's Play!</button>
+    </div>
+  </dialog>
+
+  <!-- STATS MODAL -->
+  <dialog id="modal-stats">
+    <div class="modal-header">
+      <h3 class="modal-title">Player Statistics</h3>
+      <button class="modal-close-btn" data-close="modal-stats" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div id="stat-modal-high" class="stat-num">0</div>
+          <div class="stat-desc">High Score</div>
+        </div>
+        <div class="stat-box">
+          <div id="stat-modal-games" class="stat-num">0</div>
+          <div class="stat-desc">Runs Played</div>
+        </div>
+        <div class="stat-box">
+          <div id="stat-modal-words" class="stat-num">0</div>
+          <div class="stat-desc">Words Harvested</div>
+        </div>
+        <div class="stat-box">
+          <div id="stat-modal-best-word" class="stat-num" style="font-size: 1.15rem; padding-top: 10px;">—</div>
+          <div class="stat-desc">Top Word</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button id="btn-share-stats" class="btn-primary">📋 Share Card</button>
+      <button class="btn-secondary" data-close="modal-stats">Close</button>
+    </div>
+  </dialog>
+
+  <!-- GAME OVER / RUN COMPLETE MODAL -->
+  <dialog id="modal-gameover">
+    <div class="modal-header">
+      <h3 class="modal-title">Run Finished</h3>
+    </div>
+    <div class="modal-body" style="text-align: center;">
+      <p style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase;">Final Score</p>
+      <div id="gameover-score" class="stat-num" style="font-size: 3rem; margin: 6px 0;">0</div>
+      <div id="gameover-rank" style="font-family: var(--font-mono); font-size: 1rem; font-weight: 700; color: var(--accent-color); margin-bottom: 14px;">RANK: WORDSMITH</div>
+      <div class="stats-grid" style="text-align: left;">
+        <div class="stat-box">
+          <div id="gameover-words-count" class="stat-num" style="font-size: 1.4rem;">0</div>
+          <div class="stat-desc">Words Harvested</div>
+        </div>
+        <div class="stat-box">
+          <div id="gameover-best-word" class="stat-num" style="font-size: 1.1rem; padding-top: 5px;">—</div>
+          <div class="stat-desc">Best Word</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button id="btn-gameover-share" class="btn-secondary">📋 Share Result</button>
+      <button id="btn-gameover-restart" class="btn-primary">Play Again ↵</button>
+    </div>
+  </dialog>
+
+  <!-- Scripts -->
+  <script src="dictionary.js?v=16"></script>
+  <script src="game.js?v=16"></script>
+</body>
+</html>

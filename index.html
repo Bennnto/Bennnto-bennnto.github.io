@@ -20,7 +20,8 @@
     href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
     rel="stylesheet" />
 
-  <link rel="stylesheet" href="style.css?v=14" />
+  <link rel="stylesheet" href="style.css?v=16" />
+  <link rel="stylesheet" href="game.css?v=16" />
 </head>
 
 <body>
@@ -41,8 +42,7 @@
         <a href="#info" class="nav-link">Info</a>
         <a href="#resume" class="nav-link">Resume</a>
         <a href="#projects" class="nav-link">Projects</a>
-        <a href="#git-activity" class="nav-link">Git Activity</a>
-        <a href="#playground" class="nav-link">Playground</a>
+        <a href="#playground" class="nav-link">Word Game</a>
         <a href="#contact" class="nav-link">Contact</a>
       </nav>
 
@@ -78,18 +78,18 @@
           <div class="crosshair bl">+</div>
           <div class="crosshair br">+</div>
 
-          <!-- Decorative Technical Labels -->
-          <span class="grid-meta tl">SYSTEM_ACTIVE: TRUE</span>
-          <span class="grid-meta tr">LAT: 43.6532° N / LON: 79.3832° W</span>
-          <span class="grid-meta bl">COMMIT_GRAPH // 2026</span>
-          <span class="grid-meta br">B.PROMKAEW</span>
+          <!-- Top Technical Meta Row -->
+          <div class="grid-top-meta">
+            <span>SYS_ACT: TRUE</span>
+            <span>43.65°N / 79.38°W</span>
+          </div>
 
           <!-- The Color Grid Container (Populated via JS) -->
           <div id="interactive-grid" class="interactive-grid"></div>
 
           <!-- Contribution Legend & Cursor Tooltip -->
           <div class="grid-legend">
-            <span class="legend-text">Contribution History</span>
+            <span class="legend-text">Activity</span>
             <div class="legend-scale">
               <span>Less</span>
               <span class="legend-box lvl-0"></span>
@@ -99,6 +99,12 @@
               <span class="legend-box lvl-4"></span>
               <span>More</span>
             </div>
+          </div>
+
+          <!-- Bottom Technical Meta Row -->
+          <div class="grid-bottom-meta">
+            <span>COMMIT_GRAPH // 2026</span>
+            <span>B.PROMKAEW</span>
           </div>
           <div id="grid-tooltip" class="grid-tooltip"></div>
         </div>
@@ -373,6 +379,21 @@
         <h2 class="section-title">Projects</h2>
 
         <div class="projects-list">
+
+          <!-- Project: GLYPHS Word Game -->
+          <article class="project-card featured">
+            <div class="project-header">
+              <h3 class="project-name">GLYPHS</h3>
+              <span class="badge featured-badge" style="background: var(--accent-color); color: #fff;">Playable</span>
+            </div>
+            <p class="project-desc">A minimalist, tactile word-building puzzle game inspired by solitaire mechanics. Build words on a 7×7 board using letter tiles, compound digraphs, and artifact modifiers to harvest high-scoring combos.</p>
+            <div class="project-meta">
+              <span class="project-stack">HTML5 · JavaScript · Web Audio API · Neo-Brutalist</span>
+              <a href="game.html" class="project-link" aria-label="Play GLYPHS Word Game">
+                Play Game <span>→</span>
+              </a>
+            </div>
+          </article>
 
           <!-- Project: CPile -->
           <article class="project-card featured">
@@ -655,250 +676,175 @@
         </div>
       </section>
 
-      <!-- INTERACTIVE GIT LOG & ACTIVITY VISUALIZER SECTION -->
-      <section id="git-activity" class="portfolio-section">
-        <h2 class="section-title">Git Log & Activity</h2>
-        <p class="library-intro">
-          Interactive commit graph and repository timeline visualizing development branches, commit histories, code
-          diffs, and real-time activity metrics.
-        </p>
 
-        <div class="git-container">
-          <!-- Control Toolbar -->
-          <div class="git-toolbar">
-            <div class="git-controls-left">
-              <label for="git-branch-select" class="sr-only">Select Branch</label>
-              <select id="git-branch-select" class="git-select" aria-label="Filter by Repository">
-                <option value="all">🌿 All Repositories (Live)</option>
-                <option value="Bennnto-bennnto.github.io">🔹 Bennnto-bennnto.github.io</option>
-                <option value="CPile">⚡ CPile (Transpiler)</option>
-                <option value="Tress">⚙️ Tress (AST Language)</option>
-                <option value="GAFF">🔨 GAFF (C Compiler)</option>
-              </select>
-
-              <div class="git-view-toggle" role="group" aria-label="View Mode">
-                <button id="git-view-graph" class="git-btn active" title="Visual Branch Graph">
-                  <span class="btn-icon">🌳</span> Graph
-                </button>
-                <button id="git-view-terminal" class="git-btn" title="Interactive Terminal Log">
-                  <span class="btn-icon">💻</span> Terminal
-                </button>
-              </div>
-            </div>
-
-            <div class="git-controls-right">
-              <span id="git-api-status" class="git-api-badge"><span class="pulse-dot"></span> CONNECTING...</span>
-              <div class="git-search-box">
-                <span class="search-icon">🔍</span>
-                <input type="text" id="git-search-input" class="git-input"
-                  placeholder="Search commits, authors, hashes..." />
-              </div>
-              <button id="git-reset-btn" class="git-btn" title="Reset Filters">Reset</button>
-            </div>
-          </div>
-
-          <!-- Main Viewport: Canvas Graph vs Interactive Terminal -->
-          <div class="git-viewport-wrapper">
-            <!-- Decorative corner crosshairs & technical labels -->
-            <div class="crosshair tl">+</div>
-            <div class="crosshair tr">+</div>
-            <div class="crosshair bl">+</div>
-            <div class="crosshair br">+</div>
-
-            <span class="grid-meta tl">SYSTEM_ACTIVE // LIVE</span>
-            <span class="grid-meta tr">LAT: 43.6532° N / LON: 79.3832° W</span>
-            <span class="grid-meta bl">COMMIT_GRAPH // 2026</span>
-            <span class="grid-meta br">BENNTO_GIT_V2.1</span>
-
-            <!-- Visual Graph View -->
-            <div id="git-graph-view" class="git-view-panel active">
-              <canvas id="git-graph-canvas" class="git-canvas"></canvas>
-            </div>
-
-            <!-- Terminal View -->
-            <div id="git-terminal-view" class="git-view-panel">
-              <div class="terminal-header">
-                <span class="terminal-dot red"></span>
-                <span class="terminal-dot yellow"></span>
-                <span class="terminal-dot green"></span>
-                <span class="terminal-title">ben@macbook-pro: ~/bennnto.github.io (git log)</span>
-              </div>
-              <div id="terminal-body" class="terminal-body">
-                <!-- Populated dynamically via JS -->
-              </div>
-              <div class="terminal-input-row">
-                <span class="terminal-prompt">bennnto:~$</span>
-                <input type="text" id="terminal-cmd-input" class="terminal-input"
-                  placeholder="Try 'git log', 'git checkout <branch>', or 'help'..." />
-              </div>
-            </div>
-          </div>
-
-          <!-- Telemetry HUD -->
-          <div class="git-hud">
-            <div class="hud-card">
-              <span class="hud-label">Total Commits</span>
-              <span id="git-hud-commits" class="hud-value blue">0</span>
-            </div>
-
-            <div class="hud-card">
-              <span class="hud-label">Active Branches</span>
-              <span id="git-hud-branches" class="hud-value green">0</span>
-            </div>
-
-            <div class="hud-card">
-              <span class="hud-label">Net Code Mutations</span>
-              <span id="git-hud-diff" class="hud-value purple">+0 / -0</span>
-            </div>
-
-            <div class="hud-card">
-              <span class="hud-label">Current HEAD</span>
-              <span id="git-hud-head" class="hud-value mono">main</span>
-            </div>
-          </div>
-
-          <!-- Selected Commit Detail Inspector Modal / Panel -->
-          <div id="commit-inspector" class="commit-inspector hidden">
-            <div class="inspector-header">
-              <div class="inspector-title-group">
-                <span class="inspector-badge" id="inspector-hash">#000000</span>
-                <h3 class="inspector-subject" id="inspector-subject">Select a commit node to inspect details</h3>
-              </div>
-              <button id="inspector-close" class="inspector-close-btn" aria-label="Close Inspector">✕</button>
-            </div>
-
-            <div class="inspector-body">
-              <div class="inspector-meta-row">
-                <span class="meta-item"><strong>Author:</strong> <span id="inspector-author">-</span></span>
-                <span class="meta-item"><strong>Date:</strong> <span id="inspector-date">-</span></span>
-                <span class="meta-item"><strong>Branch:</strong> <span id="inspector-branch"
-                    class="branch-tag">-</span></span>
-                <span class="meta-item" id="inspector-tag-wrapper" style="display:none;"><strong>Tag:</strong> <span
-                    id="inspector-tag" class="release-tag">-</span></span>
-              </div>
-
-              <div class="inspector-stats-row">
-                <span class="stat-added" id="inspector-additions">+0 additions</span>
-                <span class="stat-deleted" id="inspector-deletions">-0 deletions</span>
-              </div>
-
-              <div class="inspector-files">
-                <span class="files-title">Modified Files:</span>
-                <ul id="inspector-file-list" class="file-list">
-                  <!-- Populated via JS -->
-                </ul>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      <!-- TRESS PLAYGROUND SECTION -->
+      <!-- GLYPHS WORD PUZZLE SECTION (REPLACED GIT ACTIVITY & TRESS PLAYGROUND) -->
       <section id="playground" class="portfolio-section">
-        <h2 class="section-title">Tress Playground</h2>
+        <h2 class="section-title">GLYPHS Word Puzzle</h2>
         <p class="playground-intro">
-          Statically typed, interpreted scripting language running in a custom AST interpreter client-side. Select an
-          example to test its type checking and execution.
+          A tactile word-building puzzle game inspired by solitaire mechanics. Build words on the 7×7 board, utilize compound digraphs and artifact modifiers, and harvest high-scoring combos.
         </p>
 
-        <div class="playground-box">
-          <!-- Top bar with template picker & docs wayfinding -->
+        <div class="glyphs-embedded-wrapper">
+          <!-- Top bar with game controls -->
           <div class="playground-header-bar">
             <div class="picker-group">
-              <label for="playground-template" class="playground-label">Example</label>
-              <select id="playground-template" class="playground-select">
-                <option value="vars">Variables & Types</option>
-                <option value="loops">While Loops & Math</option>
-                <option value="type-error">Statically-Typed Error Demo</option>
-              </select>
+              <span class="game-title" style="font-size: 1.05rem;">
+                <span class="glyph-dot"></span>
+                GLYPHS
+                <span class="title-tag">SOLITAIRE PUZZLE</span>
+              </span>
             </div>
 
-            <div class="playground-docs-actions">
-              <button id="tress-docs-toggle" class="tress-docs-btn">📋 Quick Ref</button>
-              <span class="lang-tag">TRESS v1.0.0</span>
-            </div>
-          </div>
-
-          <!-- Collapsible Documentation & Syntax Reference Drawer -->
-          <div id="tress-docs-drawer" class="tress-docs-drawer" hidden>
-            <div class="docs-grid">
-              <div class="docs-card">
-                <h4 class="docs-card-title">1. Static Variable Declarations</h4>
-                <p class="docs-syntax"><code>init &lt;type&gt;: &lt;name&gt; = &lt;value&gt;</code></p>
-                <p class="docs-desc">Supported types: <code>int</code>, <code>str</code>, <code>float</code>,
-                  <code>bool</code>, <code>int?</code> (Optional)
-                </p>
-                <pre class="docs-code-example">init int: x = 42
-init str: greeting = "Hello, Tress!"
-init float: pi = 3.14159</pre>
-              </div>
-
-              <div class="docs-card">
-                <h4 class="docs-card-title">2. Variable Assignment & Mutation</h4>
-                <p class="docs-syntax"><code>&lt;name&gt; = &lt;expression&gt;</code></p>
-                <p class="docs-desc">Value type must match the declared static type.</p>
-                <pre class="docs-code-example">x = x + 10
-greeting = "Updated string"</pre>
-              </div>
-
-              <div class="docs-card">
-                <h4 class="docs-card-title">3. Control Flow & Loops</h4>
-                <p class="docs-syntax"><code>while (cond) { ... }</code> | <code>if (cond) { ... }</code></p>
-                <p class="docs-desc">Supports comparisons (<code>==</code>, <code>!=</code>, <code>&lt;</code>,
-                  <code>&gt;</code>, <code>&lt;=</code>, <code>&gt;=</code>).
-                </p>
-                <pre class="docs-code-example">init int: i = 1
-while (i &lt;= 5) {
-  disp("Loop:", i)
-  i = i + 1
-}</pre>
-              </div>
-
-              <div class="docs-card">
-                <h4 class="docs-card-title">4. Built-in Functions & Math</h4>
-                <p class="docs-syntax"><code>disp(...)</code> | <code>sqrt(n)</code> | <code>abs(n)</code> |
-                  <code>floor(n)</code>
-                </p>
-                <p class="docs-desc">Print output or run math functions.</p>
-                <pre class="docs-code-example">disp("Square root:", sqrt(100))
-disp("Absolute:", abs(-42))</pre>
-              </div>
+            <div class="header-actions">
+              <button id="btn-sound" class="icon-btn" title="Toggle Sound" aria-label="Toggle Sound">🔊</button>
+              <button id="btn-help" class="icon-btn" title="How to Play" aria-label="How to Play">?</button>
+              <button id="btn-stats" class="icon-btn" title="Statistics" aria-label="Statistics">🏆</button>
+              <a href="game.html" class="icon-btn" title="Fullscreen Page" aria-label="Open in full page" target="_blank" style="text-decoration: none;">↗</a>
             </div>
           </div>
 
-          <div class="playground-editor-layout">
-            <!-- Code Editor Area -->
-            <div class="editor-pane">
-              <div id="editor-numbers" class="editor-numbers" aria-hidden="true">
-                <span>1</span>
+          <div class="game-container">
+            <!-- Left Section: Status, Board & Tile Rack -->
+            <section class="play-area" aria-label="Game Board Area">
+              <!-- Status Counters Bar -->
+              <div class="status-bar">
+                <div class="status-card">
+                  <span class="status-label">Score</span>
+                  <span id="stat-score" class="status-value">0</span>
+                </div>
+                <div class="status-card">
+                  <span class="status-label">Best</span>
+                  <span id="stat-high" class="status-value">0</span>
+                </div>
+                <div class="status-card">
+                  <span class="status-label">Combo</span>
+                  <span id="stat-combo" class="status-value">1.0×</span>
+                </div>
+                <div class="status-card">
+                  <span class="status-label">Tiles Left</span>
+                  <span id="stat-tiles-left" class="status-value">48</span>
+                </div>
               </div>
-              <textarea id="playground-code" rows="16" class="playground-textarea" spellcheck="false">// Tress statically-typed variable declarations
-init int: x = 42
-init str: greeting = "Hello, Tress!"
-init float: pi = 3.14159
 
-disp(greeting)
-disp("x is:", x)
-disp("pi is:", pi)</textarea>
-            </div>
+              <!-- 7x7 Interactive Board Grid -->
+              <div class="board-wrapper">
+                <div id="board-grid" class="board-grid" role="grid" aria-label="7 by 7 letter puzzle board">
+                  <!-- 49 Cells generated via JS -->
+                </div>
 
-            <!-- Run Button -->
-            <button id="playground-run-btn" class="playground-run-button">
-              <span>▶</span> RUN CODE
-            </button>
-          </div>
+                <!-- Floating Word Harvest Callout -->
+                <div id="harvest-banner" class="harvest-banner" role="status" aria-live="polite" style="display: none;">
+                  <span id="harvest-banner-text" class="harvest-banner-text">HARVEST "WORD" (+15)</span>
+                  <span class="harvest-btn-pill">COLLECT ↵</span>
+                </div>
+              </div>
 
-          <!-- Console Terminal Output -->
-          <div class="playground-terminal-block">
-            <div class="terminal-header">
-              <span class="terminal-title">PLAYGROUND OUTPUT</span>
-              <button id="playground-clear-btn" class="terminal-copy-btn">CLEAR</button>
-            </div>
-            <div class="terminal-body">
-              <pre id="playground-output"
-                class="terminal-output-viewport">// Write code and click Run Code to execute...</pre>
-            </div>
+              <!-- Tile Conveyor & Rack -->
+              <div class="conveyor-container">
+                <div class="conveyor-header">
+                  <span class="conveyor-title">
+                    <span>⚡ Hand Rack (6 Tiles)</span>
+                  </span>
+                  <span class="conveyor-deck-count" id="conveyor-deck-display">DECK: 48</span>
+                </div>
+
+                <div class="rack-layout">
+                  <!-- 6 Active Hand Slots -->
+                  <div class="active-hand-slots" id="active-hand" aria-label="Active tile hand">
+                    <div class="hand-slot" data-slot="0"></div>
+                    <div class="hand-slot" data-slot="1"></div>
+                    <div class="hand-slot" data-slot="2"></div>
+                    <div class="hand-slot" data-slot="3"></div>
+                    <div class="hand-slot" data-slot="4"></div>
+                    <div class="hand-slot" data-slot="5"></div>
+                  </div>
+
+                  <!-- Upcoming Peek Sub-row -->
+                  <div class="conveyor-sub-row">
+                    <div class="conveyor-divider">
+                      <span>← DRAWS FROM QUEUE:</span>
+                    </div>
+                    <div class="upcoming-queue" id="upcoming-queue" aria-label="Upcoming tiles preview" title="Next in queue">
+                      <div class="queue-slot" data-queue="0"></div>
+                      <div class="queue-slot" data-queue="1"></div>
+                      <div class="queue-slot" data-queue="2"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Action Controls -->
+                <div class="rack-controls">
+                  <button id="btn-recall" class="btn-secondary" title="Return placed unharvested tile to hand">
+                    <span>↺</span> Recall Move
+                  </button>
+                  <button id="btn-shuffle" class="btn-secondary" title="Shuffle hand tiles">
+                    <span>⇄</span> Shuffle Hand
+                  </button>
+                  <button id="btn-restart" class="btn-secondary" title="Start a fresh run">
+                    <span>✦</span> New Game
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            <!-- Right Section: Word Log, Intel & Dictionary definitions -->
+            <aside class="intel-sidebar" aria-label="Intel and Word History">
+              <!-- Harvest History Log -->
+              <div class="intel-panel">
+                <div class="panel-header">
+                  <h3 class="panel-title"><span>📜</span> Harvest Log</h3>
+                  <span id="log-count" class="panel-badge">0 words</span>
+                </div>
+                <div id="word-log-list" class="word-log-list">
+                  <div class="empty-log-msg">Place letters to form valid words horizontally or vertically. Valid words glow for harvesting!</div>
+                </div>
+              </div>
+
+              <!-- Word Meaning / Definition Inspector -->
+              <div class="intel-panel">
+                <div class="panel-header">
+                  <h3 class="panel-title"><span>🔍</span> Lexicon Intel</h3>
+                  <span class="panel-badge">Dictionary</span>
+                </div>
+                <div id="definition-card" class="definition-card">
+                  <div class="def-word-title">
+                    <span id="def-term">GLYPHS</span>
+                    <span id="def-pos" class="def-part-of-speech">noun</span>
+                  </div>
+                  <p id="def-body" class="def-body">A symbolic character, tile, or letter designed to convey meaning and score points.</p>
+                </div>
+              </div>
+
+              <!-- Artifact Modifiers Quick Guide -->
+              <div class="intel-panel">
+                <div class="panel-header">
+                  <h3 class="panel-title"><span>⚙</span> Tile Types</h3>
+                  <span class="panel-badge">Legend</span>
+                </div>
+                <div class="artifact-mini-guide">
+                  <div class="mini-guide-item">
+                    <span class="mini-tile-badge" style="background: var(--tile-bg); color: var(--text-primary);">A₁</span>
+                    <span><strong>Standard Tile:</strong> Basic letter with standard point value.</span>
+                  </div>
+                  <div class="mini-guide-item">
+                    <span class="mini-tile-badge" style="background: var(--tile-compound-bg); border-color: var(--tile-compound-border); color: #B45309;">TH</span>
+                    <span><strong>Digraph Tile:</strong> 2 letters in 1 cell (TH, CH, QU, ER). Extra points!</span>
+                  </div>
+                  <div class="mini-guide-item">
+                    <span class="mini-tile-badge" style="background: #EDE9FE; border-color: var(--bonus-wild); color: var(--bonus-wild);">★</span>
+                    <span><strong>Wildcard Prism:</strong> Morphable tile, counts as any letter.</span>
+                  </div>
+                  <div class="mini-guide-item">
+                    <span class="mini-tile-badge" style="background: #DBEAFE; border-color: var(--bonus-2x); color: var(--bonus-2x);">2×</span>
+                    <span><strong>Overclock:</strong> Multiplies any word across this cell by 2×.</span>
+                  </div>
+                  <div class="mini-guide-item">
+                    <span class="mini-tile-badge" style="background: #FEE2E2; border-color: var(--bonus-bomb); color: var(--bonus-bomb);">💣</span>
+                    <span><strong>Purge Bomb:</strong> Place onto any tile to blast it off the board.</span>
+                  </div>
+                </div>
+              </div>
+            </aside>
           </div>
         </div>
       </section>
@@ -940,8 +886,111 @@ disp("pi is:", pi)</textarea>
     </div><!-- /right-col -->
   </main>
 
-  <script src="tress.js"></script>
-  <script src="main.js?v=11"></script>
+  <!-- Canvas for Victory & Harvest Confetti -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- HOW TO PLAY MODAL -->
+  <dialog id="modal-help">
+    <div class="modal-header">
+      <h3 class="modal-title">How to Play GLYPHS</h3>
+      <button class="modal-close-btn" data-close="modal-help" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="guide-step">
+        <span class="step-num">1</span>
+        <div class="step-content">
+          <h4>Place Tiles on the Board</h4>
+          <p>Drag or click a tile from your 6-tile hand, then place it on any empty board cell. You can build words in any horizontal (left-to-right) or vertical (top-to-bottom) line.</p>
+        </div>
+      </div>
+      <div class="guide-step">
+        <span class="step-num">2</span>
+        <div class="step-content">
+          <h4>Watch Words Glow</h4>
+          <p>Whenever you form a valid English word (3+ letters), the word will pulse with a vibrant orange outline, displaying its calculated score.</p>
+        </div>
+      </div>
+      <div class="guide-step">
+        <span class="step-num">3</span>
+        <div class="step-content">
+          <h4>Harvest or Extend</h4>
+          <p>Tap the glowing word or the <strong>COLLECT</strong> banner to harvest it. Harvesting clears the tiles, frees up board space, and triggers a Combo multiplier! Or extend the word into a longer word for a massive length bonus!</p>
+        </div>
+      </div>
+      <div class="guide-step">
+        <span class="step-num">4</span>
+        <div class="step-content">
+          <h4>Master Modifiers</h4>
+          <p>Utilize compound digraphs (TH, CH, QU), 2× multiplier cells, Wildcard Prisms, and Purge Bombs to rack up legendary high scores before your deck runs out!</p>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-primary" data-close="modal-help">Got it, Let's Play!</button>
+    </div>
+  </dialog>
+
+  <!-- STATS MODAL -->
+  <dialog id="modal-stats">
+    <div class="modal-header">
+      <h3 class="modal-title">Player Statistics</h3>
+      <button class="modal-close-btn" data-close="modal-stats" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div id="stat-modal-high" class="stat-num">0</div>
+          <div class="stat-desc">High Score</div>
+        </div>
+        <div class="stat-box">
+          <div id="stat-modal-games" class="stat-num">0</div>
+          <div class="stat-desc">Runs Played</div>
+        </div>
+        <div class="stat-box">
+          <div id="stat-modal-words" class="stat-num">0</div>
+          <div class="stat-desc">Words Harvested</div>
+        </div>
+        <div class="stat-box">
+          <div id="stat-modal-best-word" class="stat-num" style="font-size: 1.15rem; padding-top: 10px;">—</div>
+          <div class="stat-desc">Top Word</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button id="btn-share-stats" class="btn-primary">📋 Share Card</button>
+      <button class="btn-secondary" data-close="modal-stats">Close</button>
+    </div>
+  </dialog>
+
+  <!-- GAME OVER / RUN COMPLETE MODAL -->
+  <dialog id="modal-gameover">
+    <div class="modal-header">
+      <h3 class="modal-title">Run Finished</h3>
+    </div>
+    <div class="modal-body" style="text-align: center;">
+      <p style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase;">Final Score</p>
+      <div id="gameover-score" class="stat-num" style="font-size: 3rem; margin: 6px 0;">0</div>
+      <div id="gameover-rank" style="font-family: var(--font-mono); font-size: 1rem; font-weight: 700; color: var(--accent-color); margin-bottom: 14px;">RANK: WORDSMITH</div>
+      <div class="stats-grid" style="text-align: left;">
+        <div class="stat-box">
+          <div id="gameover-words-count" class="stat-num" style="font-size: 1.4rem;">0</div>
+          <div class="stat-desc">Words Harvested</div>
+        </div>
+        <div class="stat-box">
+          <div id="gameover-best-word" class="stat-num" style="font-size: 1.1rem; padding-top: 5px;">—</div>
+          <div class="stat-desc">Best Word</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button id="btn-gameover-share" class="btn-secondary">📋 Share Result</button>
+      <button id="btn-gameover-restart" class="btn-primary">Play Again ↵</button>
+    </div>
+  </dialog>
+
+  <script src="dictionary.js?v=16"></script>
+  <script src="game.js?v=16"></script>
+  <script src="main.js?v=16"></script>
 </body>
 
 </html>
