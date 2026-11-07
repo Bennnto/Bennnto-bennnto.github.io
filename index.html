@@ -20,8 +20,8 @@
     href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
     rel="stylesheet" />
 
-  <link rel="stylesheet" href="style.css?v=17" />
-  <link rel="stylesheet" href="game.css?v=17" />
+  <link rel="stylesheet" href="style.css?v=19" />
+  <link rel="stylesheet" href="game.css?v=19" />
 </head>
 
 <body>
@@ -732,10 +732,11 @@
                   <!-- 49 Cells generated via JS -->
                 </div>
 
-                <!-- Floating Word Harvest Callout -->
+                <!-- Interactive Word Selection & Submit Bar -->
                 <div id="harvest-banner" class="harvest-banner" role="status" aria-live="polite" style="display: none;">
-                  <span id="harvest-banner-text" class="harvest-banner-text">HARVEST "WORD" (+15)</span>
-                  <span class="harvest-btn-pill">COLLECT ↵</span>
+                  <span id="harvest-banner-text" class="harvest-banner-text">WORD: ""</span>
+                  <button id="btn-submit-word" class="harvest-btn-pill">SUBMIT ↵</button>
+                  <button id="btn-cancel-word" class="harvest-cancel-pill" title="Clear selection">✕</button>
                 </div>
               </div>
 
@@ -743,7 +744,7 @@
               <div class="conveyor-container">
                 <div class="conveyor-header">
                   <span class="conveyor-title">
-                    <span>⚡ Hand Rack (6 Tiles)</span>
+                    <span>⚡ Hand Rack</span>
                   </span>
                   <span class="conveyor-deck-count" id="conveyor-deck-display">DECK: 48</span>
                 </div>
@@ -761,9 +762,7 @@
 
                   <!-- Upcoming Peek Sub-row -->
                   <div class="conveyor-sub-row">
-                    <div class="conveyor-divider">
-                      <span>← DRAWS FROM QUEUE:</span>
-                    </div>
+                    <span class="conveyor-sub-label">QUEUE:</span>
                     <div class="upcoming-queue" id="upcoming-queue" aria-label="Upcoming tiles preview" title="Next in queue">
                       <div class="queue-slot" data-queue="0"></div>
                       <div class="queue-slot" data-queue="1"></div>
@@ -775,13 +774,13 @@
                 <!-- Action Controls -->
                 <div class="rack-controls">
                   <button id="btn-recall" class="btn-secondary" title="Return placed unharvested tile to hand">
-                    <span>↺</span> Recall Move
+                    <span>↺</span> Recall
                   </button>
                   <button id="btn-shuffle" class="btn-secondary" title="Shuffle hand tiles">
-                    <span>⇄</span> Shuffle Hand
+                    <span>⇄</span> Shuffle
                   </button>
                   <button id="btn-restart" class="btn-secondary" title="Start a fresh run">
-                    <span>✦</span> New Game
+                    <span>✦</span> New
                   </button>
                 </div>
               </div>
@@ -988,9 +987,9 @@
     </div>
   </dialog>
 
-  <script src="dictionary.js?v=16"></script>
-  <script src="game.js?v=16"></script>
-  <script src="main.js?v=16"></script>
+  <script src="dictionary.js?v=19"></script>
+  <script src="game.js?v=19"></script>
+  <script src="main.js?v=19"></script>
 </body>
 
 </html>
